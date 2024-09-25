@@ -1,0 +1,9 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:TestGenerator.UI"
+        x:Class="TestGenerator.UI.SplitViewResizer">
+        
+        <Border BorderBrush="Gray" Width="8" BorderThickness="0 0 1 0">
+                <Rectangle Width="8"></Rectangle>
+        </Border>
+</UserControl>

@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:code="clr-namespace:TestGenerator.MainTabs.Code"
+        xmlns:ui="clr-namespace:TestGenerator.UI"
+        xmlns:testGenerator="clr-namespace:TestGenerator"
+        xmlns:filesTab="clr-namespace:TestGenerator.FilesTab"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TestGenerator.MainWindow"
+        Title="TestGenerator">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Gray"
+                BorderThickness="0 0 0 1">
+            <ui:MainMenu Name="MainMenu" TabChanged="MainMenu_OnTabChanged"></ui:MainMenu>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray"
+                BorderThickness="0 0 1 0">
+            <ui:SideBar Name="SideBar" TabChanged="SideBar_OnTabChanged"></ui:SideBar>
+        </Border>
+
+        <SplitView Grid.Row="1" Grid.Column="1" PanePlacement="Left" OpenPaneLength="300" DisplayMode="Inline"
+                   IsPaneOpen="False" Transitions="" Name="SplitView">
+            <SplitView.Pane>
+                    <Border BorderThickness="0 0 1 0" BorderBrush="Gray">
+                        <Panel>
+                            <filesTab:FilesTab Name="FilesTabControl"/>
+                            <ui:SplitViewResizer Width="8" HorizontalAlignment="Right" Background="Transparent" />
+                        </Panel>
+                    </Border>
+            </SplitView.Pane>
+
+            <Panel Name="MainTabsPanel">
+                <code:CodeTab Name="CodeTab"></code:CodeTab>
+            </Panel>
+        </SplitView>
+
+    </Grid>
+</Window>
