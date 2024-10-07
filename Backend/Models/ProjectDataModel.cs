@@ -1,4 +1,4 @@
-﻿namespace Shared.models;
+﻿namespace Backend.Models;
 
 class ProjectDataModel
 {

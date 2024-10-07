@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
-using Backend;
-using Shared;
+using Backend.Services;
+using Backend.Types;
 
 namespace TestGenerator.FilesTab;
 

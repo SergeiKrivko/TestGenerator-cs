@@ -1,29 +1,28 @@
 ﻿using System.Text.Json;
-using Shared.models;
+using Backend.Models;
+using Backend.Services;
+using Shared;
 
-namespace Shared;
+namespace Backend.Types;
 
-public class Project
+public class Project : IProject
 {
-    public static string TestGeneratorDir { get; } = ".TestGenerator";
-    public static string DataFile { get; } = "TestGeneratorData.json";
-
-    public Guid Id { get; }
+    public override Guid Id { get; }
     private string? _name;
 
-    public string Name
+    public override string Name
     {
         get => String.IsNullOrWhiteSpace(_name) ? System.IO.Path.GetFileName(Path) : _name;
         set => _name = value;
     }
-    
-    public string Path { get; }
-    public ProjectType Type { get; }
+
+    public override string Path { get; }
+    public override ProjectType Type { get; }
 
     private Project(string name, string path, ProjectType type)
     {
         Id = Guid.NewGuid();
-        Name = name;
+        _name = name;
         Path = path;
         Type = type;
     }

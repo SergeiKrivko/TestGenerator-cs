@@ -32,8 +32,14 @@ public partial class CodeEditor : UserControl
     {
         _textMateInstallation.SetGrammar(null);
         Editor.Document = new TextDocument(File.ReadAllText(fileName));
-        _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(
-            _registryOptions.GetLanguageByExtension("." + fileName.Split('.')[^1]).Id
-        ));
+        try
+        {
+            _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(
+                _registryOptions.GetLanguageByExtension("." + fileName.Split('.')[^1]).Id
+            ));
+        }
+        catch (NullReferenceException)
+        {
+        }
     }
 }

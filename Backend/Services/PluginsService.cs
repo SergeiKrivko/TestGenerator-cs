@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Shared;
 
-namespace Backend;
+namespace Backend.Services;
 
 public class PluginsService
 {

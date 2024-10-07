@@ -1,4 +1,6 @@
-﻿namespace Shared;
+﻿using Shared;
+
+namespace Backend.Services;
 
 public class ProjectTypesService
 {

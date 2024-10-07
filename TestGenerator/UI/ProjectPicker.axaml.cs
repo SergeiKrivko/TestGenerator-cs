@@ -1,12 +1,10 @@
 ﻿using System;
-using System.IO;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using Backend;
-using Shared;
+using Backend.Services;
+using Backend.Types;
 
 namespace TestGenerator.UI;
 
@@ -62,7 +60,7 @@ public partial class ProjectPicker : UserControl
 
         var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            Title = "Open Project",
+            Title = "Open IProject",
             AllowMultiple = false
         });
 
