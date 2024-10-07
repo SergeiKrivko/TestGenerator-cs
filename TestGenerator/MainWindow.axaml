@@ -4,8 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:code="clr-namespace:TestGenerator.MainTabs.Code"
         xmlns:ui="clr-namespace:TestGenerator.UI"
-        xmlns:testGenerator="clr-namespace:TestGenerator"
         xmlns:filesTab="clr-namespace:TestGenerator.FilesTab"
+        xmlns:terminalTab="clr-namespace:TestGenerator.TerminalTab"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TestGenerator.MainWindow"
         Title="TestGenerator">
@@ -35,6 +35,7 @@
                     <Border BorderThickness="0 0 1 0" BorderBrush="Gray">
                         <Panel>
                             <filesTab:FilesTab Name="FilesTabControl"/>
+                            <terminalTab:TerminalTab Name="TerminalTabControl"/>
                             <ui:SplitViewResizer Width="8" HorizontalAlignment="Right" Background="Transparent" />
                         </Panel>
                     </Border>
