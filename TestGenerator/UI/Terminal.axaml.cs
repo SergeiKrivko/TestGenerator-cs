@@ -21,41 +21,21 @@ public partial class Terminal : UserControl
         WritePrompt();
     }
 
-    private void Box_OnKeyDown(object? sender, KeyEventArgs e)
+    private void Box_OnReturn(string command)
     {
-        if (Box.Text == null)
-            return;
-        if (e.Key == Key.Enter)
+        var text = Box.GetInput();
+        Write("\n");
+        if (_currentProcess == null)
+            RunProcess(text);
+        else
         {
-            var text = GetCommand();
-            Write("\n");
-            if (_currentProcess == null)
-                RunProcess(text);
-            else
-            {
-                _currentProcess.StandardInput.WriteLine(text);
-            }
+            _currentProcess.StandardInput.WriteLine(text);
         }
-        else if (Box.CaretIndex < LastText.Length)
-        {
-            Box.CaretIndex = Box.Text.Length;
-        }
-    }
-
-    private string? GetCommand()
-    {
-        return Box.Text?.Replace(LastText, "");
     }
 
     protected void Write(string? text)
     {
-        if (text == null)
-            return;
-        var flag = Box.CaretIndex == Box.Text?.Length;
-        Box.Text += text;
-        if (flag)
-            Box.CaretIndex += text.Length;
-        LastText = Box.Text;
+        Box.Write(text);
     }
 
     private async void RunProcess(string? command)
