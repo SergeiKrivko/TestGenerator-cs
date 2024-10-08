@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
-using Backend.Models;
-using Backend.Services;
+using Core.Models;
+using Core.Services;
 using Shared;
 
-namespace Backend.Types;
+namespace Core.Types;
 
 public class Project : IProject
 {

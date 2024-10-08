@@ -1,6 +1,6 @@
 ﻿using Shared;
 
-namespace Backend.Services;
+namespace Core.Services;
 
 public class AppService : IAppService
 {
@@ -18,7 +18,11 @@ public class AppService : IAppService
             return _appService;
         }
     }
-    
+
+    public override SettingsFile Settings { get; } = new SettingsFile(Path.Join(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
+        Config.AppName, "settings.xml"));
+
     public delegate void ShowHandler(string key);
 
     public event ShowHandler? OnMainTabShow;

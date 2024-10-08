@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 
-namespace Backend;
+namespace Core;
 
 public class PluginLoadContext : AssemblyLoadContext
 {

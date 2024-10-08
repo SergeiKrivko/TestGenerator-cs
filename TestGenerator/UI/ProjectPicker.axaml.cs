@@ -3,8 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using Backend.Services;
-using Backend.Types;
+using Core.Services;
+using Core.Types;
 
 namespace TestGenerator.UI;
 

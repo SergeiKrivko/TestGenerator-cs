@@ -1,6 +1,6 @@
 ﻿using Shared;
 
-namespace Backend.Services;
+namespace Core.Services;
 
 public class ProjectTypesService
 {

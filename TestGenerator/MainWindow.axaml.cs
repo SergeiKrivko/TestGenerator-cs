@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Backend.Services;
+using Core.Services;
 using Shared;
 
 namespace TestGenerator;

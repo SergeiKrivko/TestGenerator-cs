@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using Backend.Types;
+using Core.Types;
 
-namespace Backend.Services;
+namespace Core.Services;
 
 public class ProjectsService
 {

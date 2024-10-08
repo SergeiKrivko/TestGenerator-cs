@@ -3,8 +3,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Backend.Services;
-using Backend.Types;
+using Core.Services;
+using Core.Types;
 
 namespace TestGenerator.FilesTab;
 

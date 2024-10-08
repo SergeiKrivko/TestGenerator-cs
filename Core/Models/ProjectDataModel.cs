@@ -1,4 +1,4 @@
-﻿namespace Backend.Models;
+﻿namespace Core.Models;
 
 class ProjectDataModel
 {

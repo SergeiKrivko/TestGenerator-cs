@@ -13,6 +13,8 @@ public abstract class IAppService
             return _instance;
         }
     }
+    
+    public abstract SettingsFile Settings { get; }
 
     public abstract void MainTabShow(string key);
 
