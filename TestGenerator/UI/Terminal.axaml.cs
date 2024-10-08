@@ -3,9 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Threading;
-using InvalidOperationException = System.InvalidOperationException;
 
 namespace TestGenerator.UI;
 
@@ -13,8 +11,9 @@ public partial class Terminal : UserControl
 {
     private Process? _currentProcess;
     public string CurrentDirectory { get; set; } = ".";
-    public string LastText = "";
-    
+    public string TerminalApp { get; set; } = "powershell";
+    public string TerminalAppArgs { get; set; } = "-Command";
+
     public Terminal()
     {
         InitializeComponent();
@@ -38,63 +37,73 @@ public partial class Terminal : UserControl
         Box.Write(text);
     }
 
+    private void Clear()
+    {
+        Box.ClearText();
+    }
+
+    private void ChangeDirectory(string directory)
+    {
+        if (Path.IsPathFullyQualified(directory))
+            CurrentDirectory = directory.Trim();
+        else
+        {
+            CurrentDirectory = Path.GetFullPath(Path.Combine(CurrentDirectory, directory));
+        }
+    }
+
     private async void RunProcess(string? command)
     {
-        if (string.IsNullOrWhiteSpace(command))
+        if (!string.IsNullOrWhiteSpace(command))
         {
-            WritePrompt();
-            return;
-        }
-        var arguments = "";
-        if (command.Contains(' '))
-        {
-            arguments = command.Substring(command.IndexOf(' '));
-            command = command.Substring(0, command.IndexOf(' '));
-        }
-        
-        _currentProcess = new Process();
-        _currentProcess.StartInfo.FileName = command;
-        _currentProcess.StartInfo.Arguments = arguments;
-        _currentProcess.StartInfo.WorkingDirectory = CurrentDirectory;
-        _currentProcess.StartInfo.StandardInputEncoding = Encoding.UTF8;
-        _currentProcess.StartInfo.StandardErrorEncoding = Encoding.UTF8;
-        _currentProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-        _currentProcess.StartInfo.UseShellExecute = false;
-        _currentProcess.StartInfo.RedirectStandardOutput = true;
-        _currentProcess.StartInfo.RedirectStandardInput = true;
-        _currentProcess.StartInfo.RedirectStandardError = true;
-        try
-        {
-            _currentProcess.Start();
-            _currentProcess.OutputDataReceived += CurrentProcessOnOutputDataReceived;
-            _currentProcess.Exited += CurrentProcessOnExited;
-            _currentProcess.BeginOutputReadLine();
-            
-            await _currentProcess.WaitForExitAsync();
-        }
-        catch (Exception e)
-        {
-            Write(e.Message + "\n");
+            if (command.Trim() == "clear")
+                Clear();
+            else if (command.Trim().StartsWith("cd "))
+                ChangeDirectory(command.Substring(2).Trim());
+            else
+            {
+                _currentProcess = new Process();
+                _currentProcess.StartInfo.FileName = TerminalApp;
+                _currentProcess.StartInfo.Arguments = TerminalAppArgs + " " + command;
+                _currentProcess.StartInfo.WorkingDirectory = CurrentDirectory;
+                _currentProcess.StartInfo.CreateNoWindow = true;
+                _currentProcess.StartInfo.StandardInputEncoding = Encoding.UTF8;
+                _currentProcess.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+                _currentProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                _currentProcess.StartInfo.UseShellExecute = false;
+                _currentProcess.StartInfo.RedirectStandardOutput = true;
+                _currentProcess.StartInfo.RedirectStandardInput = true;
+                _currentProcess.StartInfo.RedirectStandardError = true;
+                try
+                {
+                    _currentProcess.Start();
+                    _currentProcess.OutputDataReceived += CurrentProcessOnOutputDataReceived;
+                    _currentProcess.Exited += CurrentProcessOnExited;
+                    _currentProcess.BeginOutputReadLine();
+
+                    await _currentProcess.WaitForExitAsync();
+                }
+                catch (Exception e)
+                {
+                    Write(e.Message + "\n");
+                }
+
+                _currentProcess = null;
+                return;
+            }
         }
 
-        _currentProcess = null;
         WritePrompt();
     }
 
     private void CurrentProcessOnExited(object? sender, EventArgs e)
     {
-        Dispatcher.UIThread.Post(() =>
-        {
-            WritePrompt();
-        });
+        Dispatcher.UIThread.Post(() => { WritePrompt(); });
     }
 
     private void CurrentProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e)
     {
-        Dispatcher.UIThread.Post(() =>
-        {
-            Write(e.Data + "\n");
-        });
+        Dispatcher.UIThread.Post(() => { Write(e.Data + "\n"); });
     }
 
     protected virtual string Prompt => Path.GetFullPath(CurrentDirectory) + "> ";

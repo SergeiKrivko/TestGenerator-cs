@@ -29,6 +29,12 @@ public class TerminalTextBox : TextBox
     {
         return Text?.Replace(LastText, "");
     }
+
+    public void ClearText()
+    {
+        LastText = "";
+        Text = "";
+    }
     
     protected override void OnKeyDown(KeyEventArgs e)
     {
