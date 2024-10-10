@@ -22,7 +22,7 @@ public class AppService : AAppService
 
     public override SettingsFile Settings { get; } = SettingsFile.Open(Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
-        Config.AppName, "settings.xml"));
+        Config.AppName, "Settings.xml"));
 
     public delegate void ShowHandler(string key);
 

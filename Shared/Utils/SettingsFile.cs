@@ -7,16 +7,20 @@ public class SettingsFile : SettingsSection
     private Dictionary<string, SettingsSection> _sections;
     private string _path;
 
-    private SettingsFile(string path, Dictionary<string, string?> global, 
+    private SettingsFile(string path, Dictionary<string, string?> global,
         Dictionary<string, Dictionary<string, string?>> sections) : base("Global", global)
     {
+        Changed += Store;
         _path = path;
         _sections = new Dictionary<string, SettingsSection>();
         foreach (var element in sections)
         {
             var section = FromDictionary(element.Key, element.Value);
             if (section.Name != null)
+            {
+                section.Changed += Store;
                 _sections[section.Name] = section;
+            }
         }
     }
 
@@ -68,14 +72,17 @@ public class SettingsFile : SettingsSection
         catch (FileNotFoundException)
         {
         }
+        catch (DirectoryNotFoundException)
+        {
+        }
         catch (XmlException)
         {
         }
 
         return new SettingsFile(path, global, sections);
     }
-    
-    
+
+
     private static XmlElement StoreNode(SettingsSection section, XmlDocument document)
     {
         var root = document.CreateElement("section");
@@ -125,6 +132,7 @@ public class SettingsFile : SettingsSection
 
         root.AppendChild(StoreGlobal(document));
 
+        Directory.CreateDirectory(Path.GetDirectoryName(_path) ?? ".");
         document.Save(_path);
     }
 
@@ -133,6 +141,7 @@ public class SettingsFile : SettingsSection
         if (_sections.TryGetValue(name, out var section))
             return section;
         var newSection = Empty(name);
+        newSection.Changed += Store;
         _sections[name] = newSection;
         return newSection;
     }

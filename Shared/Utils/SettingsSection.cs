@@ -9,9 +9,9 @@ public class SettingsSection
     public bool IsGlobal { get; } = false;
     public string? Name { get; }
 
-    protected delegate void ChangeHandler();
+    public delegate void ChangeHandler();
 
-    protected event ChangeHandler? Changed;
+    public event ChangeHandler? Changed;
 
     protected SettingsSection(string name, Dictionary<string, string?> dictionary)
     {

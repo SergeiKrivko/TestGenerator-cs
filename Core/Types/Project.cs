@@ -1,19 +1,20 @@
-﻿using System.Text.Json;
-using Core.Models;
-using Core.Services;
+﻿using Core.Services;
 using Shared;
+using Shared.Utils;
 
 namespace Core.Types;
 
 public class Project : AProject
 {
+    protected SettingsFile Settings { get; }
+    protected SettingsFile Data { get; }
+    
     public override Guid Id { get; }
-    private string? _name;
 
     public override string Name
     {
-        get => String.IsNullOrWhiteSpace(_name) ? System.IO.Path.GetFileName(Path) : _name;
-        set => _name = value;
+        get => string.IsNullOrWhiteSpace(Data.Get("name")) ? System.IO.Path.GetFileName(Path) : Data.Get("name") ?? "";
+        set => Settings.Set("name", value);
     }
 
     public override string Path { get; }
@@ -21,28 +22,32 @@ public class Project : AProject
     public string DataPath => System.IO.Path.Join(Path, TestGeneratorDir);
     public override ProjectType Type { get; }
 
-    private Project(string name, string path, ProjectType type)
+    private Project(string path)
     {
         Id = Guid.NewGuid();
-        _name = name;
         Path = path;
-        Type = type;
+        Settings = SettingsFile.Open(System.IO.Path.Join(DataPath, "Settings.xml"));
+        Data = SettingsFile.Open(System.IO.Path.Join(DataPath, "Data.xml"));
+        Type = ProjectTypesService.Instance.Get(Data.Get("type") ?? "");
     }
 
-    public static Project LightEditProject { get; } = new("LightEdit", "", ProjectTypesService.Default);
+    private Project()
+    {
+        Id = Guid.NewGuid();
+        var path = Path = System.IO.Path.Join(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
+            Config.AppName, "LightEdit");
+        Settings = SettingsFile.Open(System.IO.Path.Join(path, "Settings.xml"));
+        Data = SettingsFile.Open(System.IO.Path.Join(path, "Data.xml"));
+        if (Data.Get("name") != "LightEdit")
+            Data.Set("name", "LightEdit");
+        Type = ProjectTypesService.Default;
+    }
+
+    public static Project LightEditProject { get; } = new();
 
     public static Project Load(string path)
     {
-        var data = _loadData(path);
-        return new Project(data.name ?? "", path, ProjectTypesService.Instance.Get(data.type ?? ""));
-    }
-
-    private static ProjectDataModel _loadData(string path)
-    {
-        var data = JsonSerializer.Deserialize<ProjectDataModel>(
-            new StreamReader(System.IO.Path.Join(path, TestGeneratorDir, DataFile)).ReadToEnd());
-        if (data == null)
-            throw new Exception($"Can not read \"{DataFile}\" in {path}");
-        return data;
+        return new Project(path);
     }
 }
