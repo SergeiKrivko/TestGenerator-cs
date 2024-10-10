@@ -14,7 +14,6 @@ public partial class ProjectPicker : UserControl
 
     public ProjectPicker()
     {
-        Console.WriteLine(ProjectsService.Instance.Current.Name);
         InitializeComponent();
         ProjectsService.Instance.CurrentChanged += _onCurrentChanged;
         ProjectsService.Instance.Load("C:\\Users\\sergi\\PycharmProjects\\GPT-chat");

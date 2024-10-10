@@ -21,4 +21,6 @@ public abstract class AAppService
     public abstract void MainTabShow(string key);
 
     public abstract void MainTabCommand(string key, string command, string? data = null);
+
+    public abstract Logger GetLogger(string name);
 }

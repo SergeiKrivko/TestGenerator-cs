@@ -33,7 +33,7 @@ public class PluginsService
                 {
                     var plugin = (Plugin)instance;
                     Plugins.Add(plugin.Name, plugin);
-                    Console.WriteLine($"Plugin \"{plugin.Name}\" loaded. Tabs count: {plugin.MainTabs.Count}");
+                    LogService.Logger.Debug($"Plugin '{plugin.Name}' loaded");
                     OnPluginLoaded?.Invoke(plugin);
                 }
             }
@@ -46,7 +46,7 @@ public class PluginsService
 
         string pluginLocation =
             Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar)));
-        Console.WriteLine($"Loading commands from: {pluginLocation}");
+        LogService.Logger.Debug($"Loading plugin from: {pluginLocation}");
         PluginLoadContext loadContext = new PluginLoadContext(pluginLocation);
         return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
     }

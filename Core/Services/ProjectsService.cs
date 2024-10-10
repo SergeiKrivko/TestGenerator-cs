@@ -30,10 +30,12 @@ public class ProjectsService
         {
             if (value == Project.LightEditProject)
             {
+                LogService.Logger.Debug("Current project set to LightEdit");
                 _current = null;
             }
             else if (Projects.Contains(value))
             {
+                LogService.Logger.Debug($"Current project set to '{value.Name}'");
                 _current = value;
             }
             else

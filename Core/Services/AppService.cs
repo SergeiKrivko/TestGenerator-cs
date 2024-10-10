@@ -34,11 +34,15 @@ public class AppService : AAppService
 
     public override void MainTabShow(string key)
     {
+        LogService.Logger.Debug($"Show main tab '{key}'");
         OnMainTabShow?.Invoke(key);
     }
 
     public override void MainTabCommand(string key, string command, string? data = null)
     {
+        LogService.Logger.Debug($"Command to main tab '{key}'");
         OnMainTabCommand?.Invoke(key, command, data);
     }
+
+    public override Logger GetLogger(string name) => LogService.GetLogger(name);
 }

@@ -65,6 +65,9 @@ public class SettingsFile : SettingsSection
                 }
             }
         }
+        catch (FileNotFoundException)
+        {
+        }
         catch (XmlException)
         {
         }
