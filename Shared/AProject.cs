@@ -2,7 +2,7 @@
 
 namespace Shared;
 
-public abstract class IProject
+public abstract class AProject
 {
     public static string TestGeneratorDir { get; } = ".TestGenerator";
     public static string DataFile { get; } = "TestGeneratorData.json";

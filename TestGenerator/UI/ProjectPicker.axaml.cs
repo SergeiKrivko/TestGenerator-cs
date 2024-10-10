@@ -60,7 +60,7 @@ public partial class ProjectPicker : UserControl
 
         var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            Title = "Open IProject",
+            Title = "Open AProject",
             AllowMultiple = false
         });
 

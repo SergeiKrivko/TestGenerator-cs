@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Core.Services;
 using Core.Types;
+using Shared;
 
 namespace TestGenerator.FilesTab;
 
@@ -40,8 +41,8 @@ public partial class FilesTab : UserControl
         if (item is FileNode)
         {
             var fileNode = (FileNode)item;
-            AppService.Instance.MainTabShow("Code");
-            AppService.Instance.MainTabCommand("Code", "open", fileNode.Info.FullName);
+            AAppService.Instance.MainTabShow("Code");
+            AAppService.Instance.MainTabCommand("Code", "open", fileNode.Info.FullName);
         }
     }
 }

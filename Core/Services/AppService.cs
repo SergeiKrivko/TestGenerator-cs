@@ -1,8 +1,9 @@
 ﻿using Shared;
+using Shared.Utils;
 
 namespace Core.Services;
 
-public class AppService : IAppService
+public class AppService : AAppService
 {
     private static AppService? _appService;
 
@@ -19,7 +20,7 @@ public class AppService : IAppService
         }
     }
 
-    public override SettingsFile Settings { get; } = new SettingsFile(Path.Join(
+    public override SettingsFile Settings { get; } = SettingsFile.Open(Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
         Config.AppName, "settings.xml"));
 

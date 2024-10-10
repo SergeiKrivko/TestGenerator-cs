@@ -5,7 +5,7 @@ using Shared;
 
 namespace Core.Types;
 
-public class Project : IProject
+public class Project : AProject
 {
     public override Guid Id { get; }
     private string? _name;
@@ -17,6 +17,8 @@ public class Project : IProject
     }
 
     public override string Path { get; }
+
+    public string DataPath => System.IO.Path.Join(Path, TestGeneratorDir);
     public override ProjectType Type { get; }
 
     private Project(string name, string path, ProjectType type)

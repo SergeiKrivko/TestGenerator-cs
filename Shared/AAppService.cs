@@ -1,10 +1,12 @@
-﻿namespace Shared;
+﻿using Shared.Utils;
 
-public abstract class IAppService
+namespace Shared;
+
+public abstract class AAppService
 {
-    protected static IAppService? _instance;
+    protected static AAppService? _instance;
 
-    public static IAppService Instance
+    public static AAppService Instance
     {
         get
         {
