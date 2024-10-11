@@ -70,9 +70,14 @@ public class Build: ABuild
         return new Build(ProjectsService.Instance.Current, Guid.Parse(filename));
     }
 
-    public static Build New(BuildType type)
+    public static Build Load(Guid id)
     {
-        return new Build(ProjectsService.Instance.Current, Guid.NewGuid());
+        return new Build(ProjectsService.Instance.Current, id);
+    }
+
+    public static Build New(Type buildType)
+    {
+        return new Build(ProjectsService.Instance.Current, Guid.NewGuid(), buildType);
     }
 
     public override string Command => Builder.Command;

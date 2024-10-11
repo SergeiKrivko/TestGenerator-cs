@@ -6,8 +6,8 @@ namespace Core.Types;
 
 public class Project : AProject
 {
-    protected SettingsFile Settings { get; }
-    protected SettingsFile Data { get; }
+    public override SettingsFile Settings { get; }
+    public override SettingsFile Data { get; }
     
     public override Guid Id { get; }
 

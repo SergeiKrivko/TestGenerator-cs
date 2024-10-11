@@ -1,0 +1,28 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:builds="clr-namespace:TestGenerator.Builds"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TestGenerator.Builds.BuildsWindow"
+        x:DataType="builds:BuildsWindow"
+        Title="Сценарии запуска" Width="650" Height="500">
+    <Grid ColumnDefinitions="Auto *" RowDefinitions="Auto *">
+        <StackPanel Orientation="Horizontal">
+            <Button Click="AddButton_OnClick">
+                <PathIcon Data="{DynamicResource IconPlus}" />
+            </Button>
+            <Button>
+                <PathIcon Data="{DynamicResource IconTrash}" />
+            </Button>
+        </StackPanel>
+        
+        <ListBox Grid.Row="1" Grid.Column="0" Name="BuildsList" ItemsSource="{Binding Builds}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"></TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>

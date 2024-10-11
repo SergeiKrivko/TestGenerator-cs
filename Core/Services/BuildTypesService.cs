@@ -18,7 +18,7 @@ public class BuildTypesService
 
     public Dictionary<string, Type> Types { get; } = new();
 
-    public Type? Get(string key)
+    public Type Get(string key)
     {
         return Types.GetValueOrDefault(key, typeof(EmptyBuild));
     }
