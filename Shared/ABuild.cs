@@ -12,7 +12,7 @@ public abstract class ABuild
 
     public abstract void Compile();
 
-    public abstract string Command { get; }
+    public abstract string? Command { get; }
 
     public abstract void Run(string args);
 

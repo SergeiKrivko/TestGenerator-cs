@@ -29,13 +29,15 @@ public class SettingsSection
         return new SettingsSection(name, dictionary);
     }
 
-    public void Set(string key, string? value)
+    private void Set(string? key, string? value)
     {
+        if (key == null)
+            return;
         _dictionary[key] = value;
         Changed?.Invoke();
     }
 
-    public void Set(string key, object? obj)
+    public void Set(string? key, object? obj)
     {
         Set(key, JsonSerializer.Serialize(obj));
     }
@@ -45,14 +47,14 @@ public class SettingsSection
         _dictionary.Remove(key);
     }
 
-    public string? Get(string key)
+    private string? Get(string key)
     {
         if (_dictionary.TryGetValue(key, out var res))
             return res;
         return null;
     }
 
-    public string Get(string key, string defaultValue)
+    private string Get(string key, string defaultValue)
     {
         if (_dictionary.TryGetValue(key, out var res))
             return res ?? defaultValue;

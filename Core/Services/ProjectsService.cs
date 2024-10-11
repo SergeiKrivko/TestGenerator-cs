@@ -18,7 +18,7 @@ public class ProjectsService
 
     private ProjectsService()
     {
-        var currentPath = AppService.Instance.Settings.Get("currentProject");
+        var currentPath = AppService.Instance.Settings.Get<string>("currentProject");
         foreach (var path in AppService.Instance.Settings.Get<string[]>("recentProjects", []))
         {
             var project = Project.Load(path);

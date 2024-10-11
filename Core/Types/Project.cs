@@ -13,7 +13,7 @@ public class Project : AProject
 
     public override string Name
     {
-        get => string.IsNullOrWhiteSpace(Data.Get("name")) ? System.IO.Path.GetFileName(Path) : Data.Get("name") ?? "";
+        get => string.IsNullOrWhiteSpace(Data.Get<string>("name")) ? System.IO.Path.GetFileName(Path) : Data.Get<string>("name") ?? "";
         set => Settings.Set("name", value);
     }
 
@@ -28,7 +28,7 @@ public class Project : AProject
         Path = path;
         Settings = SettingsFile.Open(System.IO.Path.Join(DataPath, "Settings.xml"));
         Data = SettingsFile.Open(System.IO.Path.Join(DataPath, "Data.xml"));
-        Type = ProjectTypesService.Instance.Get(Data.Get("type") ?? "");
+        Type = ProjectTypesService.Instance.Get(Data.Get<string>("type") ?? "");
     }
 
     private Project()
@@ -39,7 +39,7 @@ public class Project : AProject
             Config.AppName, "LightEdit");
         Settings = SettingsFile.Open(System.IO.Path.Join(path, "Settings.xml"));
         Data = SettingsFile.Open(System.IO.Path.Join(path, "Data.xml"));
-        if (Data.Get("name") != "LightEdit")
+        if (Data.Get<string>("name") != "LightEdit")
             Data.Set("name", "LightEdit");
         Type = ProjectTypesService.Default;
     }

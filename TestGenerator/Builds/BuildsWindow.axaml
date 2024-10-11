@@ -3,11 +3,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:builds="clr-namespace:TestGenerator.Builds"
+        xmlns:settings="clr-namespace:Shared.Settings;assembly=Shared"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TestGenerator.Builds.BuildsWindow"
         x:DataType="builds:BuildsWindow"
         Title="Сценарии запуска" Width="650" Height="500">
-    <Grid ColumnDefinitions="Auto *" RowDefinitions="Auto *">
+    <Grid ColumnDefinitions="200 *" RowDefinitions="Auto *">
         <StackPanel Orientation="Horizontal">
             <Button Click="AddButton_OnClick">
                 <PathIcon Data="{DynamicResource IconPlus}" />
@@ -17,12 +18,21 @@
             </Button>
         </StackPanel>
         
-        <ListBox Grid.Row="1" Grid.Column="0" Name="BuildsList" ItemsSource="{Binding Builds}">
+        <ListBox Grid.Row="1" Grid.Column="0" Name="BuildsList" ItemsSource="{Binding Builds}"
+                 SelectionChanged="BuildsList_OnSelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"></TextBlock>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        
+        <ScrollViewer Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
+            <StackPanel>
+                <settings:SettingsControl Margin="10" Name="MainSettingsControl"/>
+                <settings:SettingsControl Margin="10" Name="BuilderSettingsControl"/>
+                <settings:SettingsControl Margin="10" Name="OtherSettingsControl"/>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

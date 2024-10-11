@@ -1,4 +1,5 @@
-﻿using Core.Services;
+﻿using System.Diagnostics;
+using Core.Services;
 using Shared;
 using Shared.Utils;
 
@@ -10,58 +11,37 @@ public class Build: ABuild
 
     public override string Name
     {
-        get => _settings.Get("name") ?? ""; 
-        set => _settings.Set("name", value);
+        get => Settings.Get<string>("name") ?? ""; 
+        set => Settings.Set("name", value);
     }
 
     public override string WorkingDirectory
     {
-        get => _settings.Get("workingDirectory") ?? _project.Path; 
-        set => _settings.Set("workingDirectory", value);
+        get => Settings.Get<string>("workingDirectory") ?? _project.Path; 
+        set => Settings.Set("workingDirectory", value);
     }
 
-    public override string Type => _settings.Get("type") ?? "";
+    public override string Type => Settings.Get<string>("type") ?? "";
     public override BuildType Builder { get; }
 
     private readonly Project _project;
-    private SettingsFile _settings;
+    public SettingsFile Settings { get; }
 
     private Build(Project project, Guid id)
     {
         Id = id;
         _project = project;
-        _settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
+        Settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
 
-        BuildType? builder;
-        var buildType = BuildTypesService.Instance.Get(_settings.Get("type") ?? "");
-        if (buildType?.IsSubclassOf(typeof(BuildType)) == true)
-        {
-            builder = Builder = Activator.CreateInstance(buildType) as BuildType ?? new EmptyBuild();
-        }
-        else
-        {
-            builder = Builder = new EmptyBuild();
-        }
-
-        builder.Settings = _settings.GetSection("TypeSettings");
+        Builder = BuildTypesService.Instance.Get(Settings.Get<string>("type") ?? "");
     }
 
-    private Build(Project project, Guid id, Type buildType)
+    private Build(Project project, Guid id, BuildType buildType)
     {
         Id = id;
         _project = project;
-        _settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
-        
-        BuildType? builder;
-        if (buildType?.IsSubclassOf(typeof(BuildType)) == true)
-        {
-            builder = Builder = Activator.CreateInstance(buildType) as BuildType ?? new EmptyBuild();
-        }
-        else
-        {
-            builder = Builder = new EmptyBuild();
-        }
-        builder.Settings = _settings.GetSection("TypeSettings");
+        Settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
+        Builder = buildType;
     }
 
     public static Build FromFile(string path)
@@ -75,16 +55,41 @@ public class Build: ABuild
         return new Build(ProjectsService.Instance.Current, id);
     }
 
-    public static Build New(Type buildType)
+    public static Build New(BuildType buildType)
     {
         return new Build(ProjectsService.Instance.Current, Guid.NewGuid(), buildType);
     }
 
-    public override string Command => Builder.Command;
+    public override string? Command => Builder.Command == null ? null : Builder.Command(Settings.GetSection("typeSettings"));
 
-    public override void Compile() => Builder.Compile();
+    public override void Compile()
+    {
+        if (Builder.Compile != null)
+        {
+            Builder.Compile(Settings.GetSection("typeSettings"));
+        }
+    }
 
-    public override void Run(string args) => Builder.Run(args);
+    public override void Run(string args)
+    {
+        if (Builder.Run != null)
+        {
+            Builder.Run(Settings.GetSection("typeSettings"));
+        } 
+        else if (Builder.Command != null)
+        {
+            Process.Start(Builder.Command(Settings.GetSection("typeSettings")));
+        }
+    }
 
-    public override void RunConsole(string args) => Builder.RunConsole(args);
+    public override void RunConsole(string args)
+    {
+        if (Builder.RunConsole != null)
+        {
+            Builder.RunConsole(Settings.GetSection("typeSettings"));
+        } 
+        else if (Builder.Command != null)
+        {
+        }
+    }
 }

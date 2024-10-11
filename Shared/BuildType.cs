@@ -1,24 +1,28 @@
 ﻿using System.Diagnostics;
+using Shared.Settings;
 using Shared.Utils;
 
 namespace Shared;
 
-public abstract class BuildType
+public class BuildType
 {
-    public SettingsSection? Settings { get; set; }
+    public required string Name { get; init; }
 
-    public virtual void Compile()
-    {
-    }
+    public required string Key { get; init; }
 
-    public abstract string Command { get; }
+    public IField[] SettingsFields { get; init; } = [];
 
-    public virtual void Run(string args)
-    {
-        Process.Start(Command, args);
-    }
+    public delegate void Handler(SettingsSection settings);
 
-    public virtual void RunConsole(string args)
-    {
-    }
+    public Handler? Compile { get; set; }
+
+    public delegate string CommandBuilder(SettingsSection settings);
+
+    public CommandBuilder? Command { get; init; }
+
+    public Handler? Run { get; init; }
+
+    public Handler? RunConsole { get; init; }
+
+    public static BuildType Empty { get; } = new(){Name = "", Key = ""};
 }
