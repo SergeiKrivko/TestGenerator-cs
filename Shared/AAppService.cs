@@ -22,5 +22,9 @@ public abstract class AAppService
 
     public abstract void MainTabCommand(string key, string command, string? data = null);
 
+    public abstract void SideTabShow(string key);
+
+    public abstract void SideTabCommand(string key, string command, string? data = null);
+
     public abstract Logger GetLogger(string name);
 }

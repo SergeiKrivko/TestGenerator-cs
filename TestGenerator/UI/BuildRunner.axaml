@@ -1,0 +1,20 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="clr-namespace:TestGenerator.UI"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="ui:BuildRunner"
+             x:Class="TestGenerator.UI.BuildRunner">
+    <StackPanel Orientation="Horizontal" Spacing="5">
+        <ComboBox Name="ComboBox" ItemsSource="{Binding Builds}" VerticalAlignment="Center">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"></TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button VerticalAlignment="Center" Click="RunButton_OnClick">R</Button>
+        <Button VerticalAlignment="Center">S</Button>
+    </StackPanel>
+</UserControl>

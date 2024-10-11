@@ -70,7 +70,7 @@ public class Build: ABuild
         }
     }
 
-    public override void Run(string args)
+    public override void Run(string args = "")
     {
         if (Builder.Run != null)
         {
@@ -78,11 +78,12 @@ public class Build: ABuild
         } 
         else if (Builder.Command != null)
         {
-            Process.Start(Builder.Command(Settings.GetSection("typeSettings")));
+            var command = Builder.Command(Settings.GetSection("typeSettings")).Split();
+            Process.Start(command[0], string.Join(' ', command.Skip(1)));
         }
     }
 
-    public override void RunConsole(string args)
+    public override void RunConsole(string args = "")
     {
         if (Builder.RunConsole != null)
         {
@@ -90,6 +91,9 @@ public class Build: ABuild
         } 
         else if (Builder.Command != null)
         {
+            var command = Builder.Command(Settings.GetSection("typeSettings"));
+            AppService.Instance.SideTabShow("Run");
+            AppService.Instance.SideTabCommand("Run","run", command);
         }
     }
 }

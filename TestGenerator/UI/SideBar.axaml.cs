@@ -11,21 +11,32 @@ namespace TestGenerator.UI;
 public partial class SideBar : UserControl
 {
     private Dictionary<string, ToggleButton> _buttons = new();
-    public string? Current { get; private set; }
-    
-    public static readonly RoutedEvent<RoutedEventArgs> TabChangeEvent =
-        RoutedEvent.Register<MainMenu, RoutedEventArgs>("tabChangeEvent", RoutingStrategies.Bubble);
+
+    private string? _current;
+    public string? Current { 
+        get => _current;
+        set
+        {
+            if (value != _current)
+            {
+                _current = value;
+                foreach (var item in _buttons)
+                {
+                    item.Value.IsChecked = value == item.Key;
+                }
+
+                TabChanged?.Invoke(value);
+            }
+        }
+    }
     
     public SideBar()
     {
         InitializeComponent();
     }
-    
-    public event EventHandler<RoutedEventArgs>? TabChanged
-    {
-        add => AddHandler(TabChangeEvent, value);
-        remove => RemoveHandler(TabChangeEvent, value);
-    }
+
+    public delegate void ChangeHandler(string? key);
+    public event ChangeHandler? TabChanged;
 
     public void Add(string key, string iconData)
     {
@@ -52,7 +63,7 @@ public partial class SideBar : UserControl
 
         Current = _buttons[key].IsChecked == true ? key : null;
         
-        var e = new RoutedEventArgs(TabChangeEvent);
-        RaiseEvent(e);
+        
+        TabChanged?.Invoke(key);
     }
 }

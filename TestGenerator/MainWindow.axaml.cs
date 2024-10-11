@@ -23,6 +23,7 @@ public partial class MainWindow : Window
 
         _sideTabs.Add("Files", FilesTabControl);
         _sideTabs.Add("Builds", new BuildsWindow());
+        _sideTabs.Add("Run", RunTabControl);
         _sideTabs.Add("Terminal", TerminalTabControl);
         SideBar.Add("Files",
             "M2.34225e-05 2.50001C5.01254e-05 1.50001 0.999996 2.61779e-05 2.50002 6.2865e-06H6.50002C7.5 -8.86825e-06 8.5 1.50001 9.50002 1.50001H20C22 1.50001 22.5 3.50001 22.5 3.50001V15.5C22.5 17.5 20.5 18 20 18H2.50002C0.500011 18 5.88746e-05 16 2.34225e-05 15.5V2.50001ZM2.50002 1.50001C2.50002 1.50001 1.5 1.5 1.5 2.5V5.5H21V4C21 4 20.8246 3 20 3H9.50002C8 3 7 1.5 6.50002 1.50001H2.50002ZM21 7H1.5V15.5C1.5 16.5 2.5 16.5 2.5 16.5H20C21 16.5 21 15.5 21 15.5V7Z");
@@ -32,11 +33,15 @@ public partial class MainWindow : Window
             "2.839 14.561 1.99C13.7715 1.66596 12.9263 1.4995 12.073 1.5C10.593 1.5 9.46897 2.167 9.03797 2.563C8.79395 2.79586 8.57138 3.05022 8.37297 3.323C8.27825 3.45375 8.22826 3.61158 8.23041 3.77302C8.23257 3.93446 8.28677 4.09089 8.38495 4.21906C8.48313 4.34724 8.62005 4.44031 8.77535 4.48443C8.93066 4.52856 9.09606 4.5214 9.24697 4.464C9.37897 4.415 9.51297 4.374 9.64997 4.341C9.93397 4.281 10.225 4.263 10.514 4.287C11.133 4.338 11.864 4.645 12.187 4.901C12.736 " +
             "5.341 13 5.936 13.043 6.827C13.052 7.006 12.681 7.677 12.106 8.443C11.9962 8.5876 11.9425 8.76713 11.955 8.94827C11.9675 9.12941 12.0453 9.29987 12.174 9.428L13.787 11.04C13.9224 11.1759 14.1047 11.2548 14.2965 11.2604C14.4883 11.2659 14.6749 11.1978 14.818 11.07C15.274 10.662 15.968 10.048 16.212 9.898C16.572 9.676 16.83 9.633 16.901 9.626C17.0845 9.60786 17.2692 9.64661 17.43 9.737C17.43 9.745 17.43 9.753 17.427 9.761C17.4244 9.76841 17.4203 9.77522 17.415 " +
             "9.781L17.33 9.863L17.316 9.876C17.2215 9.96985 17.1466 10.0815 17.0955 10.2044C17.0445 10.3274 17.0183 10.4593 17.0185 10.5924C17.0187 10.7256 17.0452 10.8574 17.0966 10.9802C17.148 11.103 17.2233 11.2144 17.318 11.308L18.924 12.898C19.0181 12.9916 19.1298 13.0656 19.2527 13.1157C19.3756 13.1658 19.5072 13.1911 19.64 13.19C19.907 13.19 20.163 13.086 20.354 12.9L22.956 10.33C23.142 10.1405 23.2473 9.88619 23.2498 9.62062C23.2522 9.35505 23.1515 9.09889 22.969 8.906Z");
+        SideBar.Add("Run",
+            "M6.23405 20.625C5.94705 20.625 5.66405 20.549 5.41405 20.406C5.13374 20.242 4.90176 20.0067 4.7416 19.7242C4.58145 19.4416 4.49881 19.1218 4.50204 18.797V5.20301C4.50204 4.53001 4.85205 3.91301 5.41405 3.59401C5.66983 3.44699 5.96041 3.37137 6.25542 3.37507C6.55042 3.37876 6.83902 3.46163 7.09105 3.61501L18.709 10.569C18.9517 10.7205 19.1517 10.9313 19.2904 11.1815C19.4291 11.4316 19.5019 11.713 19.5019 11.999C19.5019 12.2851 19.4291 12.5664 19.2904 12.8166C19.1517 13.0667 18.9517 13.2775 18.709 13.429L7.08905 20.385C6.83105 20.541 6.53552 20.6239 6.23405 20.625Z");
         SideBar.Add("Terminal",
             "M3.05178e-05 4C3.05178e-05 4 3.05176e-05 7.53815e-06 4.00003 2.31943e-06H20C20 2.31943e-06 24 2.38419e-06 24 4V14C24 14 24 18 20 18H4.00003C4.00003 18 3.05178e-05 18 3.05178e-05 14V4ZM4.00003 1C4.00003 1 1 1 1.00003 4V14C1 17 4.00003 17 4.00003 17H20C20 17 23 17 23 14.5V4C23 1 20 1 20 1H4.00003ZM9 10.5C10.4 9 9 7.5 9 7.5L5 3L3.5 4.5L7.5 9L3.5 13.5L5 15L9 10.5ZM10 15H20V13H10V15Z");
 
         AppService.Instance.OnMainTabShow += ShowMainTab;
         AppService.Instance.OnMainTabCommand += MainTabCommand;
+        AppService.Instance.OnSideTabShow += ShowSideTab;
+        AppService.Instance.OnSideTabCommand += SideTabCommand;
         PluginsService.Instance.OnPluginLoaded += _addPlugin;
 
         PluginsService.Instance.LoadPlugin("TestPlugin.dll");
@@ -53,6 +58,19 @@ public partial class MainWindow : Window
         _mainTabs[key].Command(command, data);
     }
 
+    private void ShowSideTab(string key)
+    {
+        if (key != SideBar.Current)
+            SideBar.Current = key;
+    }
+
+    private void SideTabCommand(string key, string command, string? data)
+    {
+        var tab = _sideTabs[key] as SideTab;
+        if (tab != null)
+            tab.Command(command, data);
+    }
+
     private void MainMenu_OnTabChanged(object? sender, RoutedEventArgs e)
     {
         foreach (var tab in _mainTabs.Values)
@@ -63,7 +81,7 @@ public partial class MainWindow : Window
         _mainTabs[MainMenu.Current].IsVisible = true;
     }
 
-    private async void SideBar_OnTabChanged(object? sender, RoutedEventArgs e)
+    private async void SideBar_OnTabChanged(string key)
     {
         foreach (var tab in _sideTabs.Values)
         {

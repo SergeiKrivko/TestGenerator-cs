@@ -36,6 +36,7 @@
                         <Panel>
                             <filesTab:FilesTab Name="FilesTabControl"/>
                             <terminalTab:TerminalTab Name="TerminalTabControl"/>
+                            <terminalTab:RunTab Name="RunTabControl"/>
                             <ui:SplitViewResizer Width="8" HorizontalAlignment="Right" Background="Transparent" />
                         </Panel>
                     </Border>

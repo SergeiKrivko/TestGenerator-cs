@@ -14,7 +14,7 @@ public abstract class ABuild
 
     public abstract string? Command { get; }
 
-    public abstract void Run(string args);
+    public abstract void Run(string args = "");
 
-    public abstract void RunConsole(string args);
+    public abstract void RunConsole(string args = "");
 }
