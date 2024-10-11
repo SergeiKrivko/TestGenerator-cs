@@ -16,8 +16,6 @@ public partial class ProjectPicker : UserControl
     {
         InitializeComponent();
         ProjectsService.Instance.CurrentChanged += _onCurrentChanged;
-        ProjectsService.Instance.Load("C:\\Users\\sergi\\PycharmProjects\\GPT-chat");
-        ProjectsService.Instance.Load("C:\\Users\\sergi\\PycharmProjects\\TestGen\\TestGenerator");
         ProjectsListBox.ItemsSource = ProjectsService.Instance.Projects;
         _onCurrentChanged(ProjectsService.Instance.Current);
     }
@@ -65,7 +63,7 @@ public partial class ProjectPicker : UserControl
 
         if (files.Count >= 1)
         {
-            ProjectsService.Instance.Load(files[0].Path.AbsolutePath);
+            ProjectsService.Instance.Current = ProjectsService.Instance.Load(files[0].Path.AbsolutePath);
         }
     }
 }

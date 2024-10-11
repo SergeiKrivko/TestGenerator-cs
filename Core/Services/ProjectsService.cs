@@ -16,6 +16,18 @@ public class ProjectsService
         }
     }
 
+    private ProjectsService()
+    {
+        var currentPath = AppService.Instance.Settings.Get("currentProject");
+        foreach (var path in AppService.Instance.Settings.Get<string[]>("recentProjects", []))
+        {
+            var project = Project.Load(path);
+            Projects.Add(project);
+            if (path == currentPath)
+                Current = project;
+        }
+    }
+
     public ObservableCollection<Project> Projects { get; } = new();
 
     private Project? _current;
@@ -32,11 +44,13 @@ public class ProjectsService
             {
                 LogService.Logger.Debug("Current project set to LightEdit");
                 _current = null;
+                AppService.Instance.Settings.Remove("currentProject");
             }
             else if (Projects.Contains(value))
             {
                 LogService.Logger.Debug($"Current project set to '{value.Name}'");
                 _current = value;
+                AppService.Instance.Settings.Set("currentProject", _current.Path);
             }
             else
             {
@@ -50,6 +64,7 @@ public class ProjectsService
     {
         var proj = Project.Load(path);
         Projects.Add(proj);
+        AppService.Instance.Settings.Set("recentProjects", Projects.Select(p => p.Path));
         return proj;
     }
 }
