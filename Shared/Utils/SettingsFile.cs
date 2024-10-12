@@ -147,4 +147,19 @@ public class SettingsFile : SettingsSection
     }
 
     public bool DeleteSection(string name) => _sections.Remove(name);
+
+    public void Delete()
+    {
+        _sections.Clear();
+        try
+        {
+            File.Delete(_path);
+        }
+        catch (DirectoryNotFoundException)
+        {
+        }
+        catch (FileNotFoundException)
+        {
+        }
+    }
 }

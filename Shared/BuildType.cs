@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Shared.Settings;
 using Shared.Utils;
 
@@ -10,7 +11,11 @@ public class BuildType
 
     public required string Key { get; init; }
 
-    public IField[] SettingsFields { get; init; } = [];
+    public string Icon { get; init; } = "";
+
+    public delegate Collection<IField> SettingsFunc();
+
+    public SettingsFunc SettingsFields { get; init; } = () => [];
 
     public delegate void Handler(SettingsSection settings);
 

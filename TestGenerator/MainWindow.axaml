@@ -34,9 +34,7 @@
             <SplitView.Pane>
                     <Border BorderThickness="0 0 1 0" BorderBrush="Gray">
                         <Panel>
-                            <filesTab:FilesTab Name="FilesTabControl"/>
-                            <terminalTab:TerminalTab Name="TerminalTabControl"/>
-                            <terminalTab:RunTab Name="RunTabControl"/>
+                            <Panel Name="SideTabsPanel" Margin="0 0 5 0" />
                             <ui:SplitViewResizer Width="8" HorizontalAlignment="Right" Background="Transparent" />
                         </Panel>
                     </Border>

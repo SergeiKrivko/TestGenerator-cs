@@ -14,7 +14,11 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <Button VerticalAlignment="Center" Click="RunButton_OnClick">R</Button>
-        <Button VerticalAlignment="Center">S</Button>
+        <Button VerticalAlignment="Center" Click="RunButton_OnClick">
+            <PathIcon Data="{DynamicResource IconPlay}"></PathIcon>
+        </Button>
+        <Button VerticalAlignment="Center">
+            <PathIcon Data="{DynamicResource IconStop}"></PathIcon>
+        </Button>
     </StackPanel>
 </UserControl>

@@ -42,6 +42,7 @@ public class Build: ABuild
         _project = project;
         Settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
         Builder = buildType;
+        Settings.Set("type", buildType.Key);
     }
 
     public static Build FromFile(string path)

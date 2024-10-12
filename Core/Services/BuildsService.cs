@@ -41,4 +41,10 @@ public class BuildsService
         ProjectsService.Instance.Current.Data.Set("builds", Builds.Select(b => b.Id));
         return build;
     }
+
+    public void Remove(Build build)
+    {
+        build.Settings.Delete();
+        Builds.Remove(build);
+    }
 }

@@ -4,34 +4,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:builds="clr-namespace:TestGenerator.Builds"
         xmlns:settings="clr-namespace:Shared.Settings;assembly=Shared"
+        xmlns:shared="clr-namespace:Shared;assembly=Shared"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TestGenerator.Builds.BuildsWindow"
         x:DataType="builds:BuildsWindow"
         Title="Сценарии запуска" Width="650" Height="500">
     <Grid ColumnDefinitions="200 *" RowDefinitions="Auto *">
         <StackPanel Orientation="Horizontal">
-            <Button Click="AddButton_OnClick">
+            <Button Name="AddButton">
                 <PathIcon Data="{DynamicResource IconPlus}" />
             </Button>
-            <Button>
+            <Button Click="DeleteButton_OnClick">
                 <PathIcon Data="{DynamicResource IconTrash}" />
             </Button>
         </StackPanel>
-        
+
         <ListBox Grid.Row="1" Grid.Column="0" Name="BuildsList" ItemsSource="{Binding Builds}"
                  SelectionChanged="BuildsList_OnSelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}"></TextBlock>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Data="{Binding Builder.Icon}"></PathIcon>
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
+
         <ScrollViewer Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
             <StackPanel>
-                <settings:SettingsControl Margin="10" Name="MainSettingsControl"/>
-                <settings:SettingsControl Margin="10" Name="BuilderSettingsControl"/>
-                <settings:SettingsControl Margin="10" Name="OtherSettingsControl"/>
+                <settings:SettingsControl Margin="10" Name="MainSettingsControl" />
+                <settings:SettingsControl Margin="10" Name="BuilderSettingsControl" />
+                <settings:SettingsControl Margin="10" Name="OtherSettingsControl" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

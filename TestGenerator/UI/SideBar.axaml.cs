@@ -62,8 +62,5 @@ public partial class SideBar : UserControl
         }
 
         Current = _buttons[key].IsChecked == true ? key : null;
-        
-        
-        TabChanged?.Invoke(key);
     }
 }

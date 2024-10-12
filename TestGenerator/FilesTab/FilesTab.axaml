@@ -10,7 +10,6 @@
     <TreeView Name="TreeView" 
               ItemsSource="{Binding Nodes}" 
               SelectionMode="Multiple" 
-              Margin="5"
               DoubleTapped="TreeView_OnDoubleTapped">
         <TreeView.ItemTemplate>
             <TreeDataTemplate ItemsSource="{Binding SubNodes}">

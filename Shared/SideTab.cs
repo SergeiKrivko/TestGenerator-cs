@@ -3,10 +3,11 @@ using Avalonia.Controls;
 
 namespace Shared;
 
-public class SideTab : UserControl
+public abstract class SideTab : UserControl
 {
-    public string TabKey { get; protected set; } = new Guid().ToString();
-    public string TabName { get; protected set; } = "";
+    public virtual string TabKey { get; } = new Guid().ToString();
+    public abstract string TabName { get; }
+    public abstract string TabIcon { get; }
     
     public virtual void Command(string command, string? data)
     {
