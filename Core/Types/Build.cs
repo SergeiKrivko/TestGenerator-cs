@@ -94,6 +94,7 @@ public class Build: ABuild
         {
             var command = Builder.Command(Settings.GetSection("typeSettings"));
             AppService.Instance.SideTabShow("Run");
+            AppService.Instance.SideTabCommand("Run","changeDirectory", WorkingDirectory);
             AppService.Instance.SideTabCommand("Run","run", command);
         }
     }

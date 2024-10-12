@@ -24,6 +24,10 @@ public partial class RunTab : SideTab
             case "run":
                 Terminal.Run(data);
                 break;
+            case "changeDirectory":
+                if (!string.IsNullOrEmpty(data))
+                    Terminal.CurrentDirectory = data;
+                break;
         }
     }
 }

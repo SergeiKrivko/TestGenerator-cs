@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Core.Services;
 using Core.Types;
 using Shared.Settings;
