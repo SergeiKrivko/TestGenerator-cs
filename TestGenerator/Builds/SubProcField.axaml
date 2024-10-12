@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:builds="clr-namespace:TestGenerator.Builds"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="builds:SubProcField"
+             x:Class="TestGenerator.Builds.SubProcField">
+    <StackPanel Orientation="Vertical" Spacing="5">
+        <TextBlock Name="NameLabel"></TextBlock>
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <Button Width="42" Height="30" Padding="0" Click="AddCommandButton_OnClick">
+                <PathIcon Data="{DynamicResource IconAddCommand}"></PathIcon>
+            </Button>
+            <Button Width="42" Height="30" Padding="0" Click="AddBuildButton_OnClick">
+                <PathIcon Data="{DynamicResource IconAddBuild}"></PathIcon>
+            </Button>
+            <Button Width="30" Height="30" Padding="0" Click="RemoveButton_OnClick">
+                <PathIcon Data="{DynamicResource IconTrash}"></PathIcon>
+            </Button>
+            <Button Width="30" Height="30" Padding="0">▲</Button>
+            <Button Width="30" Height="30" Padding="0">▼</Button>
+        </StackPanel>
+        <ListBox Name="ListBox" MinHeight="150" ItemsSource="{Binding Subprocesses}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <builds:SubProcItem Margin="-5" Subprocess="{Binding .}"></builds:SubProcItem>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</UserControl>

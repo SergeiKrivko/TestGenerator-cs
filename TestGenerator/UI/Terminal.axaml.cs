@@ -54,7 +54,7 @@ public partial class Terminal : UserControl
         }
     }
 
-    protected async Task RunProcess(string? command)
+    protected async Task<Process?> RunProcess(string? command)
     {
         if (!string.IsNullOrWhiteSpace(command))
         {
@@ -64,7 +64,7 @@ public partial class Terminal : UserControl
                 ChangeDirectory(command.Substring(2).Trim());
             else
             {
-                CurrentProcess = new Process();
+                var proc = CurrentProcess = new Process();
                 CurrentProcess.StartInfo.FileName = TerminalApp;
                 CurrentProcess.StartInfo.Arguments = TerminalAppArgs + " " + command;
                 CurrentProcess.StartInfo.WorkingDirectory = CurrentDirectory;
@@ -91,11 +91,12 @@ public partial class Terminal : UserControl
                 }
 
                 CurrentProcess = null;
-                return;
+                return proc;
             }
         }
 
         WritePrompt();
+        return null;
     }
 
     private void CurrentProcessOnExited(object? sender, EventArgs e)

@@ -1,0 +1,17 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TestGenerator.Builds.CommandDialog"
+        WindowStartupLocation="CenterOwner"
+        Width="300" Height="120" CanResize="False"
+        Title="CommandDialog">
+    <Grid RowDefinitions="Auto Auto" Margin="15">
+        <TextBox Name="TextBox" FontFamily="Consolas" Margin="0 0 0 10"></TextBox>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+            <Button Click="CancelButton_OnClick">Отмена</Button>
+            <Button Click="ConfirmButton_OnClick">Ок</Button>
+        </StackPanel>
+    </Grid>
+</Window>

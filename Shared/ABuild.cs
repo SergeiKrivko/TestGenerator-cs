@@ -1,4 +1,6 @@
-﻿namespace Shared;
+﻿using System.Collections.ObjectModel;
+
+namespace Shared;
 
 public abstract class ABuild
 {
@@ -6,15 +8,21 @@ public abstract class ABuild
     public abstract string Name { get; set; }
     public abstract string WorkingDirectory { get; set; }
     
+    public abstract List<BuildSubprocess> PreProc { get; }
+    public abstract List<BuildSubprocess> PostProc { get; }
+    
     public abstract string Type { get; }
 
     public abstract BuildType Builder { get; }
 
-    public abstract void Compile();
+    public abstract Task<int> Compile();
 
     public abstract string? Command { get; }
 
-    public abstract void Run(string args = "");
+    public abstract Task<int> Run(string args = "");
 
-    public abstract void RunConsole(string args = "");
+    public abstract Task<int> RunConsole(string args = "");
+    public abstract Task<int> RunPreProcConsole();
+    public abstract Task<int> RunPostProcConsole();
+    public abstract Task<int> ExecuteConsole(string args = "");
 }

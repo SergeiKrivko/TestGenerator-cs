@@ -25,4 +25,11 @@
       <ProjectReference Include="..\Core\Core.csproj" />
       <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Builds\SubBuildDialog.axaml.cs">
+        <DependentUpon>SubBuildDialog.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>

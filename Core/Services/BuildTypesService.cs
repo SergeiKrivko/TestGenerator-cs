@@ -47,6 +47,7 @@ public class BuildTypesService
                 {
                     Key = "command",
                     FieldName = "Команда",
+                    FontFamily = "Consolas",
                 }
             ]
         };

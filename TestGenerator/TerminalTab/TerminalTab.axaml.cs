@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls;
-using Shared;
-using TestGenerator.UI;
+﻿using Shared;
 
 namespace TestGenerator.TerminalTab;
 

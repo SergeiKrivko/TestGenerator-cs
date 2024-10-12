@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using Core.Types;
+using Shared;
 using Shared.Utils;
 
 namespace Core.Services;
@@ -58,4 +59,14 @@ public class AppService : AAppService
     }
 
     public override Logger GetLogger(string name) => LogService.GetLogger(name);
+
+    public delegate ITerminalController TerminalControllerFunc(string command, string? workingDirectory);
+    public TerminalControllerFunc? TerminalController { get; set; }
+
+    public override ITerminalController RunInConsole(string command, string? workingDirectory = null)
+    {
+        if (TerminalController == null)
+            throw new Exception("Fail to run get TerminalController");
+        return TerminalController(command, workingDirectory);
+    }
 }

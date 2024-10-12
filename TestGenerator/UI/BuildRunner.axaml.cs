@@ -19,10 +19,10 @@ public partial class BuildRunner : UserControl
         ComboBox.ItemsSource = Builds;
     }
 
-    private void RunButton_OnClick(object? sender, RoutedEventArgs e)
+    private async void RunButton_OnClick(object? sender, RoutedEventArgs e)
     {
         var build = ComboBox.SelectedValue as Build;
         if (build != null)
-            build.RunConsole();
+            await build.ExecuteConsole();
     }
 }

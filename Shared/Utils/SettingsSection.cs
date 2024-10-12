@@ -82,5 +82,10 @@ public class SettingsSection
         }
     }
 
+    public void Save()
+    {
+        Changed?.Invoke();
+    }
+
     public IEnumerator<KeyValuePair<string, string?>> GetEnumerator() => _dictionary.GetEnumerator();
 }

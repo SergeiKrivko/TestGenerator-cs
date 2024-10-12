@@ -27,4 +27,6 @@ public abstract class AAppService
     public abstract void SideTabCommand(string key, string command, string? data = null);
 
     public abstract Logger GetLogger(string name);
+
+    public abstract ITerminalController RunInConsole(string command, string? workingDirectory = null);
 }

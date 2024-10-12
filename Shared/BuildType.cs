@@ -17,7 +17,7 @@ public class BuildType
 
     public SettingsFunc SettingsFields { get; init; } = () => [];
 
-    public delegate void Handler(SettingsSection settings);
+    public delegate Task<int> Handler(SettingsSection settings);
 
     public Handler? Compile { get; set; }
 
@@ -28,6 +28,10 @@ public class BuildType
     public Handler? Run { get; init; }
 
     public Handler? RunConsole { get; init; }
+
+    public delegate void Initializer(SettingsSection settings);
+    
+    public Initializer? Init { get; init; }
 
     public static BuildType Empty { get; } = new(){Name = "", Key = ""};
 }
