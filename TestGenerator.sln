@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{8D8D1DD4-1C59-4B52-8DAD-1B11FFED4A64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangC", "Plugins\LangC\LangC.csproj", "{E3789EC3-E96C-4556-AC51-64172E05A949}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +34,13 @@ Global
 		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3789EC3-E96C-4556-AC51-64172E05A949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3789EC3-E96C-4556-AC51-64172E05A949}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3789EC3-E96C-4556-AC51-64172E05A949}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3789EC3-E96C-4556-AC51-64172E05A949}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2} = {8D8D1DD4-1C59-4B52-8DAD-1B11FFED4A64}
+		{E3789EC3-E96C-4556-AC51-64172E05A949} = {8D8D1DD4-1C59-4B52-8DAD-1B11FFED4A64}
 	EndGlobalSection
 EndGlobal

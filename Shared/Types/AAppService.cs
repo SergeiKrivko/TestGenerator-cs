@@ -1,4 +1,5 @@
-﻿using Shared.Utils;
+﻿using Shared.Types;
+using Shared.Utils;
 
 namespace Shared;
 
@@ -29,4 +30,12 @@ public abstract class AAppService
     public abstract Logger GetLogger(string name);
 
     public abstract ITerminalController RunInConsole(string command, string? workingDirectory = null);
+
+    public abstract void Emit(string key, object? data = null);
+
+    public delegate void Handler<T>(T obj);
+    public delegate void Handler();
+
+    public abstract ISubscription Subscribe<T>(string key, Handler<T> handler);
+    public abstract ISubscription Subscribe(string key, Handler handler);
 }

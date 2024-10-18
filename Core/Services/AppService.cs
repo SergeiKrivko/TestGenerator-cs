@@ -1,5 +1,6 @@
 ﻿using Core.Types;
 using Shared;
+using Shared.Types;
 using Shared.Utils;
 
 namespace Core.Services;
@@ -24,6 +25,8 @@ public class AppService : AAppService
     public override SettingsFile Settings { get; } = SettingsFile.Open(Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
         Config.AppName, "Settings.xml"));
+
+    private Dictionary<string, IEvent> _events = [];
 
     public delegate void ShowHandler(string key);
 
@@ -68,5 +71,27 @@ public class AppService : AAppService
         if (TerminalController == null)
             throw new Exception("Fail to run get TerminalController");
         return TerminalController(command, workingDirectory);
+    }
+
+    public override void Emit(string key, object? data = null)
+    {
+        if (_events.TryGetValue(key, out var ev))
+        {
+            ev.Emit(data);
+        }
+    }
+
+    public override ISubscription Subscribe<T>(string key, Handler<T> handler)
+    {
+        if (!_events.ContainsKey(key))
+            _events[key] = new Event(key);
+        return _events[key].Subscribe(handler);
+    }
+
+    public override ISubscription Subscribe(string key, Handler handler)
+    {
+        if (!_events.ContainsKey(key))
+            _events[key] = new Event(key);
+        return _events[key].Subscribe(handler);
     }
 }
