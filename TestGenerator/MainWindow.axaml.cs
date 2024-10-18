@@ -39,6 +39,12 @@ public partial class MainWindow : Window
         PluginsService.Instance.OnPluginLoaded += AddPlugin;
 
         PluginsService.Instance.LoadPlugin("TestPlugin.dll");
+
+        AppService.Instance.AddRequestHandler<string, int>("req", async data =>
+        {
+            Console.WriteLine(data);
+            return 4;
+        });
     }
 
     private void ShowMainTab(string key)

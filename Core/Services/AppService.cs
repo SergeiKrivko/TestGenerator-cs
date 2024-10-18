@@ -1,4 +1,5 @@
-﻿using Core.Types;
+﻿using System.Text.Json;
+using Core.Types;
 using Shared;
 using Shared.Types;
 using Shared.Utils;
@@ -27,6 +28,7 @@ public class AppService : AAppService
         Config.AppName, "Settings.xml"));
 
     private Dictionary<string, IEvent> _events = [];
+    private Dictionary<string, IRequestHandler> _requestHandlers = [];
 
     public delegate void ShowHandler(string key);
 
@@ -93,5 +95,30 @@ public class AppService : AAppService
         if (!_events.ContainsKey(key))
             _events[key] = new Event(key);
         return _events[key].Subscribe(handler);
+    }
+
+    public override void AddRequestHandler<TI, TO>(string key, RequestHandler<TI, TO> handler)
+    {
+        var h = new RequestHandler(key);
+        h.SetHandler<TI, TO>(handler);
+        _requestHandlers[key] = h;
+    }
+
+    public override void AddRequestHandler<TO>(string key, RequestHandler<TO> handler)
+    {
+        var h = new RequestHandler(key);
+        h.SetHandler<TO>(handler);
+        _requestHandlers[key] = h;
+    }
+
+    public override async Task<T> Request<T>(string key, object? data = null)
+    {
+        var res = await _requestHandlers[key].Call(data);
+        if (data is T)
+            return (T)res;
+        var res2 = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(data));
+        if (res2 != null)
+            return res2;
+        throw new InvalidCastException();
     }
 }

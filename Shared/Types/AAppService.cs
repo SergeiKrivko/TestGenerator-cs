@@ -38,4 +38,11 @@ public abstract class AAppService
 
     public abstract ISubscription Subscribe<T>(string key, Handler<T> handler);
     public abstract ISubscription Subscribe(string key, Handler handler);
+
+    public delegate Task<TO> RequestHandler<TI, TO>(TI data);
+    public delegate Task<TO> RequestHandler<TO>();
+
+    public abstract Task<T> Request<T>(string key, object? data = null);
+    public abstract void AddRequestHandler<TI, TO>(string key, RequestHandler<TI, TO> handler);
+    public abstract void AddRequestHandler<TO>(string key, RequestHandler<TO> handler);
 }
