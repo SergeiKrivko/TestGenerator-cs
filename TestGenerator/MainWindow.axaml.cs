@@ -36,7 +36,7 @@ public partial class MainWindow : Window
         AppService.Instance.OnMainTabCommand += MainTabCommand;
         AppService.Instance.OnSideTabShow += ShowSideTab;
         AppService.Instance.OnSideTabCommand += SideTabCommand;
-        PluginsService.Instance.OnPluginLoaded += _addPlugin;
+        PluginsService.Instance.OnPluginLoaded += AddPlugin;
 
         PluginsService.Instance.LoadPlugin("TestPlugin.dll");
     }
@@ -60,9 +60,8 @@ public partial class MainWindow : Window
 
     private void SideTabCommand(string key, string command, string? data)
     {
-        var tab = _sideTabs[key] as SideTab;
-        if (tab != null)
-            tab.Command(command, data);
+        var tab = _sideTabs[key];
+        tab.Command(command, data);
     }
 
     private void MainMenu_OnTabChanged(object? sender, RoutedEventArgs e)
@@ -121,7 +120,7 @@ public partial class MainWindow : Window
         SideBar.Add(tab.TabKey, tab.TabIcon);
     }
 
-    private void _addPlugin(Plugin plugin)
+    private void AddPlugin(Plugin plugin)
     {
         foreach (var tab in plugin.MainTabs)
         {
@@ -129,6 +128,10 @@ public partial class MainWindow : Window
             MainTabsPanel.Children.Add(tab);
             tab.IsVisible = false;
             MainMenu.Add(tab.TabKey, tab.TabName);
+        }
+        foreach (var tab in plugin.SideTabs)
+        {
+            AddSideTab(tab);
         }
     }
 }
