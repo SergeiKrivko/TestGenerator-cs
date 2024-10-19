@@ -18,17 +18,17 @@ public class BuildType
 
     public SettingsFunc SettingsFields { get; init; } = () => [];
 
-    public delegate BaseBuilder BuilderFunc(AProject project, SettingsSection settings);
+    public delegate BaseBuilder BuilderFunc(Guid id, AProject project, SettingsSection settings);
 
     public required BuilderFunc Builder { get; init; }
 
     private class EmptyBuilder : BaseBuilder
     {
-        public EmptyBuilder(AProject project, SettingsSection settings) : base(project, settings)
+        public EmptyBuilder(Guid id, AProject project, SettingsSection settings) : base(id, project, settings)
         {
         }
     }
 
     public static BuildType Empty { get; } = new()
-        { Name = "", Key = "", Builder = (project, settings) => new EmptyBuilder(project, settings) };
+        { Name = "", Key = "", Builder = (id, project, settings) => new EmptyBuilder(id, project, settings) };
 }

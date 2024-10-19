@@ -49,6 +49,7 @@ public class BuildsService
     {
         build.Settings.Delete();
         Builds.Remove(build);
+        ProjectsService.Instance.Current.Data.Set("builds", Builds.Select(b => b.Id));
     }
 
     public Build? Get(Guid id)

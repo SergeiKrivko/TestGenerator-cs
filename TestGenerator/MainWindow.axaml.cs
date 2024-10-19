@@ -19,7 +19,13 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        AppService.Instance.OnMainTabShow += ShowMainTab;
+        AppService.Instance.OnSideTabShow += ShowSideTab;
+        PluginsService.Instance.OnPluginLoaded += AddPlugin;
+        BuildTypesService.Init();
+        
         InitializeComponent();
+        
         _mainTabs.Add("Code", CodeTab);
         MainMenu.Add("Code", "Код");
 
@@ -32,17 +38,10 @@ public partial class MainWindow : Window
         AddSideTab(new RunTab());
         AddSideTab(new TerminalTab.TerminalTab());
         
-        AppService.Instance.OnMainTabShow += ShowMainTab;
-        AppService.Instance.OnSideTabShow += ShowSideTab;
-        PluginsService.Instance.OnPluginLoaded += AddPlugin;
-
-        PluginsService.Instance.LoadPlugin("TestPlugin.dll");
-
-        AppService.Instance.AddRequestHandler<string, int>("req", async data =>
-        {
-            Console.WriteLine(data);
-            return 4;
-        });
+        // PluginsService.Instance.LoadPlugin("TestPlugin.dll");
+        PluginsService.Instance.LoadPlugin("LangC.dll");
+        
+        ProjectsService.Instance.Load();
     }
 
     private void ShowMainTab(string key)

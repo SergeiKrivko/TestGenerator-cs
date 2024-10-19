@@ -23,6 +23,9 @@ public class AppService : AAppService
         }
     }
 
+    public override string AppDataPath { get; } = Path.Join(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko", Config.AppName);
+
     public override SettingsFile Settings { get; } = SettingsFile.Open(Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
         Config.AppName, "Settings.xml"));
@@ -50,6 +53,7 @@ public class AppService : AAppService
     public override Logger GetLogger(string name) => LogService.GetLogger(name);
 
     public delegate ITerminalController TerminalControllerFunc(string command, string? workingDirectory);
+
     public TerminalControllerFunc? TerminalController { get; set; }
 
     public override ITerminalController RunInConsole(string command, string? workingDirectory = null)
@@ -105,4 +109,6 @@ public class AppService : AAppService
             return res2;
         throw new InvalidCastException();
     }
+
+    public override AProject CurrentProject => ProjectsService.Instance.Current;
 }

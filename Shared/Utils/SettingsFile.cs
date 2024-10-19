@@ -6,6 +6,7 @@ public class SettingsFile : SettingsSection
 {
     private Dictionary<string, SettingsSection> _sections;
     private string _path;
+    private bool _deleted = false;
 
     private SettingsFile(string path, Dictionary<string, string?> global,
         Dictionary<string, Dictionary<string, string?>> sections) : base("Global", global)
@@ -118,6 +119,8 @@ public class SettingsFile : SettingsSection
 
     private void Store()
     {
+        if (_deleted)
+            return;
         var document = new XmlDocument();
         var xmlDeclaration = document.CreateXmlDeclaration("1.0", "UTF-8", null);
         document.AppendChild(xmlDeclaration);
@@ -150,6 +153,7 @@ public class SettingsFile : SettingsSection
 
     public void Delete()
     {
+        _deleted = true;
         _sections.Clear();
         try
         {

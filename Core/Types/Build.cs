@@ -1,29 +1,28 @@
-﻿using System.Diagnostics;
-using Core.Services;
+﻿using Core.Services;
 using Shared;
 using Shared.Types;
 using Shared.Utils;
 
 namespace Core.Types;
 
-public class Build: ABuild
+public class Build : ABuild
 {
     public override Guid Id { get; }
 
     public override string Name
     {
-        get => Settings.Get<string>("name") ?? ""; 
+        get => Settings.Get<string>("name") ?? "";
         set => Settings.Set("name", value);
     }
 
     public override string WorkingDirectory
     {
-        get => Settings.Get<string>("workingDirectory") ?? _project.Path; 
+        get => Settings.Get<string>("workingDirectory") ?? _project.Path;
         set => Settings.Set("workingDirectory", value);
     }
 
-    public override List<BuildSubprocess> PreProc  => Settings.Get<BuildSubprocess[]>("preProc", []).ToList();
-    public override List<BuildSubprocess> PostProc  => Settings.Get<BuildSubprocess[]>("postProc", []).ToList();
+    public override List<BuildSubprocess> PreProc => Settings.Get<BuildSubprocess[]>("preProc", []).ToList();
+    public override List<BuildSubprocess> PostProc => Settings.Get<BuildSubprocess[]>("postProc", []).ToList();
 
     public override string TypeName => Settings.Get<string>("type") ?? "";
     public override BuildType Type { get; }
@@ -38,11 +37,13 @@ public class Build: ABuild
         _project = project;
         Settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
 
+        Console.WriteLine(BuildTypesService.Instance.Types.Count);
         var type = Type = BuildTypesService.Instance.Get(Settings.Get<string>("type") ?? "");
-        Builder = type.Builder(_project, Settings.GetSection("typeSettings"));
+        Builder = type.Builder(id, _project, Settings.GetSection("typeSettings"));
     }
 
     public delegate Build? BuildGetter(Guid id);
+
     public BuildGetter? GetBuild { get; set; }
 
     private Build(Project project, Guid id, BuildType buildType)
@@ -52,7 +53,15 @@ public class Build: ABuild
         Settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
         Type = buildType;
         Settings.Set("type", buildType.Key);
-        Builder = buildType.Builder(_project, Settings.GetSection("typeSettings"));
+        var builder = Builder = buildType.Builder(id, _project, Settings.GetSection("typeSettings"));
+        Console.WriteLine($"{builder.GetType().GetMethod("Compile")?.Module} " +
+                          $"{typeof(BaseBuilder).GetMethod("Compile")?.Module}");
+        if (builder.GetType().GetMethod("Compile") != typeof(BaseBuilder).GetMethod("Compile"))
+        {
+            var lst = Settings.Get<BuildSubprocess[]>("preProc", []).ToList();
+            lst.Add(new BuildSubprocess { Compile = true });
+            Settings.Set("preProc", lst);
+        }
     }
 
     public static Build FromFile(string path)
@@ -105,6 +114,7 @@ public class Build: ABuild
                 if (build != null)
                     code = await build.ExecuteConsole();
             }
+
             if (code != 0)
                 return code;
         }

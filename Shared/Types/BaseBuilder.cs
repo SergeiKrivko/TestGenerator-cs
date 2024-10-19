@@ -6,10 +6,13 @@ namespace Shared.Types;
 public abstract class BaseBuilder
 {
     public SettingsSection Settings { get; }
+    
+    public Guid BuildId { get; }
     public AProject Project { get; }
     
-    public BaseBuilder(AProject project, SettingsSection settings)
+    public BaseBuilder(Guid id, AProject project, SettingsSection settings)
     {
+        BuildId = id;
         Settings = settings;
         Project = project;
     }
@@ -35,4 +38,6 @@ public abstract class BaseBuilder
             Settings.Get<string>("workingDirectory"));
         return await controller.RunAsync();
     }
+
+    public string TempPath => Path.Join(AAppService.Instance.AppDataPath, "Temp", "Builds", BuildId.ToString());
 }

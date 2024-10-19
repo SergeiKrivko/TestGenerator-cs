@@ -18,6 +18,8 @@ public abstract class AAppService
     }
     
     public abstract SettingsFile Settings { get; }
+    
+    public abstract string AppDataPath { get; }
 
     public abstract void MainTabShow(string key);
 
@@ -41,4 +43,6 @@ public abstract class AAppService
     public abstract Task<T> Request<T>(string key, object? data = null);
     public abstract void AddRequestHandler<TI, TO>(string key, RequestHandler<TI, TO> handler);
     public abstract void AddRequestHandler<TO>(string key, RequestHandler<TO> handler);
+    
+    public abstract AProject CurrentProject { get; }
 }
