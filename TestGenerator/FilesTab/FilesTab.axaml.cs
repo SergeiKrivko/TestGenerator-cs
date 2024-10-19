@@ -45,8 +45,7 @@ public partial class FilesTab : SideTab
         if (item is FileNode)
         {
             var fileNode = (FileNode)item;
-            AAppService.Instance.MainTabShow("Code");
-            AAppService.Instance.MainTabCommand("Code", "open", fileNode.Info.FullName);
+            AAppService.Instance.Request<int>("openFile", fileNode.Info.FullName);
         }
     }
 }

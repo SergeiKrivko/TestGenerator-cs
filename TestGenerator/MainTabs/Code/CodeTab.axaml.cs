@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using System.Threading.Tasks;
+using Shared;
 
 namespace TestGenerator.MainTabs.Code;
 
@@ -7,16 +8,12 @@ public partial class CodeTab : MainTab
     public CodeTab()
     {
         InitializeComponent();
+        AAppService.Instance.AddRequestHandler<string, int>("openFile", Open);
     }
 
-    public override void Command(string command, string? data)
+    private async Task<int> Open(string path)
     {
-        switch (command)
-        {
-            case "open":
-                if (data is not null)
-                    Editor.Open(data);
-                break;
-        }
+        Editor.Open(path);
+        return 0;
     }
 }

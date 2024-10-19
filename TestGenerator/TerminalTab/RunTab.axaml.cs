@@ -22,18 +22,10 @@ public partial class RunTab : SideTab
         AppService.Instance.TerminalController = (command, directory) =>
             new TerminalController(Terminal, command) { WorkingDirectory = directory };
     }
-
-    public override void Command(string command, string? data)
+    
+    private async Task<int> Run(string command)
     {
-        switch (command)
-        {
-            case "run":
-                Terminal.Run(data);
-                break;
-            case "changeDirectory":
-                if (!string.IsNullOrEmpty(data))
-                    Terminal.CurrentDirectory = data;
-                break;
-        }
+        var proc = await Terminal.Run(command);
+        return proc?.ExitCode ?? -1;
     }
 }

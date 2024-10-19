@@ -33,9 +33,7 @@ public partial class MainWindow : Window
         AddSideTab(new TerminalTab.TerminalTab());
         
         AppService.Instance.OnMainTabShow += ShowMainTab;
-        AppService.Instance.OnMainTabCommand += MainTabCommand;
         AppService.Instance.OnSideTabShow += ShowSideTab;
-        AppService.Instance.OnSideTabCommand += SideTabCommand;
         PluginsService.Instance.OnPluginLoaded += AddPlugin;
 
         PluginsService.Instance.LoadPlugin("TestPlugin.dll");
@@ -53,21 +51,10 @@ public partial class MainWindow : Window
             MainMenu.Current = key;
     }
 
-    private void MainTabCommand(string key, string command, string? data)
-    {
-        _mainTabs[key].Command(command, data);
-    }
-
     private void ShowSideTab(string key)
     {
         if (key != SideBar.Current)
             SideBar.Current = key;
-    }
-
-    private void SideTabCommand(string key, string command, string? data)
-    {
-        var tab = _sideTabs[key];
-        tab.Command(command, data);
     }
 
     private void MainMenu_OnTabChanged(object? sender, RoutedEventArgs e)
