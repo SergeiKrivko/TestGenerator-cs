@@ -10,6 +10,7 @@ public partial class DirectoryItem : UserControl, IItem
     private string[] _extensions;
 
     public event IItem.SelectionChangeHandler? SelectionChanged;
+    public event Action? Changed;
 
     public bool Selected => CheckBox.IsChecked ?? false;
 
@@ -66,11 +67,12 @@ public partial class DirectoryItem : UserControl, IItem
         foreach (var file in Directory.GetFiles(path).Where(p => extensions.Contains(System.IO.Path.GetExtension(p))))
         {
             var item = new FileItem(file, extensions);
+            item.SelectionChanged += f => Changed?.Invoke();
             ChildrenPanel.Children.Add(item);
         }
     }
 
-    public void Select(IEnumerable<string> items)
+    public void Select(string[] items)
     {
         foreach (var child in ChildrenPanel.Children)
         {
@@ -97,5 +99,6 @@ public partial class DirectoryItem : UserControl, IItem
     private void CheckBox_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
     {
         SelectionChanged?.Invoke(Selected);
+        Changed?.Invoke();
     }
 }

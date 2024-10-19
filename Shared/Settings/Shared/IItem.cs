@@ -12,5 +12,5 @@ public interface IItem
     
     public bool Selected { get; }
 
-    public void Select(IEnumerable<string> items);
+    public void Select(string[] items);
 }

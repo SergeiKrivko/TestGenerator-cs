@@ -9,7 +9,8 @@ public partial class FilesField : UserControl, IField
     public object? Value
     {
         get => (_topLevelItem?.Current ?? []).Select(p => System.IO.Path.GetRelativePath(Path, p));
-        set => _topLevelItem?.Select((value as string[] ?? []).Select(p => System.IO.Path.Join(Path, p)));
+        set => _topLevelItem?.Select((value as IEnumerable<string> ?? [])
+            .Select(p => System.IO.Path.GetFullPath(System.IO.Path.Join(Path, p))).ToArray());
     }
 
     public string? Key { get; set; }
@@ -20,7 +21,7 @@ public partial class FilesField : UserControl, IField
     private DirectoryItem? _topLevelItem = null;
 
     public event IField.ChangeHandler? ValueChanged;
-    
+
     public FilesField(string path, string[] extensions)
     {
         Path = path;
@@ -33,12 +34,13 @@ public partial class FilesField : UserControl, IField
     {
         Panel.Children.Clear();
         _topLevelItem = new DirectoryItem(Path, Extensions);
+        _topLevelItem.Changed += () => { ValueChanged?.Invoke(this, Value); };
         Panel.Children.Add(_topLevelItem);
     }
 
     public void Load(SettingsSection section)
     {
         if (Key != null)
-            Value = section.Get<string>(Key);
+            Value = section.Get<string[]>(Key);
     }
 }

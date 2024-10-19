@@ -25,9 +25,9 @@ public partial class FileItem : UserControl, IItem
         NameBlock.Text = System.IO.Path.GetFileName(path);
     }
 
-    public void Select(IEnumerable<string> items)
+    public void Select(string[] items)
     {
-        CheckBox.IsChecked = items.Contains(Path);
+        CheckBox.IsChecked = items.Contains(System.IO.Path.GetFullPath(Path));
     }
 
     private void CheckBox_OnIsCheckedChanged(object? sender, RoutedEventArgs e)

@@ -37,7 +37,6 @@ public class Build : ABuild
         _project = project;
         Settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
 
-        Console.WriteLine(BuildTypesService.Instance.Types.Count);
         var type = Type = BuildTypesService.Instance.Get(Settings.Get<string>("type") ?? "");
         Builder = type.Builder(id, _project, Settings.GetSection("typeSettings"));
     }
