@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Shared.Types;
 
 namespace Shared;
 
@@ -11,9 +12,10 @@ public abstract class ABuild
     public abstract List<BuildSubprocess> PreProc { get; }
     public abstract List<BuildSubprocess> PostProc { get; }
     
-    public abstract string Type { get; }
+    public abstract string TypeName { get; }
 
-    public abstract BuildType Builder { get; }
+    public abstract BuildType Type { get; }
+    public abstract BaseBuilder Builder { get; }
 
     public abstract Task<int> Compile();
 

@@ -5,7 +5,7 @@ namespace Shared;
 public interface ITerminalController
 {
     public string Command { get; }
-    public Task<int> Run();
+    public Task<int> RunAsync();
     
     public string? WorkingDirectory { get; }
 }

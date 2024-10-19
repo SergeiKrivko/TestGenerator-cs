@@ -59,7 +59,7 @@ public class SubProcItem : StackPanel
         else if (Subprocess.BuildId != null)
         {
             var build = BuildsService.Instance.Get(Subprocess.BuildId.Value);
-            _icon.Data = PathGeometry.Parse(build?.Builder.Icon ?? "");
+            _icon.Data = PathGeometry.Parse(build?.Type.Icon ?? "");
             _label.Text = build?.Name;
         }
     }

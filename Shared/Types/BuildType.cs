@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Shared.Settings;
+using Shared.Types;
 using Shared.Utils;
 
 namespace Shared;
@@ -17,21 +18,17 @@ public class BuildType
 
     public SettingsFunc SettingsFields { get; init; } = () => [];
 
-    public delegate Task<int> Handler(SettingsSection settings);
+    public delegate BaseBuilder BuilderFunc(AProject project, SettingsSection settings);
 
-    public Handler? Compile { get; set; }
+    public required BuilderFunc Builder { get; init; }
 
-    public delegate string CommandBuilder(SettingsSection settings);
+    private class EmptyBuilder : BaseBuilder
+    {
+        public EmptyBuilder(AProject project, SettingsSection settings) : base(project, settings)
+        {
+        }
+    }
 
-    public CommandBuilder? Command { get; init; }
-
-    public Handler? Run { get; init; }
-
-    public Handler? RunConsole { get; init; }
-
-    public delegate void Initializer(SettingsSection settings);
-    
-    public Initializer? Init { get; init; }
-
-    public static BuildType Empty { get; } = new(){Name = "", Key = ""};
+    public static BuildType Empty { get; } = new()
+        { Name = "", Key = "", Builder = (project, settings) => new EmptyBuilder(project, settings) };
 }

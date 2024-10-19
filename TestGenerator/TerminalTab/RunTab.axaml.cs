@@ -10,7 +10,7 @@ namespace TestGenerator.TerminalTab;
 
 public partial class RunTab : SideTab
 {
-    public override string TabKey => "Run";
+    public override string TabKey => "RunAsync";
     public override string TabName => "Выполнение";
 
     public override string TabIcon =>

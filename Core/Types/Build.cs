@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Core.Services;
 using Shared;
+using Shared.Types;
 using Shared.Utils;
 
 namespace Core.Types;
@@ -24,8 +25,9 @@ public class Build: ABuild
     public override List<BuildSubprocess> PreProc  => Settings.Get<BuildSubprocess[]>("preProc", []).ToList();
     public override List<BuildSubprocess> PostProc  => Settings.Get<BuildSubprocess[]>("postProc", []).ToList();
 
-    public override string Type => Settings.Get<string>("type") ?? "";
-    public override BuildType Builder { get; }
+    public override string TypeName => Settings.Get<string>("type") ?? "";
+    public override BuildType Type { get; }
+    public override BaseBuilder Builder { get; }
 
     private readonly Project _project;
     public SettingsFile Settings { get; }
@@ -36,7 +38,8 @@ public class Build: ABuild
         _project = project;
         Settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
 
-        var builder = Builder = BuildTypesService.Instance.Get(Settings.Get<string>("type") ?? "");
+        var type = Type = BuildTypesService.Instance.Get(Settings.Get<string>("type") ?? "");
+        Builder = type.Builder(_project, Settings.GetSection("typeSettings"));
     }
 
     public delegate Build? BuildGetter(Guid id);
@@ -47,10 +50,9 @@ public class Build: ABuild
         Id = id;
         _project = project;
         Settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
-        Builder = buildType;
+        Type = buildType;
         Settings.Set("type", buildType.Key);
-        if (buildType.Init != null)
-            buildType.Init(Settings);
+        Builder = buildType.Builder(_project, Settings.GetSection("typeSettings"));
     }
 
     public static Build FromFile(string path)
@@ -69,49 +71,13 @@ public class Build: ABuild
         return new Build(ProjectsService.Instance.Current, Guid.NewGuid(), buildType);
     }
 
-    public override string? Command => Builder.Command == null ? null : Builder.Command(Settings.GetSection("typeSettings"));
+    public override string? Command => Builder.Command;
 
-    public override async Task<int> Compile()
-    {
-        if (Builder.Compile != null)
-        {
-            return await Builder.Compile(Settings.GetSection("typeSettings"));
-        }
+    public override Task<int> Compile() => Builder.Compile();
 
-        return 0;
-    }
+    public override Task<int> Run(string args = "") => Builder.Run(args);
 
-    public override async Task<int> Run(string args = "")
-    {
-        if (Builder.Run != null)
-        {
-            return await Task.Run(() => Builder.Run(Settings.GetSection("typeSettings")));
-        } 
-        if (Builder.Command != null)
-        {
-            var command = Builder.Command(Settings.GetSection("typeSettings")).Split();
-            var proc = Process.Start(command[0], string.Join(' ', command.Skip(1)));
-            await proc.WaitForExitAsync();
-            return proc.ExitCode;
-        }
-
-        throw new NullReferenceException("Both 'Command' and 'Run' can not be null");
-    }
-
-    public override async Task<int> RunConsole(string args = "")
-    {
-        if (Builder.RunConsole != null)
-        {
-            return await Builder.RunConsole(Settings.GetSection("typeSettings"));
-        } 
-        if (Builder.Command != null)
-        {
-            var command = Builder.Command(Settings.GetSection("typeSettings"));
-            AppService.Instance.SideTabShow("Run");
-            return await AppService.Instance.RunInConsole(command, WorkingDirectory).Run();
-        }
-        throw new NullReferenceException("Both 'Command' and 'RunConsole' can not be null");
-    }
+    public override Task<int> RunConsole(string args = "") => Builder.RunConsole(args);
 
     private Build? _getBuild(Guid id)
     {
@@ -131,7 +97,7 @@ public class Build: ABuild
             }
             else if (proc.Command != null)
             {
-                code = await AppService.Instance.RunInConsole(proc.Command, WorkingDirectory).Run();
+                code = await AppService.Instance.RunInConsole(proc.Command, WorkingDirectory).RunAsync();
             }
             else if (proc.BuildId != null)
             {

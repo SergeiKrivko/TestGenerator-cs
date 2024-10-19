@@ -16,7 +16,7 @@ public class TerminalController : ITerminalController
         Command = command;
     }
 
-    public async Task<int> Run()
+    public async Task<int> RunAsync()
     {
         if (WorkingDirectory != null)
             _terminal.CurrentDirectory = WorkingDirectory;

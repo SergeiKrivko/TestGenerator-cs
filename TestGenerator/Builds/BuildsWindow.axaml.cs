@@ -47,7 +47,7 @@ public partial class BuildsWindow : Window
             return;
         MainSettingsControl.Section = build.Settings;
         BuilderSettingsControl.Clear();
-        foreach (var field in build.Builder.SettingsFields())
+        foreach (var field in build.Type.SettingsFields())
         {
             BuilderSettingsControl.Add(field);
         }
