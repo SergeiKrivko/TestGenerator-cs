@@ -29,4 +29,14 @@ public class RunTerminal: Terminal
         return null;
     }
 
+    protected override async Task<Process?> RunProcess(string? command)
+    {
+        var proc = await  base.RunProcess(command);
+        if (proc != null)
+        {
+            Write($"\nProcess finished with exit code {proc.ExitCode}\n");
+        }
+
+        return proc;
+    }
 }

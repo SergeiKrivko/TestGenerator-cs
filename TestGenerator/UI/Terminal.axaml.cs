@@ -77,7 +77,7 @@ public partial class Terminal : UserControl
         }
     }
 
-    protected async Task<Process?> RunProcess(string? command)
+    protected virtual async Task<Process?> RunProcess(string? command)
     {
         if (!string.IsNullOrWhiteSpace(command))
         {
@@ -139,7 +139,7 @@ public partial class Terminal : UserControl
         {
             var count = await CurrentProcess.StandardOutput.ReadAsync(chars);
             if (count > 0)
-                Dispatcher.UIThread.Post(() => Write(chars.Slice(0, count).ToString()));
+                Write(chars.Slice(0, count).ToString());
             await Task.Delay(10);
         }
     }
@@ -154,7 +154,7 @@ public partial class Terminal : UserControl
         {
             var count = await CurrentProcess.StandardError.ReadAsync(chars);
             if (count > 0)
-                Dispatcher.UIThread.Post(() => Write(chars.Slice(0, count).ToString()));
+                Write(chars.Slice(0, count).ToString());
             await Task.Delay(10);
         }
     }
