@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using Core.Types;
 using Shared;
 using Shared.Types;
@@ -111,4 +112,29 @@ public class AppService : AAppService
     }
 
     public override AProject CurrentProject => ProjectsService.Instance.Current;
+
+    public override async Task<ICompletedProcess> RunProcess(string args)
+    {
+        var lst = args.Split();
+        var proc = Process.Start(new ProcessStartInfo(lst[0], string.Join(' ', lst.Skip(1)))
+        {
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        });
+        if (proc == null)
+        {
+            LogService.Logger.Information($"Can not start '{args}'");
+            return new CompletedProcess { ExitCode = -1 };
+        }
+
+        await proc.WaitForExitAsync();
+        LogService.Logger.Information($"Process '{args}' (exit {proc.ExitCode})");
+        return new CompletedProcess
+        {
+            ExitCode = proc.ExitCode, 
+            Stdout = await proc.StandardOutput.ReadToEndAsync(),
+            Stderr = await proc.StandardError.ReadToEndAsync()
+        };
+    }
 }

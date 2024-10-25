@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Controls.Documents;
 using Avalonia.Threading;
+using Core.Services;
 
 namespace TestGenerator.UI;
 
@@ -15,6 +16,9 @@ public partial class Terminal : UserControl
     public string CurrentDirectory { get; set; } = ".";
     public string TerminalApp { get; set; } = "powershell";
     public string TerminalAppArgs { get; set; } = "-Command";
+    
+    private List<string> _lastCommands = [];
+    private int _lastCommandIndex = 0;
 
     public Terminal()
     {
@@ -30,7 +34,8 @@ public partial class Terminal : UserControl
             await RunProcess(text);
         else
         {
-            CurrentProcess.StandardInput.WriteLine(text);
+            await CurrentProcess.StandardInput.WriteLineAsync(text);
+            await CurrentProcess.StandardInput.FlushAsync();
         }
     }
 
@@ -54,10 +59,31 @@ public partial class Terminal : UserControl
         }
     }
 
+    private void PreviousCommand()
+    {
+        if (CurrentProcess == null && _lastCommandIndex > 0)
+        {
+            _lastCommandIndex -= 1;
+            Box.Rewrite(_lastCommands[_lastCommandIndex]);
+        }
+    }
+
+    private void NextCommand()
+    {
+        if (CurrentProcess == null && _lastCommandIndex < _lastCommands.Count)
+        {
+            _lastCommandIndex += 1;
+            Box.Rewrite(_lastCommandIndex == _lastCommands.Count ? "" : _lastCommands[_lastCommandIndex]);
+        }
+    }
+
     protected async Task<Process?> RunProcess(string? command)
     {
         if (!string.IsNullOrWhiteSpace(command))
         {
+            _lastCommands.Add(command);
+            _lastCommandIndex = _lastCommands.Count;
+            
             if (command.Trim() == "clear")
                 Clear();
             else if (command.Trim().StartsWith("cd "))
@@ -79,18 +105,22 @@ public partial class Terminal : UserControl
                 try
                 {
                     CurrentProcess.Start();
-                    CurrentProcess.OutputDataReceived += CurrentProcessOnOutputDataReceived;
-                    CurrentProcess.Exited += CurrentProcessOnExited;
-                    CurrentProcess.BeginOutputReadLine();
+                    ReadOutputLoop();
+                    ReadErrorLoop();
 
                     await CurrentProcess.WaitForExitAsync();
+                    CurrentProcess = null;
+                    LogService.Logger.Information($"Process {proc.Id} exited with code {proc.ExitCode}");
+
+                    Write(await proc.StandardOutput.ReadToEndAsync());
+                    Write(await proc.StandardError.ReadToEndAsync());
+                    WritePrompt();
                 }
                 catch (Exception e)
                 {
                     Write(e.Message + "\n");
+                    CurrentProcess = null;
                 }
-
-                CurrentProcess = null;
                 return proc;
             }
         }
@@ -99,19 +129,39 @@ public partial class Terminal : UserControl
         return null;
     }
 
-    private void CurrentProcessOnExited(object? sender, EventArgs e)
+    private async void ReadOutputLoop()
     {
-        Dispatcher.UIThread.Post(() => { WritePrompt(); });
+        if (CurrentProcess == null)
+            return;
+        var pid = CurrentProcess.Id;
+        var chars = new Memory<char>(new char[100]);
+        while (pid == CurrentProcess?.Id)
+        {
+            var count = await CurrentProcess.StandardOutput.ReadAsync(chars);
+            if (count > 0)
+                Dispatcher.UIThread.Post(() => Write(chars.Slice(0, count).ToString()));
+            await Task.Delay(10);
+        }
     }
 
-    private void CurrentProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e)
+    private async void ReadErrorLoop()
     {
-        Dispatcher.UIThread.Post(() => { Write(e.Data + "\n"); });
+        if (CurrentProcess == null)
+            return;
+        var pid = CurrentProcess.Id;
+        var chars = new Memory<char>(new char[100]);
+        while (pid == CurrentProcess?.Id)
+        {
+            var count = await CurrentProcess.StandardError.ReadAsync(chars);
+            if (count > 0)
+                Dispatcher.UIThread.Post(() => Write(chars.Slice(0, count).ToString()));
+            await Task.Delay(10);
+        }
     }
 
     protected virtual string Prompt => Path.GetFullPath(CurrentDirectory) + "> ";
 
-    protected void WritePrompt()
+    public void WritePrompt()
     {
         Write(Prompt);
     }

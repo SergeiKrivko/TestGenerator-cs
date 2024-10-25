@@ -8,11 +8,16 @@ public class TerminalTextBox : TextBox
 {
     protected override Type StyleKeyOverride => typeof(TextBox); 
     
-    public string LastText = "";
+    public string LastText { get; private set; } = "";
     
     public delegate void ReturnHandler(string command);
     
     public event ReturnHandler? Return;
+    
+    public delegate void ArrowHandler();
+    
+    public event ArrowHandler? ArrowUp;
+    public event ArrowHandler? ArrowDown;
     
     public void Write(string? text)
     {
@@ -35,9 +40,30 @@ public class TerminalTextBox : TextBox
         LastText = "";
         Text = "";
     }
+
+    public void Rewrite(string text = "")
+    {
+        Text = LastText + text;
+    }
     
     protected override void OnKeyDown(KeyEventArgs e)
     {
+        if ((e.KeyModifiers & (KeyModifiers.Shift | KeyModifiers.Control)) != 0)
+        {
+            base.OnKeyDown(e);
+            return;
+        }
+
+        if (e.Key == Key.Up)
+        {
+            ArrowUp?.Invoke();
+            return;
+        }
+        if (e.Key == Key.Down)
+        {
+            ArrowDown?.Invoke();
+            return;
+        }
         if (e.Key == Key.Delete || e.Key == Key.Back)
         {
             if (SelectionStart <= LastText.Length || CaretIndex <= LastText.Length)

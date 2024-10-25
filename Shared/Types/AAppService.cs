@@ -45,4 +45,6 @@ public abstract class AAppService
     public abstract void AddRequestHandler<TO>(string key, RequestHandler<TO> handler);
     
     public abstract AProject CurrentProject { get; }
+
+    public abstract Task<ICompletedProcess> RunProcess(string args);
 }
