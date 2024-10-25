@@ -14,8 +14,8 @@ public partial class Terminal : UserControl
 {
     protected Process? CurrentProcess;
     public string CurrentDirectory { get; set; } = ".";
-    public string TerminalApp { get; set; } = "powershell";
-    public string TerminalAppArgs { get; set; } = "-Command";
+    public string TerminalApp { get; set; }
+    public string TerminalAppArgs { get; set; }
     
     private List<string> _lastCommands = [];
     private int _lastCommandIndex = 0;
@@ -24,6 +24,21 @@ public partial class Terminal : UserControl
     {
         InitializeComponent();
         WritePrompt();
+        if (OperatingSystem.IsWindows())
+        {
+            TerminalApp = "powershell";
+            TerminalAppArgs = "-Command";
+        } else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        {
+            TerminalApp = "bash";
+            TerminalAppArgs = "-c";
+        }
+        else
+        {
+            LogService.Logger.Warning("Terminal: Unknown operating system");
+            TerminalApp = "";
+            TerminalAppArgs = "";
+        }
     }
 
     private async void Box_OnReturn(string command)
