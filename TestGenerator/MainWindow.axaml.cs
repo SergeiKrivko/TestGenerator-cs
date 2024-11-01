@@ -39,7 +39,7 @@ public partial class MainWindow : Window
         AddSideTab(new TerminalTab.TerminalTab());
         
         // PluginsService.Instance.LoadPlugin("TestPlugin.dll");
-        PluginsService.Instance.LoadPlugin("LangC.dll");
+        // PluginsService.Instance.LoadPlugin("LangC.dll");
         
         ProjectsService.Instance.Load();
     }

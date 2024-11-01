@@ -16,7 +16,7 @@ public class PluginsService
         }
     }
 
-    public Dictionary<string, Plugin> Plugins { get; } = new();
+    public Dictionary<string, Plugin> Plugins { get; } = [];
     
     public delegate void PluginLoadedHandler(Plugin plugin);
     public event PluginLoadedHandler? OnPluginLoaded;
@@ -42,12 +42,12 @@ public class PluginsService
 
     private Assembly _getPluginAssembly(string relativePath)
     {
-        string root = "C:\\Users\\sergi\\RiderProjects\\TestGenerator\\Plugins";
+        var root = Path.Join(AppService.Instance.AppDataPath, "Plugins");
 
-        string pluginLocation =
+        var pluginLocation =
             Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar)));
         LogService.Logger.Debug($"Loading plugin from: {pluginLocation}");
-        PluginLoadContext loadContext = new PluginLoadContext(pluginLocation);
+        var loadContext = new PluginLoadContext(pluginLocation);
         return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
     }
 }
