@@ -16,7 +16,7 @@ public class PluginBuilder
         }
 
         res.AddRange(Directory.GetFiles(path)
-            .Where(f => !f.StartsWith("Avalonia.") && Path.GetFileNameWithoutExtension(f) != "Shared"));
+            .Where(f => !f.StartsWith("Avalonia.") && Path.GetFileNameWithoutExtension(f) != "TestGenerator.Shared"));
 
         return res;
     }
@@ -44,7 +44,7 @@ public class PluginBuilder
                 Path.GetRelativePath(Path.Join(path, "bin/Debug/net8.0"), dll)));
         }
 
-        pluginConfig.PluginLibVersion = Shared.Config.Version;
+        pluginConfig.PluginLibVersion = TestGenerator.Shared.Config.Version;
         var configFile = File.CreateText(Path.Join(tempPath, "Config.json"));
         configFile.Write(JsonSerializer.Serialize(pluginConfig));
         configFile.Close();

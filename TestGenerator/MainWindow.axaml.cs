@@ -1,12 +1,12 @@
-using System;
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Core.Services;
-using Shared;
+using TestGenerator.Shared;
 using TestGenerator.Builds;
+using TestGenerator.Shared.Types;
 using TestGenerator.TerminalTab;
 
 namespace TestGenerator;

@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator", "TestGenera
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{8907973D-DB10-4008-8B90-8CCDA0E848E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{632D4504-6B53-435A-8387-41134B6AF338}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator.Shared", "TestGenerator.Shared\TestGenerator.Shared.csproj", "{632D4504-6B53-435A-8387-41134B6AF338}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\TestPlugin.csproj", "{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2}"
 EndProject
@@ -14,7 +14,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangC", "Plugins\LangC\Lang
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGeneratorCLI", "TestGeneratorCLI\TestGeneratorCLI.csproj", "{ABE71C54-0D70-4B36-9C19-9286CE541176}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testenerator.PluginBuilder", "Testenerator.PluginBuilder\Testenerator.PluginBuilder.csproj", "{1368C2C4-66B0-49D4-A67C-D0EBBAE42B3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator.PluginBuilder", "TestGenerator.PluginBuilder\TestGenerator.PluginBuilder.csproj", "{1368C2C4-66B0-49D4-A67C-D0EBBAE42B3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator.Plugin", "TestGenerator.Plugin\TestGenerator.Plugin.csproj", "{5B6A418E-33A4-4064-B81D-CE3599903E7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{1368C2C4-66B0-49D4-A67C-D0EBBAE42B3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1368C2C4-66B0-49D4-A67C-D0EBBAE42B3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1368C2C4-66B0-49D4-A67C-D0EBBAE42B3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B6A418E-33A4-4064-B81D-CE3599903E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B6A418E-33A4-4064-B81D-CE3599903E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B6A418E-33A4-4064-B81D-CE3599903E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B6A418E-33A4-4064-B81D-CE3599903E7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2} = {8D8D1DD4-1C59-4B52-8DAD-1B11FFED4A64}

@@ -3,9 +3,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
-using Shared;
-using Shared.Settings;
-using Shared.Utils;
+using TestGenerator.Shared.Types;
+using TestGenerator.Shared.Settings;
+using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Builds;
 

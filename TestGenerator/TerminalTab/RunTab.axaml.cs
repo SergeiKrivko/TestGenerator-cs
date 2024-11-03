@@ -1,10 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using System.Threading.Tasks;
 using Core.Services;
-using Shared;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.TerminalTab;
 

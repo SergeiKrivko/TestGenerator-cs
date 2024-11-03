@@ -1,5 +1,5 @@
 ﻿using Serilog;
-using Logger = Shared.Utils.Logger;
+using Logger = TestGenerator.Shared.Utils.Logger;
 
 namespace Core.Services;
 

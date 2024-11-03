@@ -1,4 +1,4 @@
-﻿using Shared.Types;
+﻿using TestGenerator.Shared.Types;
 
 namespace Core.Types;
 

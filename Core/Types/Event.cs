@@ -1,7 +1,7 @@
 ﻿using System.Reflection.Metadata;
 using System.Text.Json;
-using Shared;
-using Shared.Types;
+using TestGenerator.Shared;
+using TestGenerator.Shared.Types;
 
 namespace Core.Types;
 

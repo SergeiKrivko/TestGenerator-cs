@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Core.Services;
 using Core.Types;
-using Shared.Settings;
+using TestGenerator.Shared.Settings;
 
 namespace TestGenerator.Builds;
 

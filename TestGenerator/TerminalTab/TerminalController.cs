@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Shared;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.TerminalTab;
 

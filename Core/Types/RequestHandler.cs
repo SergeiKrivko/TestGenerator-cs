@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Shared;
+using TestGenerator.Shared.Types;
 
 namespace Core.Types;
 

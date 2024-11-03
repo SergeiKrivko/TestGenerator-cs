@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using Core.Types;
-using Shared;
-using Shared.Types;
-using Shared.Utils;
+using TestGenerator.Shared.Types;
+using TestGenerator.Shared.Utils;
 
 namespace Core.Services;
 

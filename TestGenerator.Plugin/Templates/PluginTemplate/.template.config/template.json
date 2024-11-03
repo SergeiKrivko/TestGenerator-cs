@@ -1,0 +1,13 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "SergeiKrivko",
+  "classifications": ["Desktop/TestGenerator/Plugin"],
+  "identity": "TestGenerator.Plugin",
+  "name": "Плагин TestGenerator",
+  "shortName": "testgenerator-plugin",
+  "sourceName": "MyPlugin",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  }
+}

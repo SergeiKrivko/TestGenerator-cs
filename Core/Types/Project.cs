@@ -1,6 +1,6 @@
 ﻿using Core.Services;
-using Shared;
-using Shared.Utils;
+using TestGenerator.Shared.Types;
+using TestGenerator.Shared.Utils;
 
 namespace Core.Types;
 

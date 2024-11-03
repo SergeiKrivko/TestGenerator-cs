@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Shared;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Builds;
 

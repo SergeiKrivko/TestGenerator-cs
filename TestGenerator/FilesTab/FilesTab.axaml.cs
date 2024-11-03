@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using Avalonia.Controls;
 using Avalonia.Input;
 using Core.Services;
 using Core.Types;
-using Shared;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.FilesTab;
 
-public partial class FilesTab : SideTab
+public partial class FilesTab :  SideTab
 {
     public ObservableCollection<Node> Nodes{ get; }
 

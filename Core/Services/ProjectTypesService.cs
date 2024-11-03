@@ -1,4 +1,4 @@
-﻿using Shared;
+﻿using TestGenerator.Shared.Types;
 
 namespace Core.Services;
 

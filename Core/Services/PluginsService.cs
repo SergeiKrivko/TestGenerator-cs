@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Shared;
+using TestGenerator.Shared;
 
 namespace Core.Services;
 

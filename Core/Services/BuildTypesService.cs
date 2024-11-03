@@ -1,7 +1,6 @@
-﻿using Shared;
-using Shared.Settings;
-using Shared.Types;
-using Shared.Utils;
+﻿using TestGenerator.Shared.Settings;
+using TestGenerator.Shared.Types;
+using TestGenerator.Shared.Utils;
 
 namespace Core.Services;
 

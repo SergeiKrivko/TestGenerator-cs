@@ -1,10 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Core.Services;
 using Core.Types;
-using Shared;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Builds;
 
