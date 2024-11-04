@@ -1,6 +1,6 @@
 ﻿namespace MyPlugin;
 
-public class MyPlugin : Shared.Plugin
+public class MyPlugin : TestGenerator.Shared.Plugin
 {
     public MyPlugin()
     {
