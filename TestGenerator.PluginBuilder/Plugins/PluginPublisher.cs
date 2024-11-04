@@ -5,14 +5,15 @@ namespace Testenerator.PluginBuilder.Plugins;
 
 public class PluginPublisher
 {
-    public const string Url = "http://localhost:5255/api/v1/plugins/releases";
+    // public const string Url = "http://localhost:5255/api/v1/plugins/releases";
+    public const string Url = "https://testgenerator-api.nachert.art/api/v1/plugins/releases";
 
-    private static HttpClient _client = new();
+    private static readonly HttpClient Client = new();
 
     public static async Task PublishByUrl(PluginConfig config, string url, string token)
     {
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        var resp = await _client.PostAsync(Url, JsonContent.Create(new PluginRequestBody
+        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var resp = await Client.PostAsync(Url, JsonContent.Create(new PluginRequestBody
         {
             Key = config.Key,
             Name = config.Name,

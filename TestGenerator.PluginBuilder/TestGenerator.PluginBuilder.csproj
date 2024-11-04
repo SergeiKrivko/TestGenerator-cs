@@ -8,7 +8,7 @@
         <Nullable>enable</Nullable>
         <ToolCommandName>testgenerator-plugin</ToolCommandName>
         <PackageId>TestGenerator.PluginBuilder</PackageId>
-        <PackageVersion>1.0.0</PackageVersion>
+        <PackageVersion>1.0.1</PackageVersion>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RootNamespace>Testenerator.PluginBuilder</RootNamespace>
