@@ -2,7 +2,7 @@ name: shared.yml
 on:
   push:
     paths:
-      - TestGenerator.Shared
+      - TestGenerator.Shared/*.csproj
 
 jobs:
   build:
