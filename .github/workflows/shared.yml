@@ -24,4 +24,4 @@ jobs:
           
       - name: Publish on nuget.org
         run: |
-          dotnet nuget push nuget/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }}
+          dotnet nuget push nuget/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
