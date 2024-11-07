@@ -37,7 +37,7 @@ public class PluginPublisher
     {
         var client = new GitHubClient(new ProductHeaderValue("SergeiKrivko"));
         client.Credentials = new Credentials(githubToken);
-        
+
         var tag = $"{config.Key}-{config.Version}";
         Release? release = null;
         try
@@ -52,7 +52,8 @@ public class PluginPublisher
             new NewRelease(tag));
 
         var asset = await client.Repository.Release.UploadAsset(release,
-            new ReleaseAssetUpload(config.Key, "application/zip", File.OpenRead(path), TimeSpan.FromMinutes(5)));
+            new ReleaseAssetUpload(config.Key + ".zip", "application/zip", File.OpenRead(path),
+                TimeSpan.FromMinutes(5)));
         return asset.BrowserDownloadUrl;
     }
 
@@ -62,15 +63,16 @@ public class PluginPublisher
             await File.ReadAllTextAsync(Path.Join(options.Path ?? Directory.GetCurrentDirectory(), "Config.json")));
         if (pluginConfig == null)
             throw new Exception("Invalid config");
-        
+
         var zipPath = Builder.Build(options.Path ?? Directory.GetCurrentDirectory());
         Console.WriteLine(zipPath);
-        
+
         if (options.Github)
         {
             if (options.GithubUser == null || options.GithubRepo == null || options.GithubToken == null)
                 throw new Exception("Invalid Github credentials");
-            var url = await PublishOnGithub(pluginConfig, options.GithubUser, options.GithubRepo, options.GithubToken, zipPath);
+            var url = await PublishOnGithub(pluginConfig, options.GithubUser, options.GithubRepo, options.GithubToken,
+                zipPath);
             await PublishByUrl(pluginConfig, url, options.Token);
         }
     }
