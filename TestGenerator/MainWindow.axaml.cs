@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
@@ -38,9 +39,7 @@ public partial class MainWindow : Window
         AddSideTab(new RunTab());
         AddSideTab(new TerminalTab.TerminalTab());
         
-        // PluginsService.Instance.LoadPlugin("TestPlugin.dll");
-        // PluginsService.Instance.LoadPlugin("LangC.dll");
-        
+        PluginsService.Instance.Load();
         ProjectsService.Instance.Load();
     }
 

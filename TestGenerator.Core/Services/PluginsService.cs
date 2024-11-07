@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
+using System.Text.Json;
+using TestGenerator.Core.Types;
 using TestGenerator.Shared;
-using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Core.Services;
 
@@ -22,18 +23,28 @@ public class PluginsService
     public delegate void PluginLoadedHandler(Plugin plugin);
     public event PluginLoadedHandler? OnPluginLoaded;
 
-    private PluginsService()
+    public void Load()
     {
         foreach (var directory in Directory.GetDirectories(Path.Join(AppService.Instance.AppDataPath, "Plugins")))
         {
-            LoadPlugin(Path.Join(directory, Path.GetFileName(directory) + ".dll"));
+            try
+            {
+                LoadPlugin(directory);
+            }
+            catch (Exception e)
+            {
+                LogService.Logger.Error($"Fail to load plugin '{directory}': {e}");
+            }
         }
     }
 
     public void LoadPlugin(string pluginPath)
     {
-        Assembly pluginAssembly = _getPluginAssembly(pluginPath);
-        foreach (Type type in pluginAssembly.GetTypes())
+        var config = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(pluginPath, "Config.json")));
+        if (config == null)
+            throw new Exception("Invalid plugin: config not found");
+        var pluginAssembly = _getPluginAssembly(Path.Join(pluginPath, config.Assembly));
+        foreach (var type in pluginAssembly.GetTypes())
         {
             if (typeof(Plugin).IsAssignableFrom(type))
             {
@@ -41,8 +52,8 @@ public class PluginsService
                 if (instance != null)
                 {
                     var plugin = (Plugin)instance;
-                    Plugins.Add(plugin.Name, plugin);
-                    LogService.Logger.Debug($"Plugin '{plugin.Name}' loaded");
+                    Plugins.Add(config.Key, plugin);
+                    LogService.Logger.Debug($"Plugin '{config.Key}' loaded");
                     OnPluginLoaded?.Invoke(plugin);
                 }
             }
