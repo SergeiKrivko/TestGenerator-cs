@@ -25,7 +25,9 @@ public class PluginsService
 
     public void Load()
     {
-        foreach (var directory in Directory.GetDirectories(Path.Join(AppService.Instance.AppDataPath, "Plugins")))
+        var path = Path.Join(AppService.Instance.AppDataPath, "Plugins");
+        Directory.CreateDirectory(path);
+        foreach (var directory in Directory.GetDirectories(path))
         {
             try
             {
