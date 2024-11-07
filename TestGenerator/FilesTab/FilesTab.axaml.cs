@@ -2,8 +2,8 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using Avalonia.Input;
-using Core.Services;
-using Core.Types;
+using TestGenerator.Core.Services;
+using TestGenerator.Core.Types;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.FilesTab;

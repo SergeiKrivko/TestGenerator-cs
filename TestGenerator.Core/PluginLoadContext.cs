@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 
-namespace Core;
+namespace TestGenerator.Core;
 
 public class PluginLoadContext : AssemblyLoadContext
 {

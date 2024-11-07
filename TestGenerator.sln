@@ -2,15 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator", "TestGenerator\TestGenerator.csproj", "{07C0E63B-BFDA-4914-9633-64773DD94D2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{8907973D-DB10-4008-8B90-8CCDA0E848E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator.Core", "TestGenerator.Core\TestGenerator.Core.csproj", "{8907973D-DB10-4008-8B90-8CCDA0E848E7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator.Shared", "TestGenerator.Shared\TestGenerator.Shared.csproj", "{632D4504-6B53-435A-8387-41134B6AF338}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\TestPlugin.csproj", "{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{8D8D1DD4-1C59-4B52-8DAD-1B11FFED4A64}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangCOld", "Plugins\LangCOld\LangCOld.csproj", "{E3789EC3-E96C-4556-AC51-64172E05A949}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGeneratorCLI", "TestGeneratorCLI\TestGeneratorCLI.csproj", "{ABE71C54-0D70-4B36-9C19-9286CE541176}"
 EndProject
@@ -36,14 +30,6 @@ Global
 		{632D4504-6B53-435A-8387-41134B6AF338}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{632D4504-6B53-435A-8387-41134B6AF338}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{632D4504-6B53-435A-8387-41134B6AF338}.Release|Any CPU.Build.0 = Release|Any CPU
-		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3789EC3-E96C-4556-AC51-64172E05A949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3789EC3-E96C-4556-AC51-64172E05A949}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3789EC3-E96C-4556-AC51-64172E05A949}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3789EC3-E96C-4556-AC51-64172E05A949}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ABE71C54-0D70-4B36-9C19-9286CE541176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ABE71C54-0D70-4B36-9C19-9286CE541176}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABE71C54-0D70-4B36-9C19-9286CE541176}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -58,7 +44,5 @@ Global
 		{5B6A418E-33A4-4064-B81D-CE3599903E7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{884B95F0-FBB3-4EA6-8C9A-0F56CEA217E2} = {8D8D1DD4-1C59-4B52-8DAD-1B11FFED4A64}
-		{E3789EC3-E96C-4556-AC51-64172E05A949} = {8D8D1DD4-1C59-4B52-8DAD-1B11FFED4A64}
 	EndGlobalSection
 EndGlobal

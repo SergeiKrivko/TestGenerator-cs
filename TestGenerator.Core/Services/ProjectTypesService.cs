@@ -1,6 +1,6 @@
 ﻿using TestGenerator.Shared.Types;
 
-namespace Core.Services;
+namespace TestGenerator.Core.Services;
 
 public class ProjectTypesService
 {

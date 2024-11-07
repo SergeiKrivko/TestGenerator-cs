@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
-using Core.Types;
+using TestGenerator.Core.Types;
 using TestGenerator.Shared.Types;
 using TestGenerator.Shared.Utils;
 
-namespace Core.Services;
+namespace TestGenerator.Core.Services;
 
 public class AppService : AAppService
 {

@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
 using TestGenerator.Shared;
+using TestGenerator.Shared.Types;
 
-namespace Core.Services;
+namespace TestGenerator.Core.Services;
 
 public class PluginsService
 {
@@ -20,6 +21,14 @@ public class PluginsService
     
     public delegate void PluginLoadedHandler(Plugin plugin);
     public event PluginLoadedHandler? OnPluginLoaded;
+
+    private PluginsService()
+    {
+        foreach (var directory in Directory.GetDirectories(Path.Join(AppService.Instance.AppDataPath, "Plugins")))
+        {
+            LoadPlugin(Path.Join(directory, Path.GetFileName(directory) + ".dll"));
+        }
+    }
 
     public void LoadPlugin(string pluginPath)
     {

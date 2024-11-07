@@ -3,8 +3,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Core.Services;
-using Core.Types;
+using TestGenerator.Core.Services;
+using TestGenerator.Core.Types;
 
 namespace TestGenerator.UI;
 

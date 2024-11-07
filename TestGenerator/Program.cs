@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using System;
-using Core.Services;
+using TestGenerator.Core.Services;
 
 namespace TestGenerator;
 

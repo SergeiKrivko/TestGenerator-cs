@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using Core.Types;
+using TestGenerator.Core.Types;
 
-namespace Core.Services;
+namespace TestGenerator.Core.Services;
 
 public class BuildsService
 {

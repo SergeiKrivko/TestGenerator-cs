@@ -1,4 +1,4 @@
-﻿namespace Core;
+﻿namespace TestGenerator.Core;
 
 public class Config
 {

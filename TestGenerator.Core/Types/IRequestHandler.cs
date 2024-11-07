@@ -1,4 +1,4 @@
-﻿namespace Core.Types;
+﻿namespace TestGenerator.Core.Types;
 
 public interface IRequestHandler
 {

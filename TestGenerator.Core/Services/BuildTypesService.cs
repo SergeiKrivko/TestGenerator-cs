@@ -2,7 +2,7 @@
 using TestGenerator.Shared.Types;
 using TestGenerator.Shared.Utils;
 
-namespace Core.Services;
+namespace TestGenerator.Core.Services;
 
 public class BuildTypesService
 {

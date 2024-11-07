@@ -3,7 +3,7 @@ using System.Text.Json;
 using TestGenerator.Shared;
 using TestGenerator.Shared.Types;
 
-namespace Core.Types;
+namespace TestGenerator.Core.Types;
 
 class Event : IEvent
 {

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Text.Json;
-using Core.Services;
+using TestGenerator.Core.Services;
 
 namespace TestGeneratorCLI.Plugins;
 

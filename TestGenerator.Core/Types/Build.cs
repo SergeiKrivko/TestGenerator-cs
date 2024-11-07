@@ -1,8 +1,8 @@
-﻿using Core.Services;
+﻿using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
 using TestGenerator.Shared.Utils;
 
-namespace Core.Types;
+namespace TestGenerator.Core.Types;
 
 public class Build : ABuild
 {

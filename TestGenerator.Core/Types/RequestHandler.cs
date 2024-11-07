@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using TestGenerator.Shared.Types;
 
-namespace Core.Types;
+namespace TestGenerator.Core.Types;
 
 public class RequestHandler : IRequestHandler
 {

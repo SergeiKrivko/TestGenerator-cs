@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Logger = TestGenerator.Shared.Utils.Logger;
 
-namespace Core.Services;
+namespace TestGenerator.Core.Services;
 
 public class LogService
 {

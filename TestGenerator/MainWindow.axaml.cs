@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
-using Core.Services;
+using TestGenerator.Core.Services;
 using TestGenerator.Shared;
 using TestGenerator.Builds;
 using TestGenerator.Shared.Types;

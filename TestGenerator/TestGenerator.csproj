@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Core\Core.csproj" />
+      <ProjectReference Include="..\TestGenerator.Core\TestGenerator.Core.csproj" />
       <ProjectReference Include="..\TestGenerator.Shared\TestGenerator.Shared.csproj" />
     </ItemGroup>
 

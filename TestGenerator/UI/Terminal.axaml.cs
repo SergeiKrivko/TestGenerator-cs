@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using Core.Services;
+using TestGenerator.Core.Services;
 
 namespace TestGenerator.UI;
 
