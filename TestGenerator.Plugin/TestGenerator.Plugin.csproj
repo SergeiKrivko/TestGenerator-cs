@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         
         <PackageType>Template</PackageType>
-        <PackageVersion>1.0.1</PackageVersion>
+        <PackageVersion>1.2.0</PackageVersion>
         <PackageId>TestGenerator.Plugin</PackageId>
         <Title>TestGenerator Plugin template</Title>
         <Authors>SergeiKrivko</Authors>
@@ -22,7 +22,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <Content Include="Templates\**\*" Exclude="Templates\**\bin\**;Templates\**\obj\**" />
+        <Content Include="Templates\**\*" Exclude="Templates\**\bin\**;Templates\**\obj\**" ReplaceParameters="true" />
         <Compile Remove="**\*" />
     </ItemGroup>
     
