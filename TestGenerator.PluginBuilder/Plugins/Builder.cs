@@ -8,7 +8,7 @@ public class Builder
 {
     public static string AppDataPath { get; } = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko", "TestGenerator");
-    
+
     private static List<string> GetDlls(string path)
     {
         var res = new List<string>();
@@ -18,7 +18,8 @@ public class Builder
         }
 
         res.AddRange(Directory.GetFiles(path)
-            .Where(f => !f.StartsWith("Avalonia.") && Path.GetFileNameWithoutExtension(f) != "TestGenerator.Shared"));
+            .Where(f => f.EndsWith(".dll") && !f.Contains("Avalonia") && !f.Contains("Serilog") &&
+                        Path.GetFileNameWithoutExtension(f) != "TestGenerator.Shared"));
 
         return res;
     }
@@ -32,18 +33,18 @@ public class Builder
         Process.Start(new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = "build",
+            Arguments = "publish",
             WorkingDirectory = path,
         })?.WaitForExit();
 
-        var tempPath = Path.Join(path, "bin/Debug/net8.0/Plugin");
+        var tempPath = Path.Join(path, "bin/Release/net8.0/Plugin");
         if (Directory.Exists(tempPath))
             Directory.Delete(tempPath, recursive: true);
         Directory.CreateDirectory(tempPath);
-        foreach (var dll in GetDlls(Path.Join(path, "bin/Debug/net8.0")))
+        foreach (var dll in GetDlls(Path.Join(path, "bin/Release/net8.0/publish")))
         {
             File.Copy(dll, Path.Join(tempPath,
-                Path.GetRelativePath(Path.Join(path, "bin/Debug/net8.0"), dll)));
+                Path.GetRelativePath(Path.Join(path, "bin/Release/net8.0/publish"), dll)));
         }
 
         var configFile = File.CreateText(Path.Join(tempPath, "Config.json"));
@@ -62,6 +63,7 @@ public class Builder
             {
                 Directory.Delete(installedPath, recursive: true);
             }
+
             Directory.Move(tempPath, installedPath);
         }
         else
