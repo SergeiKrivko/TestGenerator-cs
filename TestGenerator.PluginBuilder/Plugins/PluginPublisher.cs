@@ -75,5 +75,9 @@ public class PluginPublisher
                 zipPath);
             await PublishByUrl(pluginConfig, url, options.Token);
         }
+        else if (options.Url != null)
+        {
+            await PublishByUrl(pluginConfig, options.Url, options.Token);
+        }
     }
 }
