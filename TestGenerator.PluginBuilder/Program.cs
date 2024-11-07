@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using CommandLine;
-using Testenerator.PluginBuilder.Args;
-using Testenerator.PluginBuilder.Plugins;
+using TestGenerator.PluginBuilder.Args;
+using TestGenerator.PluginBuilder.Plugins;
 
 var types = LoadVerbs();
 
@@ -19,15 +19,7 @@ async Task Run(object obj)
     switch (obj)
     {
         case PluginPublishOptions o:
-            if (o.Url != null)
-            {
-                var pluginConfig = JsonSerializer.Deserialize<PluginConfig>(
-                    File.ReadAllText(Path.Join(o.Path ?? Directory.GetCurrentDirectory(), "Config.json")));
-                if (pluginConfig == null)
-                    throw new Exception("Invalid config");
-                await PluginPublisher.PublishByUrl(pluginConfig, o.Url, o.Token);
-            }
-
+            await new PluginPublisher().Publish(o);
             break;
         case PluginBuildOptions o:
             Builder.Build(o.Path ?? Directory.GetCurrentDirectory(), o.Output, o.Install);

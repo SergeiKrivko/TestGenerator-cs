@@ -2,7 +2,7 @@
 using System.IO.Compression;
 using System.Text.Json;
 
-namespace Testenerator.PluginBuilder.Plugins;
+namespace TestGenerator.PluginBuilder.Plugins;
 
 public class Builder
 {
@@ -23,7 +23,7 @@ public class Builder
         return res;
     }
 
-    public static void Build(string path, string? outPath = null, bool install = false)
+    public static string Build(string path, string? outPath = null, bool install = false)
     {
         var pluginConfig = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(path, "Config.json")));
         if (pluginConfig == null)
@@ -50,7 +50,7 @@ public class Builder
         configFile.Write(JsonSerializer.Serialize(pluginConfig));
         configFile.Close();
 
-        outPath ??= $"{pluginConfig.Key}.zip";
+        outPath ??= Path.Join(path, $"{pluginConfig.Key}.zip");
         if (File.Exists(outPath))
             File.Delete(outPath);
         ZipFile.CreateFromDirectory(tempPath, outPath);
@@ -66,5 +66,7 @@ public class Builder
         }
         else
             Directory.Delete(tempPath, recursive: true);
+
+        return outPath;
     }
 }

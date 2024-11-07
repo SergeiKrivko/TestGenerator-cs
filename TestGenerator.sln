@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{8D8D1DD4-1C59-4B52-8DAD-1B11FFED4A64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangC", "Plugins\LangC\LangC.csproj", "{E3789EC3-E96C-4556-AC51-64172E05A949}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangCOld", "Plugins\LangCOld\LangCOld.csproj", "{E3789EC3-E96C-4556-AC51-64172E05A949}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGeneratorCLI", "TestGeneratorCLI\TestGeneratorCLI.csproj", "{ABE71C54-0D70-4B36-9C19-9286CE541176}"
 EndProject

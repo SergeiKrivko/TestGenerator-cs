@@ -8,14 +8,15 @@
         <Nullable>enable</Nullable>
         <ToolCommandName>testgenerator-plugin</ToolCommandName>
         <PackageId>TestGenerator.PluginBuilder</PackageId>
-        <PackageVersion>1.0.1</PackageVersion>
+        <PackageVersion>1.1.0</PackageVersion>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <RootNamespace>Testenerator.PluginBuilder</RootNamespace>
+        <RootNamespace>TestGenerator.PluginBuilder</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="CommandLineParser" Version="2.9.1"/>
+        <PackageReference Include="Octokit" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>

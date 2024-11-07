@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Testenerator.PluginBuilder.Args;
+namespace TestGenerator.PluginBuilder.Args;
 
 [Verb("build", HelpText = "Сборка плагина TestGenerator")]
 public class PluginBuildOptions

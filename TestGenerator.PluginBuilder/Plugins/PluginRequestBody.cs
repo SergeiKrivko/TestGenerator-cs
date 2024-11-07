@@ -1,4 +1,4 @@
-﻿namespace Testenerator.PluginBuilder.Plugins;
+﻿namespace TestGenerator.PluginBuilder.Plugins;
 
 public class PluginRequestBody
 {
