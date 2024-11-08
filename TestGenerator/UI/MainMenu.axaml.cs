@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using TestGenerator.Settings;
 
 namespace TestGenerator.UI;
 
@@ -57,5 +59,16 @@ public partial class MainMenu : UserControl
         
         var e = new RoutedEventArgs(TabChangeEvent);
         RaiseEvent(e);
+    }
+
+    private async void SettingsButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var dialog = new SettingsWindow();
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
+            desktop.MainWindow != null)
+        {
+            await dialog.ShowDialog(desktop.MainWindow);
+        }
     }
 }

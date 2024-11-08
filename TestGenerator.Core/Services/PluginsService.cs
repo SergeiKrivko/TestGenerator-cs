@@ -18,9 +18,10 @@ public class PluginsService
         }
     }
 
-    public Dictionary<string, Plugin> Plugins { get; } = [];
-    
+    public Dictionary<string, InstalledPlugin> Plugins { get; } = [];
+
     public delegate void PluginLoadedHandler(Plugin plugin);
+
     public event PluginLoadedHandler? OnPluginLoaded;
 
     public void Load()
@@ -54,7 +55,7 @@ public class PluginsService
                 if (instance != null)
                 {
                     var plugin = (Plugin)instance;
-                    Plugins.Add(config.Key, plugin);
+                    Plugins.Add(config.Key, new InstalledPlugin { Config = config, Plugin = plugin });
                     LogService.Logger.Debug($"Plugin '{config.Key}' loaded");
                     OnPluginLoaded?.Invoke(plugin);
                 }

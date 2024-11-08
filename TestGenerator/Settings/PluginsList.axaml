@@ -1,0 +1,30 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:settings="clr-namespace:TestGenerator.Settings"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="settings:PluginsList"
+             x:Class="TestGenerator.Settings.PluginsList">
+    <Grid RowDefinitions="Auto *" ColumnDefinitions="* *">
+        <TextBox Name="SearchBox" Margin="5" TextChanged="SearchBox_OnTextChanged"></TextBox>
+        <ListBox Grid.Column="0" Grid.Row="1" Name="ListBox" ItemsSource="{Binding ObservablePlugins}"
+                 SelectionChanged="ListBox_OnSelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Key}"></TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Spacing="5" Margin="10">
+            <TextBlock Name="PluginNameBox" FontSize="18"></TextBlock>
+            <StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
+                <Button Name="InstallButton">Установить</Button>
+                <Button Name="RemoveButton">Удалить</Button>
+                <Button Name="UpdateButton">Обновить</Button>
+            </StackPanel>
+            <Separator></Separator>
+            <TextBlock Name="PluginDescriptionBox" TextWrapping="Wrap"></TextBlock>
+        </StackPanel>
+    </Grid>
+</UserControl>
