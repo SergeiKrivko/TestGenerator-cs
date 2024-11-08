@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using DynamicData;
 using TestGenerator.Settings;
 
 namespace TestGenerator.UI;
@@ -45,6 +46,13 @@ public partial class MainMenu : UserControl
         {
             _onClicked(key);
         }
+    }
+
+    public void Remove(string key)
+    {
+        var button = _buttons[key];
+        ButtonsPanel.Children.Remove(button);
+        _buttons.Remove(key);
     }
 
     private void _onClicked(string key)

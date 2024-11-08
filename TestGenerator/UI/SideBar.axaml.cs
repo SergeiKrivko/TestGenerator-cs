@@ -53,6 +53,13 @@ public partial class SideBar : UserControl
         StackPanel.Children.Add(button);
     }
 
+    public void Remove(string key)
+    {
+        var button = _buttons[key];
+        _buttons.Remove(key);
+        StackPanel.Children.Remove(button);
+    }
+
     private void _onClicked(string key)
     {
         foreach (var item in _buttons)

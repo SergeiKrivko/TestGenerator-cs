@@ -39,6 +39,16 @@ public class BuildTypesService
         Types.Add(buildType.Key, buildType);
     }
 
+    public void Remove(BuildType buildType)
+    {
+        Types.Remove(buildType.Key);
+    }
+
+    public void Remove(string key)
+    {
+        Types.Remove(key);
+    }
+
     private class CommandBuilder : BaseBuilder
     {
         public CommandBuilder(Guid id, AProject project, SettingsSection settings) : base(id, project, settings)
@@ -75,6 +85,12 @@ public class BuildTypesService
                 Add(buildType);
             }
         };
-        PluginsService.Instance.OnPluginLoaded += plugin => Console.WriteLine(plugin.Name);
+        PluginsService.Instance.OnPluginUnloaded += plugin =>
+        {
+            foreach (var buildType in plugin.BuildTypes)
+            {
+                Remove(buildType);
+            }
+        };
     }
 }

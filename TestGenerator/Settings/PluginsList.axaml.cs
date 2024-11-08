@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using DynamicData;
 using TestGenerator.Core.Models;
@@ -17,6 +18,9 @@ public abstract partial class PluginsList : UserControl
     protected readonly PluginsHttpService HttpService = new();
     private RemotePlugin[] _plugins = [];
     public ObservableCollection<RemotePlugin> ObservablePlugins { get; } = [];
+
+    private string? _selectedKey;
+    private RemotePluginRelease? _latestRelease;
     
     public PluginsList()
     {
@@ -78,6 +82,7 @@ public abstract partial class PluginsList : UserControl
 
     private async void Open(string? key)
     {
+        _selectedKey = key;
         if (key == null)
         {
             PluginNameBox.Text = "";
@@ -85,14 +90,14 @@ public abstract partial class PluginsList : UserControl
         }
         else
         {
-            var latestRelease = await LoadLatestRelease(key);
+            _latestRelease = await LoadLatestRelease(key);
             var installedRelease = LoadInstalledRelease(key);
             
-            PluginNameBox.Text = installedRelease?.Name ?? latestRelease?.Name;
-            PluginDescriptionBox.Text = installedRelease?.Description ?? latestRelease?.Description;
+            PluginNameBox.Text = installedRelease?.Name ?? _latestRelease?.Name;
+            PluginDescriptionBox.Text = installedRelease?.Description ?? _latestRelease?.Description;
 
-            InstallButton.IsVisible = installedRelease == null && latestRelease != null;
-            UpdateButton.IsVisible = installedRelease != null && installedRelease.Version < latestRelease?.Version;
+            InstallButton.IsVisible = installedRelease == null && _latestRelease != null;
+            UpdateButton.IsVisible = installedRelease != null && installedRelease.Version < _latestRelease?.Version;
             RemoveButton.IsVisible = installedRelease != null;
         }
     }
@@ -104,6 +109,29 @@ public abstract partial class PluginsList : UserControl
         else
         {
             Open((ListBox.SelectedItems?[0] as RemotePlugin)?.Key);
+        }
+    }
+
+    private async void InstallButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_latestRelease != null)
+        {
+            await PluginsService.Instance.InstallPlugin(_latestRelease.Url);
+        }
+    }
+
+    private void RemoveButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_selectedKey != null)
+            PluginsService.Instance.RemovePlugin(_selectedKey);
+    }
+
+    private async void UpdateButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_latestRelease != null && _selectedKey != null)
+        {
+            PluginsService.Instance.RemovePlugin(_selectedKey);
+            await PluginsService.Instance.InstallPlugin(_latestRelease.Url);
         }
     }
 }

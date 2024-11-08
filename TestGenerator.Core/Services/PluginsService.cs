@@ -1,5 +1,8 @@
-﻿using System.Reflection;
+﻿using System.IO.Compression;
+using System.Net;
+using System.Reflection;
 using System.Text.Json;
+using TestGenerator.Core.Exceptions;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared;
 
@@ -8,6 +11,7 @@ namespace TestGenerator.Core.Services;
 public class PluginsService
 {
     private static PluginsService? _instance;
+    private readonly HttpClient _httpClient = new();
 
     public static PluginsService Instance
     {
@@ -23,6 +27,7 @@ public class PluginsService
     public delegate void PluginLoadedHandler(Plugin plugin);
 
     public event PluginLoadedHandler? OnPluginLoaded;
+    public event PluginLoadedHandler? OnPluginUnloaded;
 
     public void Load()
     {
@@ -30,13 +35,27 @@ public class PluginsService
         Directory.CreateDirectory(path);
         foreach (var directory in Directory.GetDirectories(path))
         {
-            try
+            if (File.Exists(Path.Join(directory, "IsDeleted")))
             {
-                LoadPlugin(directory);
+                try
+                {
+                    Directory.Delete(directory, recursive: true);
+                }
+                catch (UnauthorizedException e)
+                {
+                    LogService.Logger.Warning($"Cannot delete directory '{directory}': {e.Message}");
+                }
             }
-            catch (Exception e)
+            else
             {
-                LogService.Logger.Error($"Fail to load plugin '{directory}': {e}");
+                try
+                {
+                    LoadPlugin(directory);
+                }
+                catch (Exception e)
+                {
+                    LogService.Logger.Error($"Fail to load plugin '{directory}': {e}");
+                }
             }
         }
     }
@@ -55,7 +74,8 @@ public class PluginsService
                 if (instance != null)
                 {
                     var plugin = (Plugin)instance;
-                    Plugins.Add(config.Key, new InstalledPlugin { Config = config, Plugin = plugin });
+                    Plugins.Add(config.Key,
+                        new InstalledPlugin { Config = config, Plugin = plugin, Path = pluginPath });
                     LogService.Logger.Debug($"Plugin '{config.Key}' loaded");
                     OnPluginLoaded?.Invoke(plugin);
                 }
@@ -72,5 +92,34 @@ public class PluginsService
         LogService.Logger.Debug($"Loading plugin from: {pluginLocation}");
         var loadContext = new PluginLoadContext(pluginLocation);
         return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
+    }
+
+    public void UnloadPlugin(string key)
+    {
+        var plugin = Plugins[key];
+        OnPluginUnloaded?.Invoke(plugin.Plugin);
+        Plugins.Remove(key);
+    }
+
+    public async Task InstallPlugin(string url)
+    {
+        var installedPath = Path.Join(AppService.Instance.AppDataPath, "Plugins", Guid.NewGuid().ToString());
+        var stream = await _httpClient.GetStreamAsync(url);
+        await Task.Run(() => ZipFile.ExtractToDirectory(stream, installedPath));
+        LoadPlugin(installedPath);
+    }
+
+    public void RemovePlugin(string key)
+    {
+        if (!Plugins.ContainsKey(key))
+        {
+            LogService.Logger.Warning($"Plugin '{key}' not found");
+            return;
+        }
+
+        var plugin = Plugins[key];
+        UnloadPlugin(key);
+        File.Create(Path.Join(plugin.Path, "IsDeleted"));
+        LogService.Logger.Information($"Plugin '{key}' was unloaded and marked as deleted");
     }
 }

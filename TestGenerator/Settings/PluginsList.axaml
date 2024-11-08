@@ -19,9 +19,9 @@
         <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Spacing="5" Margin="10">
             <TextBlock Name="PluginNameBox" FontSize="18"></TextBlock>
             <StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
-                <Button Name="InstallButton">Установить</Button>
-                <Button Name="RemoveButton">Удалить</Button>
-                <Button Name="UpdateButton">Обновить</Button>
+                <Button Name="InstallButton" Click="InstallButton_OnClick">Установить</Button>
+                <Button Name="RemoveButton" Click="RemoveButton_OnClick">Удалить</Button>
+                <Button Name="UpdateButton" Click="UpdateButton_OnClick">Обновить</Button>
             </StackPanel>
             <Separator></Separator>
             <TextBlock Name="PluginDescriptionBox" TextWrapping="Wrap"></TextBlock>

@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -25,6 +22,7 @@ public partial class MainWindow : Window
         AppService.Instance.OnMainTabShow += ShowMainTab;
         AppService.Instance.OnSideTabShow += ShowSideTab;
         PluginsService.Instance.OnPluginLoaded += AddPlugin;
+        PluginsService.Instance.OnPluginUnloaded += RemovePlugin;
         BuildTypesService.Init();
         
         InitializeComponent();
@@ -113,6 +111,14 @@ public partial class MainWindow : Window
         SideBar.Add(tab.TabKey, tab.TabIcon);
     }
 
+    private void RemoveSideTab(string key)
+    {
+        var tab = _sideTabs[key];
+        _sideTabs.Remove(key);
+        SideTabsPanel.Children.Add(tab);
+        SideBar.Remove(key);
+    }
+
     private void AddPlugin(Plugin plugin)
     {
         foreach (var tab in plugin.MainTabs)
@@ -125,6 +131,20 @@ public partial class MainWindow : Window
         foreach (var tab in plugin.SideTabs)
         {
             AddSideTab(tab);
+        }
+    }
+
+    private void RemovePlugin(Plugin plugin)
+    {
+        foreach (var tab in plugin.MainTabs)
+        {
+            _mainTabs.Remove(tab.TabKey);
+            MainTabsPanel.Children.Remove(tab);
+            MainMenu.Remove(tab.TabKey);
+        }
+        foreach (var tab in plugin.SideTabs)
+        {
+            RemoveSideTab(tab.TabKey);
         }
     }
 }
