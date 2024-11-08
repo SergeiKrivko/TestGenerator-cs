@@ -18,7 +18,7 @@ public class Builder
         }
 
         res.AddRange(Directory.GetFiles(path)
-            .Where(f => f.EndsWith(".dll") && !f.Contains("Avalonia") && !f.Contains("Serilog") &&
+            .Where(f => !f.EndsWith(".pdb") && !f.Contains("Avalonia") && !f.Contains("Serilog") &&
                         Path.GetFileNameWithoutExtension(f) != "TestGenerator.Shared"));
 
         return res;
