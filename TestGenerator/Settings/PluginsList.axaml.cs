@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using DynamicData;
 using TestGenerator.Core.Models;
 using TestGenerator.Core.Services;
@@ -21,7 +20,8 @@ public abstract partial class PluginsList : UserControl
 
     private string? _selectedKey;
     private RemotePluginRelease? _latestRelease;
-    
+    private HashSet<string> _nowDownloading = [];
+
     public PluginsList()
     {
         InitializeComponent();
@@ -56,7 +56,7 @@ public abstract partial class PluginsList : UserControl
 
     protected abstract Task<RemotePluginRelease?> LoadLatestRelease(string key);
 
-    private async void Load()
+    public async void Load()
     {
         _plugins = await LoadAllPlugins();
         Search();
@@ -83,22 +83,30 @@ public abstract partial class PluginsList : UserControl
     private async void Open(string? key)
     {
         _selectedKey = key;
+        ReleasePanel.IsVisible = false;
         if (key == null)
         {
             PluginNameBox.Text = "";
             PluginDescriptionBox.Text = "";
+            DownloadingBlock.IsVisible = false;
         }
         else
         {
+            DownloadingBlock.IsVisible = _nowDownloading.Contains(key);
             _latestRelease = await LoadLatestRelease(key);
             var installedRelease = LoadInstalledRelease(key);
-            
+
             PluginNameBox.Text = installedRelease?.Name ?? _latestRelease?.Name;
             PluginDescriptionBox.Text = installedRelease?.Description ?? _latestRelease?.Description;
 
-            InstallButton.IsVisible = installedRelease == null && _latestRelease != null;
-            UpdateButton.IsVisible = installedRelease != null && installedRelease.Version < _latestRelease?.Version;
-            RemoveButton.IsVisible = installedRelease != null;
+            DownloadingBlock.IsVisible = _nowDownloading.Contains(key);
+                InstallButton.IsVisible =
+                !_nowDownloading.Contains(key) && installedRelease == null && _latestRelease != null;
+            UpdateButton.IsVisible = !_nowDownloading.Contains(key) && installedRelease != null &&
+                                     installedRelease.Version < _latestRelease?.Version;
+            RemoveButton.IsVisible = !_nowDownloading.Contains(key) && installedRelease != null;
+            
+            ReleasePanel.IsVisible = true;
         }
     }
 
@@ -112,26 +120,55 @@ public abstract partial class PluginsList : UserControl
         }
     }
 
+    private void AddDownloading(string key)
+    {
+        _nowDownloading.Add(key);
+        if (_selectedKey == key)
+        {
+            DownloadingBlock.IsVisible = true;
+            InstallButton.IsVisible = false;
+            RemoveButton.IsVisible = false;
+            UpdateButton.IsVisible = false;
+        }
+    }
+
+    private void RemoveDownloading(string key)
+    {
+        _nowDownloading.Remove(key);
+        if (_selectedKey == key)
+        {
+            DownloadingBlock.IsVisible = false;
+            RemoveButton.IsVisible = true;
+        }
+    }
+
     private async void InstallButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (_latestRelease != null)
+        if (_latestRelease != null && _selectedKey != null)
         {
+            AddDownloading(_selectedKey);
             await PluginsService.Instance.InstallPlugin(_latestRelease.Url);
+            RemoveDownloading(_selectedKey);
         }
     }
 
     private void RemoveButton_OnClick(object? sender, RoutedEventArgs e)
     {
         if (_selectedKey != null)
+        {
             PluginsService.Instance.RemovePlugin(_selectedKey);
+            Open(_selectedKey);
+        }
     }
 
     private async void UpdateButton_OnClick(object? sender, RoutedEventArgs e)
     {
         if (_latestRelease != null && _selectedKey != null)
         {
+            AddDownloading(_selectedKey);
             PluginsService.Instance.RemovePlugin(_selectedKey);
             await PluginsService.Instance.InstallPlugin(_latestRelease.Url);
+            RemoveDownloading(_selectedKey);
         }
     }
 }
