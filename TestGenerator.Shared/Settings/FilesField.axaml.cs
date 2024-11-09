@@ -8,7 +8,7 @@ public partial class FilesField : UserControl, IField
 {
     public object? Value
     {
-        get => (_topLevelItem?.Current ?? []).Select(p => System.IO.Path.GetRelativePath(Path, p));
+        get => (_topLevelItem?.Current ?? []).Select(p => System.IO.Path.GetRelativePath(Path, p).Replace('\\', '/'));
         set => _topLevelItem?.Select((value as IEnumerable<string> ?? [])
             .Select(p => System.IO.Path.GetFullPath(System.IO.Path.Join(Path, p))).ToArray());
     }

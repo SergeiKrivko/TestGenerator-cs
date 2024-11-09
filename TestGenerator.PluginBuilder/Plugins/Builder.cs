@@ -18,11 +18,32 @@ public class Builder
         }
 
         res.AddRange(Directory.GetFiles(path)
-            .Where(f => !f.EndsWith(".pdb") && !f.Contains("Avalonia") && !f.Contains("Serilog") &&
-                        Path.GetFileNameWithoutExtension(f) != "TestGenerator.Shared"));
+            .Where(f => !f.EndsWith(".pdb") && !ExcludeDlls.Contains(Path.GetFileName(f))));
 
         return res;
     }
+
+    private static readonly string[] ExcludeDlls =
+    [
+        "TestGenerator.Shared.dll",
+        "Avalonia.Base.dll",
+        "Avalonia.Controls.dll",
+        "Avalonia.DesignerSupport.dll",
+        "Avalonia.Dialogs.dll",
+        "Avalonia.Markup.Xaml.dll",
+        "Avalonia.Markup.dll",
+        "Avalonia.Metal.dll",
+        "Avalonia.MicroCom.dll",
+        "Avalonia.OpenGL.dll",
+        "Avalonia.Vulkan.dll",
+        "Avalonia.dll",
+        "Avalonia.Remote.Protocol.dll",
+        "Avalonia.BuildServices.dll",
+        "MicroCom.Runtime.dll",
+        "Serilog.dll",
+        "Serilog.Sinks.Console.dll",
+        "Serilog.Sinks.File.dll"
+    ];
 
     public static string Build(string path, string? outPath = null, bool install = false)
     {

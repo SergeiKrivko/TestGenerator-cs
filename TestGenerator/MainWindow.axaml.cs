@@ -132,6 +132,10 @@ public partial class MainWindow : Window
         {
             AddSideTab(tab);
         }
+        foreach (var provider in plugin.EditorProviders)
+        {
+            CodeTab.Providers.Add(provider);
+        }
     }
 
     private void RemovePlugin(Plugin plugin)
@@ -145,6 +149,10 @@ public partial class MainWindow : Window
         foreach (var tab in plugin.SideTabs)
         {
             RemoveSideTab(tab.TabKey);
+        }
+        foreach (var provider in plugin.EditorProviders)
+        {
+            CodeTab.Providers.Remove(provider);
         }
     }
 }
