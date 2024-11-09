@@ -16,6 +16,8 @@ public partial class Terminal : UserControl
     public string CurrentDirectory { get; set; } = ".";
     public string TerminalApp { get; set; }
     public string TerminalAppArgs { get; set; }
+
+    public bool TerminalQuotes { get; set; } = false;
     
     private List<string> _lastCommands = [];
     private int _lastCommandIndex = 0;
@@ -32,6 +34,7 @@ public partial class Terminal : UserControl
         {
             TerminalApp = "bash";
             TerminalAppArgs = "-c";
+            TerminalQuotes = true;
         }
         else
         {
@@ -107,7 +110,8 @@ public partial class Terminal : UserControl
             {
                 var proc = CurrentProcess = new Process();
                 CurrentProcess.StartInfo.FileName = TerminalApp;
-                CurrentProcess.StartInfo.Arguments = TerminalAppArgs + " " + command;
+                CurrentProcess.StartInfo.Arguments = TerminalAppArgs + " " +
+                                                     (TerminalQuotes ? "\"" + command + "\"" : command);
                 CurrentProcess.StartInfo.WorkingDirectory = CurrentDirectory;
                 CurrentProcess.StartInfo.CreateNoWindow = true;
                 CurrentProcess.StartInfo.StandardInputEncoding = Encoding.UTF8;
