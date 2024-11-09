@@ -12,7 +12,23 @@ public partial class DirectoryItem : UserControl, IItem
     public event IItem.SelectionChangeHandler? SelectionChanged;
     public event Action? Changed;
 
-    public bool Selected => CheckBox.IsChecked ?? false;
+    private bool _ignoreChildren = false;
+
+    public bool Selected
+    {
+        get => CheckBox.IsChecked ?? false;
+        set
+        {
+            CheckBox.IsChecked = value;
+            foreach (var child in ChildrenPanel.Children)
+            {
+                if (child is IItem)
+                {
+                    ((IItem)child).Selected = value;
+                }
+            }
+        }
+    }
 
     public string[] Current
     {
@@ -60,6 +76,7 @@ public partial class DirectoryItem : UserControl, IItem
             if (DirHasFiles(directory, extensions))
             {
                 var item = new DirectoryItem(directory, extensions);
+                item.Changed += OnChildSelectionChanged;
                 ChildrenPanel.Children.Add(item);
             }
         }
@@ -67,7 +84,7 @@ public partial class DirectoryItem : UserControl, IItem
         foreach (var file in Directory.GetFiles(path).Where(p => extensions.Contains(System.IO.Path.GetExtension(p))))
         {
             var item = new FileItem(file, extensions);
-            item.SelectionChanged += f => Changed?.Invoke();
+            item.SelectionChanged += f => OnChildSelectionChanged();
             ChildrenPanel.Children.Add(item);
         }
     }
@@ -96,9 +113,39 @@ public partial class DirectoryItem : UserControl, IItem
         ChildrenPanel.IsVisible = false;
     }
 
+    private void OnChildSelectionChanged()
+    {
+        if (!_ignoreChildren)
+        {
+            if (ChildrenPanel.Children.All(c => (c as IItem)?.Selected ?? false))
+            {
+                CheckBox.IsChecked = true;
+                SelectionChanged?.Invoke(Selected);
+            } 
+            else
+            {
+                CheckBox.IsChecked = false;
+                SelectionChanged?.Invoke(Selected);
+            }
+        }
+        Changed?.Invoke();
+    }
+
     private void CheckBox_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
     {
         SelectionChanged?.Invoke(Selected);
+        _ignoreChildren = true;
+        foreach (var child in ChildrenPanel.Children)
+        {
+            if (child is IItem)
+            {
+                Console.WriteLine(Selected);
+                ((IItem)child).Selected = Selected;
+            }
+        }
+
+        _ignoreChildren = false;
+
         Changed?.Invoke();
     }
 }

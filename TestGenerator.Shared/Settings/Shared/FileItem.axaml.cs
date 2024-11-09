@@ -13,7 +13,11 @@ public partial class FileItem : UserControl, IItem
 
     public event IItem.SelectionChangeHandler? SelectionChanged;
 
-    public bool Selected => CheckBox.IsChecked ?? false;
+    public bool Selected
+    {
+        get => CheckBox.IsChecked ?? false;
+        set => CheckBox.IsChecked = value;
+    }
 
     public string[] Current => Selected ? [Path] : [];
 

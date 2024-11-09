@@ -114,7 +114,7 @@ public partial class Terminal : UserControl
                                                      (TerminalQuotes ? "\"" + command + "\"" : command);
                 CurrentProcess.StartInfo.WorkingDirectory = CurrentDirectory;
                 CurrentProcess.StartInfo.CreateNoWindow = true;
-                CurrentProcess.StartInfo.StandardInputEncoding = Encoding.UTF8;
+                // CurrentProcess.StartInfo.StandardInputEncoding = Encoding.UTF8;
                 CurrentProcess.StartInfo.StandardErrorEncoding = Encoding.UTF8;
                 CurrentProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
                 CurrentProcess.StartInfo.UseShellExecute = false;

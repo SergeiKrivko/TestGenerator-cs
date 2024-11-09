@@ -10,7 +10,7 @@ public interface IItem
     
     public string[] Current { get; }
     
-    public bool Selected { get; }
+    public bool Selected { get; set; }
 
     public void Select(string[] items);
 }
