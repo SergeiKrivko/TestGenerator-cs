@@ -5,7 +5,8 @@ namespace TestGenerator.MainTabs.Code;
 
 public class CodeEditorProvider : IEditorProvider
 {
-    public string Name => "CodeEditor";
+    public string Key => "CodeEditor";
+    public string Name => " Редактор кода";
     public string[]? Extensions => null;
     public int Priority => 5;
 

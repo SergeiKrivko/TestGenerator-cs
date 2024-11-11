@@ -14,13 +14,18 @@ public partial class CodeTab : MainTab
     private readonly Dictionary<Guid, OpenedFileTab> _tabs = [];
     private Guid? _currentFileId = null;
 
+    private static CodeTab? _instance = null;
+    public static CodeTab? Instance => _instance;
+
     public OpenedFile? CurrentFile => _currentFileId == null ? null : _files[_currentFileId.Value];
-    public List<IEditorProvider> Providers { get; } = [new CodeEditorProvider()];
+    public List<IEditorProvider> Providers { get; } = [new CodeEditorProvider(), new SystemStdAppProvider()];
 
     public CodeTab()
     {
+        _instance = this;
         InitializeComponent();
         AAppService.Instance.AddRequestHandler<string, string?>("openFile", Open);
+        AAppService.Instance.AddRequestHandler<OpenFileWithModel, bool>("openFileWith", OpenWith);
         ProjectsService.Instance.CurrentChanged += OnProjectChanged;
     }
 
@@ -44,24 +49,40 @@ public partial class CodeTab : MainTab
         {
             if (provider.CanOpen(path))
             {
-                var opened = provider.Open(path);
-                _files.Add(opened.Id, opened);
-                EditorsPanel.Children.Add(opened.Widget);
-
-                var tab = new OpenedFileTab(opened);
-                _tabs.Add(opened.Id, tab);
-                tab.Selected += TabOnSelected;
-                tab.CloseRequested += CloseTab;
-                TabsPanel.Children.Add(tab);
-                tab.IsSelected = true;
-
-                ProjectsService.Instance.Current.Settings.Set("openedFiles",
-                    _files.Values.Select(f => f.Path).ToArray());
-                return provider.Name;
+                OpenFileWithProvider(path, provider);
+                return provider.Key;
             }
         }
 
         return null;
+    }
+
+    private async Task<bool> OpenWith(OpenFileWithModel model)
+    {
+        var provider = Providers.Find(p => p.Key == model.ProviderKey);
+        if (provider == null)
+            return false;
+        OpenFileWithProvider(model.Path, provider);
+        return true;
+    }
+
+    private void OpenFileWithProvider(string path, IEditorProvider provider)
+    {
+        var opened = provider.Open(path);
+        if (opened == null)
+            return;
+        _files.Add(opened.Id, opened);
+        EditorsPanel.Children.Add(opened.Widget);
+
+        var tab = new OpenedFileTab(opened);
+        _tabs.Add(opened.Id, tab);
+        tab.Selected += TabOnSelected;
+        tab.CloseRequested += CloseTab;
+        TabsPanel.Children.Add(tab);
+        tab.IsSelected = true;
+
+        ProjectsService.Instance.Current.Settings.Set("openedFiles",
+            _files.Values.Select(f => f.Path).ToArray());
     }
 
     private void CloseTab(OpenedFile file)
@@ -71,10 +92,10 @@ public partial class CodeTab : MainTab
         tab.CloseRequested -= CloseTab;
         TabsPanel.Children.Remove(tab);
         _tabs.Remove(file.Id);
+        _files.Remove(file.Id);
         EditorsPanel.Children.Remove(file.Widget);
         if (tab.IsSelected && _tabs.Count > 0)
             _tabs.Values.First().IsSelected = true;
-        _files.Remove(file.Id);
         ProjectsService.Instance.Current.Settings.Set("openedFiles",
             _files.Values.Select(f => f.Path).ToArray());
     }

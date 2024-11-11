@@ -6,18 +6,37 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TestGenerator.FilesTab.FilesTab"
              x:DataType="filesTab:FilesTab">
-    
-    <TreeView Name="TreeView" 
-              ItemsSource="{Binding Nodes}" 
-              SelectionMode="Multiple" 
+
+    <TreeView Name="TreeView"
+              ItemsSource="{Binding Nodes}"
+              SelectionMode="Multiple"
               DoubleTapped="TreeView_OnDoubleTapped">
-        <TreeView.ItemTemplate>
-            <TreeDataTemplate ItemsSource="{Binding SubNodes}">
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                    <PathIcon Data="{Binding Icon}"/>
-                    <TextBlock Text="{Binding Title}"/>
-                </StackPanel>
+        <TreeView.DataTemplates>
+            <TreeDataTemplate DataType="filesTab:Node" ItemsSource="{Binding SubNodes}">
+                <Border ContextRequested="Control_OnContextRequested">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <PathIcon Data="{Binding Icon}" />
+                            <TextBlock Text="{Binding Title}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <Border.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Открыть" />
+                            <Separator />
+                            <MenuItem Header="Создать"></MenuItem>
+                            <Separator />
+                            <MenuItem Header="Копировать"></MenuItem>
+                            <MenuItem Header="Копировать как путь"></MenuItem>
+                            <MenuItem Header="Вставить"></MenuItem>
+                            <Separator />
+                            <MenuItem Header="Переименовать"></MenuItem>
+                            <MenuItem Header="Удалить"></MenuItem>
+                            <MenuItem Header="Переместить в корзину"></MenuItem>
+                        </ContextMenu>
+                    </Border.ContextMenu>
+                </Border>
             </TreeDataTemplate>
-        </TreeView.ItemTemplate>
+        </TreeView.DataTemplates>
     </TreeView>
 </UserControl>

@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using Avalonia.Controls;
 using Avalonia.Input;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
+using TestGenerator.MainTabs.Code;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.FilesTab;
 
-public partial class FilesTab :  SideTab
+public partial class FilesTab : SideTab
 {
-    public ObservableCollection<Node> Nodes{ get; }
+    public ObservableCollection<Node> Nodes { get; }
 
     public override string TabName => "Файлы";
     public override string TabKey => "Files";
-    public override string TabIcon => "M2.34225e-05 2.50001C5.01254e-05 1.50001 0.999996 2.61779e-05 2.50002 6.2865e-06H6.50002C7.5 -8.86825e-06 8.5 1.50001 9.50002 1.50001H20C22 1.50001 22.5 3.50001 22.5 3.50001V15.5C22.5 17.5 20.5 18 20 18H2.50002C0.500011 18 5.88746e-05 16 2.34225e-05 15.5V2.50001ZM2.50002 1.50001C2.50002 1.50001 1.5 1.5 1.5 2.5V5.5H21V4C21 4 20.8246 3 20 3H9.50002C8 3 7 1.5 6.50002 1.50001H2.50002ZM21 7H1.5V15.5C1.5 16.5 2.5 16.5 2.5 16.5H20C21 16.5 21 15.5 21 15.5V7Z";
+
+    public override string TabIcon =>
+        "M2.34225e-05 2.50001C5.01254e-05 1.50001 0.999996 2.61779e-05 2.50002 6.2865e-06H6.50002C7.5 -8.86825e-06 8.5 1.50001 9.50002 1.50001H20C22 1.50001 22.5 3.50001 22.5 3.50001V15.5C22.5 17.5 20.5 18 20 18H2.50002C0.500011 18 5.88746e-05 16 2.34225e-05 15.5V2.50001ZM2.50002 1.50001C2.50002 1.50001 1.5 1.5 1.5 2.5V5.5H21V4C21 4 20.8246 3 20 3H9.50002C8 3 7 1.5 6.50002 1.50001H2.50002ZM21 7H1.5V15.5C1.5 16.5 2.5 16.5 2.5 16.5H20C21 16.5 21 15.5 21 15.5V7Z";
 
     public FilesTab()
     {
@@ -44,7 +48,30 @@ public partial class FilesTab :  SideTab
         if (item is FileNode)
         {
             var fileNode = (FileNode)item;
-            AAppService.Instance.Request<int>("openFile", fileNode.Info.FullName);
+            AAppService.Instance.Request<string?>("openFile", fileNode.Info.FullName);
+        }
+    }
+
+    private void Control_OnContextRequested(object? sender, ContextRequestedEventArgs e)
+    {
+        var border = sender as Border;
+        if (border == null)
+            return;
+        var item = TreeView.SelectedItem as Node;
+        if (item == null)
+            return;
+
+        var openMenu = border.ContextMenu?.Items[0] as MenuItem;
+        openMenu?.Items.Clear();
+        foreach (var provider in CodeTab.Instance?.Providers ?? [])
+        {
+            if (provider.CanOpen(item.Path))
+            {
+                var menuItem = new MenuItem { Header = provider.Name };
+                menuItem.Click += (o, args) => AAppService.Instance.Request<bool>("openFileWith",
+                    new OpenFileWithModel { Path = item.Path, ProviderKey = provider.Key });
+                openMenu?.Items.Add(menuItem);
+            }
         }
     }
 }
@@ -53,16 +80,19 @@ public class Node
 {
     public ObservableCollection<Node> SubNodes { get; }
     public string Title { get; }
+    public string Path { get; }
     public string Icon { get; set; } = "";
-  
-    public Node(string title)
+
+    public Node(string path, string title)
     {
+        Path = path;
         Title = title;
         SubNodes = new ObservableCollection<Node>();
     }
 
-    public Node(string title, ObservableCollection<Node> subNodes)
+    public Node(string path, string title, ObservableCollection<Node> subNodes)
     {
+        Path = path;
         Title = title;
         SubNodes = subNodes;
     }
@@ -72,11 +102,12 @@ class DirectoryNode : Node
 {
     public DirectoryInfo Info { get; }
 
-    public DirectoryNode(DirectoryInfo info): base(info.Name)
+    public DirectoryNode(DirectoryInfo info) : base(info.FullName, info.Name)
     {
         Info = info;
         Update();
-        Icon = "M2.34225e-05 2.50001C5.01254e-05 1.50001 0.999996 2.61779e-05 2.50002 6.2865e-06H6.50002C7.5 -8.86825e-06 8.5 1.50001 9.50002 1.50001H20C22 1.50001 22.5 3.50001 22.5 3.50001V15.5C22.5 17.5 20.5 18 20 18H2.50002C0.500011 18 5.88746e-05 16 2.34225e-05 15.5V2.50001ZM2.50002 1.50001C2.50002 1.50001 1.5 1.5 1.5 2.5V5.5H21V4C21 4 20.8246 3 20 3H9.50002C8 3 7 1.5 6.50002 1.50001H2.50002ZM21 7H1.5V15.5C1.5 16.5 2.5 16.5 2.5 16.5H20C21 16.5 21 15.5 21 15.5V7Z";
+        Icon =
+            "M2.34225e-05 2.50001C5.01254e-05 1.50001 0.999996 2.61779e-05 2.50002 6.2865e-06H6.50002C7.5 -8.86825e-06 8.5 1.50001 9.50002 1.50001H20C22 1.50001 22.5 3.50001 22.5 3.50001V15.5C22.5 17.5 20.5 18 20 18H2.50002C0.500011 18 5.88746e-05 16 2.34225e-05 15.5V2.50001ZM2.50002 1.50001C2.50002 1.50001 1.5 1.5 1.5 2.5V5.5H21V4C21 4 20.8246 3 20 3H9.50002C8 3 7 1.5 6.50002 1.50001H2.50002ZM21 7H1.5V15.5C1.5 16.5 2.5 16.5 2.5 16.5H20C21 16.5 21 15.5 21 15.5V7Z";
     }
 
     public void Update()
@@ -86,6 +117,7 @@ class DirectoryNode : Node
         {
             SubNodes.Add(new DirectoryNode(elem));
         }
+
         foreach (var elem in Info.GetFiles())
         {
             SubNodes.Add(new FileNode(elem));
@@ -97,7 +129,7 @@ class FileNode : Node
 {
     public FileInfo Info { get; }
 
-    public FileNode(FileInfo info): base(info.Name)
+    public FileNode(FileInfo info) : base(info.FullName, info.Name)
     {
         Info = info;
     }
