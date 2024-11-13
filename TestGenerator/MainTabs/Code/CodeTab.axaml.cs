@@ -10,14 +10,14 @@ namespace TestGenerator.MainTabs.Code;
 
 public partial class CodeTab : MainTab
 {
-    private readonly Dictionary<Guid, OpenedFile> _files = [];
+    private readonly Dictionary<Guid, OpenedFileModel> _files = [];
     private readonly Dictionary<Guid, OpenedFileTab> _tabs = [];
     private Guid? _currentFileId = null;
 
     private static CodeTab? _instance = null;
     public static CodeTab? Instance => _instance;
 
-    public OpenedFile? CurrentFile => _currentFileId == null ? null : _files[_currentFileId.Value];
+    public OpenedFile? CurrentFile => _currentFileId == null ? null : _files[_currentFileId.Value].File;
     public List<IEditorProvider> Providers { get; } = [new CodeEditorProvider(), new SystemStdAppProvider()];
 
     public CodeTab()
@@ -32,13 +32,17 @@ public partial class CodeTab : MainTab
     private async void OnProjectChanged(Project project)
     {
         Clear();
-        var current = project.Settings.Get<string>("currentFile");
-        foreach (var file in project.Settings.Get<string[]>("openedFiles", []))
+        var current = project.Settings.Get<OpenedFileModel>("currentFile");
+        foreach (var file in project.Settings.Get<OpenedFileModel[]>("openedFiles", []))
         {
-            await Open(file);
+            var provider = Providers.Find(p => p.Key == file.Provider);
+            if (provider != null)
+                OpenFileWithProvider(file.Path, provider);
+            else
+                await Open(file.Path);
         }
 
-        var f = _files.Values.SingleOrDefault(f => f.Path == current);
+        var f = _files.Values.FirstOrDefault(f => f.Path == current?.Path && f.Provider == current.Provider);
         if (f != null)
             _tabs[f.Id].IsSelected = true;
     }
@@ -71,33 +75,41 @@ public partial class CodeTab : MainTab
         var opened = provider.Open(path);
         if (opened == null)
             return;
-        _files.Add(opened.Id, opened);
+        var model = new OpenedFileModel { File = opened, Path = path, Provider = provider.Key };
+        _files.Add(model.Id, model);
         EditorsPanel.Children.Add(opened.Widget);
 
-        var tab = new OpenedFileTab(opened);
-        _tabs.Add(opened.Id, tab);
+        var tab = new OpenedFileTab(model);
+        _tabs.Add(model.Id, tab);
         tab.Selected += TabOnSelected;
         tab.CloseRequested += CloseTab;
         TabsPanel.Children.Add(tab);
         tab.IsSelected = true;
 
-        ProjectsService.Instance.Current.Settings.Set("openedFiles",
-            _files.Values.Select(f => f.Path).ToArray());
+        StoreOpenedFiles();
     }
 
-    private void CloseTab(OpenedFile file)
+    private void StoreOpenedFiles()
     {
+        ProjectsService.Instance.Current.Settings.Set("openedFiles",
+            _files.Values.ToArray());
+    }
+
+    private void CloseTab(OpenedFileModel? file)
+    {
+        if (file == null)
+            return;
         var tab = _tabs[file.Id];
         tab.Selected -= TabOnSelected;
         tab.CloseRequested -= CloseTab;
         TabsPanel.Children.Remove(tab);
         _tabs.Remove(file.Id);
         _files.Remove(file.Id);
-        EditorsPanel.Children.Remove(file.Widget);
+        if (file.File?.Widget != null)
+            EditorsPanel.Children.Remove(file.File.Widget);
         if (tab.IsSelected && _tabs.Count > 0)
             _tabs.Values.First().IsSelected = true;
-        ProjectsService.Instance.Current.Settings.Set("openedFiles",
-            _files.Values.Select(f => f.Path).ToArray());
+        StoreOpenedFiles();
     }
 
     private void Clear()
@@ -108,16 +120,24 @@ public partial class CodeTab : MainTab
         }
     }
 
-    private void TabOnSelected(OpenedFile file)
+    private void TabOnSelected(OpenedFileModel file)
     {
+        var openedFile = _files[file.Id].File;
+        if (openedFile == null)
+            return;
         foreach (var f in _files.Values.Where(f => f != file))
         {
+            if (f?.Id == null)
+                continue;
             _tabs[f.Id].IsSelected = false;
-            _files[f.Id].Widget.IsVisible = false;
+            var opened = _files[f.Id].File;
+            if (opened == null)
+                continue;
+            opened.Widget.IsVisible = false;
         }
 
-        _files[file.Id].Widget.IsVisible = true;
+        openedFile.Widget.IsVisible = true;
         ProjectsService.Instance.Current.Settings.Set("currentFile",
-            file.Path);
+            file);
     }
 }
