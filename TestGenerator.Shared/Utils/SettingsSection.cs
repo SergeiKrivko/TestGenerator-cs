@@ -19,7 +19,7 @@ public class SettingsSection
         _dictionary = dictionary;
     }
 
-    protected static SettingsSection Empty(string name)
+    public static SettingsSection Empty(string name)
     {
         return new SettingsSection(name, []);
     }

@@ -22,13 +22,15 @@
                     </StackPanel>
                     <Border.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Открыть" />
+                            <MenuItem Header="Открыть">
+                                <MenuItem />
+                            </MenuItem>
                             <Separator />
                             <MenuItem Header="Создать"></MenuItem>
                             <Separator />
-                            <MenuItem Header="Копировать"></MenuItem>
-                            <MenuItem Header="Копировать как путь"></MenuItem>
-                            <MenuItem Header="Вставить"></MenuItem>
+                            <MenuItem Header="Копировать" Click="Copy_OnClick"></MenuItem>
+                            <MenuItem Header="Копировать как путь" Click="CopyPath_OnClick"></MenuItem>
+                            <MenuItem Header="Вставить" Click="Paste_OnClick"></MenuItem>
                             <Separator />
                             <MenuItem Header="Переименовать"></MenuItem>
                             <MenuItem Header="Удалить"></MenuItem>

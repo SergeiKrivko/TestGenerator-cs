@@ -10,6 +10,7 @@ public class Plugin
     public List<BuildType> BuildTypes { get; init; } = [];
     public List<ProjectType> ProjectTypes { get; init; } = [];
     public List<IEditorProvider> EditorProviders { get; init; } = [];
+    public List<IFileCreator> FileCreators { get; init; } = [];
 
     protected Plugin()
     {
@@ -21,7 +22,8 @@ public class Plugin
         List<SideTab>? sideTabs = null,
         List<BuildType>? buildTypes = null,
         List<ProjectType>? projectTypes = null,
-        List<IEditorProvider>? editorProviders = null)
+        List<IEditorProvider>? editorProviders = null,
+        List<IFileCreator>? fileCreators = null)
     {
         Name = name;
         if (mainTabs != null)
@@ -34,5 +36,7 @@ public class Plugin
             ProjectTypes = projectTypes;
         if (editorProviders != null)
             EditorProviders = editorProviders;
+        if (fileCreators != null)
+            FileCreators = fileCreators;
     }
 }

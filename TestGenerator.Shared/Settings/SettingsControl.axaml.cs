@@ -23,6 +23,15 @@ public partial class SettingsControl : UserControl
         InitializeComponent();
     }
 
+    public SettingsControl(ICollection<IField> fields)
+    {
+        InitializeComponent();
+        foreach (var field in fields)
+        {
+            Add(field);
+        }
+    }
+
     private void Load()
     {
         if (_section == null)

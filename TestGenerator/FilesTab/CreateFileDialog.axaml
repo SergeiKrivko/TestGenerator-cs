@@ -1,0 +1,17 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TestGenerator.FilesTab.CreateFileDialog"
+        Width="400" Height="200"
+        WindowStartupLocation="CenterOwner"
+        Title="Создание файла">
+    <StackPanel Spacing="10" Margin="10">
+        <StackPanel Name="SettingsControlPanel"></StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Click="CancelButton_OnClick">Отмена</Button>
+            <Button Click="ConfirmButton_OnClick">Создать</Button>
+        </StackPanel>
+    </StackPanel>
+</Window>
