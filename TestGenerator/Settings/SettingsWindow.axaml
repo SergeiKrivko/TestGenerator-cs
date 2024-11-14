@@ -5,6 +5,17 @@
         xmlns:settings="clr-namespace:TestGenerator.Settings"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TestGenerator.Settings.SettingsWindow"
-        Title="SettingsWindow" Width="800" Height="540" WindowStartupLocation="CenterOwner">
-    <settings:PluginsView></settings:PluginsView>
+        x:DataType="settings:SettingsWindow"
+        Title="TestGenerator - настройки" Width="900" Height="540" WindowStartupLocation="CenterOwner">
+    <Grid ColumnDefinitions="Auto *">
+        <TreeView Name="TreeView" ItemsSource="{Binding Nodes}" 
+                  SelectionChanged="TreeView_OnSelectionChanged" MinWidth="250">
+            <TreeView.DataTemplates>
+                <TreeDataTemplate DataType="settings:SettingsNode" ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+            </TreeView.DataTemplates>
+        </TreeView>
+        <Panel Name="PagesPanel" Grid.Column="1" Margin="10 10 0 10"></Panel>
+    </Grid>
 </Window>

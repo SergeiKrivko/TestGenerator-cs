@@ -141,6 +141,8 @@ public class SettingsFile : SettingsSection
 
     public SettingsSection GetSection(string name)
     {
+        if (name == "")
+            return this;
         if (_sections.TryGetValue(name, out var section))
             return section;
         var newSection = Empty(name);
