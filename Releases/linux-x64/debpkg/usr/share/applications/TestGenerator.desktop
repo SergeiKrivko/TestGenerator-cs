@@ -1,0 +1,9 @@
+﻿[Desktop Entry]
+Version={AppVersion}
+Name=TestGenerator
+Exec=/opt/SergeiKrivko/TestGenerator/TestGenerator
+StartupNotify=true
+Terminal=false
+Icon=/opt/SergeiKrivko/TestGenerator/icon.png
+Type=Application
+Categories=Development;

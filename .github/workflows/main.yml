@@ -1,0 +1,152 @@
+﻿name: Build Application
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - version.txt
+
+jobs:
+  build-win-x64:
+    name: Build for Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Build
+        run: |
+          python replace_versions.py
+          cd TestGenerator
+          dotnet build --sc --runtime win-x64 -c Release
+
+      - name: Compile .ISS to .EXE Installer
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: Releases/win-x64/setup.iss
+          options: /O+
+          
+      - name: Upload release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install PyGithub
+          python upload_release.py Releases/win-x64/TestGenerator-setup.exe amd64
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestGenerator-win-x64.exe
+          path: Releases/win-x64/TestGenerator-setup.exe 
+  
+  build-linux-x64:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Build
+        id: build
+        run: |
+          python -c "print('version=', open('version.txt').read().replace('\ufeff', ''), sep='')" >> $GITHUB_OUTPUT
+          python3 replace_versions.py
+          cd TestGenerator
+          dotnet build --sc --runtime linux-x64 -c Release
+
+      - name: Prepare DEP package
+        run: |
+          cp -r TestGenerator/bin/Release/net8.0/linux-x64/. Releases/linux-x64/debpkg/opt/SergeiKrivko/TestGenerator
+
+      - name: Create DEB package
+        uses: jiro4989/build-deb-action@v3
+        with:
+          package: testgenerator
+          package_root: Releases/linux-x64/debpkg
+          maintainer: SergeiKrivko
+          version: ${{ steps.build.outputs.version }}
+          arch: amd64
+          desc: TestGenerator
+
+      - name: Upload release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install PyGithub
+          python3 upload_release.py testgenerator_${{ steps.build.outputs.version }}_amd64.deb amd64
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestGenerator-linux-x64.deb
+          path: testgenerator_${{ steps.build.outputs.version }}_amd64.deb
+          
+  build-macos-x64:
+    name: Build for macOS
+    runs-on: macos-12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Build
+        run: |
+          python3 replace_versions.py
+          cd TestGenerator
+          dotnet build --sc --runtime osx-x64 -c Release
+
+      - name: Prepare package
+        run: |
+          cp -r TestGenerator/bin/Release/net8.0/osx-x64 Releases/mac-x64/TestGenerator.app/Contents
+          mv Releases/mac-x64/TestGenerator.app/Contents/osx-x64 Releases/mac-x64/TestGenerator.app/Contents/MacOS
+
+      - name: Create installer
+        uses: QQxiaoming/create-dmg-action@v0.0.2
+        with:
+          name: TestGenerator
+          srcdir: Releases/mac-x64/TestGenerator.app
+
+      - name: Upload release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install PyGithub
+          python3 upload_release.py TestGenerator.dmg amd64
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestGenerator-mac-x64.dmg
+          path: TestGenerator.dmg
