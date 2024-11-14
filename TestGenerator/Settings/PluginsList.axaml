@@ -19,6 +19,10 @@
         <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Spacing="5" Margin="10" Name="ReleasePanel"
                     IsVisible="False">
             <TextBlock Name="PluginNameBox" FontSize="18"></TextBlock>
+            <StackPanel Orientation="Horizontal" Spacing="3">
+                <TextBlock>Версия:</TextBlock>
+                <TextBlock Name="VersionBlock"></TextBlock>
+            </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="5" Margin="5" Height="30">
                 <TextBlock Name="DownloadingBlock" VerticalAlignment="Center">Установка...</TextBlock>
                 <Button Name="InstallButton" Click="InstallButton_OnClick">Установить</Button>

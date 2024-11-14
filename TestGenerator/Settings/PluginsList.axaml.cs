@@ -97,6 +97,7 @@ public abstract partial class PluginsList : UserControl
             var installedRelease = LoadInstalledRelease(key);
 
             PluginNameBox.Text = installedRelease?.Name ?? _latestRelease?.Name;
+            VersionBlock.Text = (installedRelease?.Version ?? _latestRelease?.Version)?.ToString();
             PluginDescriptionBox.Text = installedRelease?.Description ?? _latestRelease?.Description;
 
             DownloadingBlock.IsVisible = _nowDownloading.Contains(key);
