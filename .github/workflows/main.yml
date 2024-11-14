@@ -131,7 +131,7 @@ jobs:
         run: |
           cp -r TestGenerator/bin/Release/net8.0/osx-x64 Releases/mac-x64/TestGenerator.app/Contents
           mv Releases/mac-x64/TestGenerator.app/Contents/osx-x64 Releases/mac-x64/TestGenerator.app/Contents/MacOS
-          codesign --force --timestamp --deep --entitlements "$ENTITLEMENTS" --sign - Releases/mac-x64/TestGenerator.app
+          codesign --force --timestamp --deep --entitlements Releases/mac-x64/TestGeneratorEntitlements.entitlements --sign - Releases/mac-x64/TestGenerator.app
 
       - name: Create installer
         uses: QQxiaoming/create-dmg-action@v0.0.2
