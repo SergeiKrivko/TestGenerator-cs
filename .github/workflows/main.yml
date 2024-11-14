@@ -133,8 +133,9 @@ jobs:
           cp -r TestGenerator/bin/Release/net8.0/osx-x64 Releases/mac-x64/TestGenerator.app/Contents
           mv Releases/mac-x64/TestGenerator.app/Contents/osx-x64 Releases/mac-x64/TestGenerator.app/Contents/MacOS
           cd Releases/mac-x64
-          chmod 755 sign-code.sh
-          ./sign-code.sh
+#          chmod 755 sign-code.sh
+#          ./sign-code.sh
+          codesign --verify --all-architectures --deep --strict TestGenerator.app
 
       - name: Create installer
         uses: QQxiaoming/create-dmg-action@v0.0.2
