@@ -1,9 +1,8 @@
 ﻿name: Build Application
 on:
   push:
-#    paths:
-#      - version.txt
-#      - .github/workflows/main.yml
+    paths:
+      - version.txt
 
 jobs:
   build-win-x64:
@@ -132,9 +131,7 @@ jobs:
         run: |
           cp -r TestGenerator/bin/Release/net8.0/osx-x64 Releases/mac-x64/TestGenerator.app/Contents
           mv Releases/mac-x64/TestGenerator.app/Contents/osx-x64 Releases/mac-x64/TestGenerator.app/Contents/MacOS
-          cd Releases/mac-x64
-          chmod 755 sign-code.sh
-          ./sign-code.sh
+          codesign --force --timestamp --deep --entitlements "$ENTITLEMENTS" --sign - Releases/mac-x64/TestGenerator.app
 
       - name: Create installer
         uses: QQxiaoming/create-dmg-action@v0.0.2
