@@ -127,9 +127,13 @@ jobs:
           dotnet build --sc --runtime osx-x64 -c Release
 
       - name: Prepare package
+        env:
+          SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
         run: |
           cp -r TestGenerator/bin/Release/net8.0/osx-x64 Releases/mac-x64/TestGenerator.app/Contents
           mv Releases/mac-x64/TestGenerator.app/Contents/osx-x64 Releases/mac-x64/TestGenerator.app/Contents/MacOS
+          cd Releases/mac-x64
+          ./sign-code.sh
 
       - name: Create installer
         uses: QQxiaoming/create-dmg-action@v0.0.2
