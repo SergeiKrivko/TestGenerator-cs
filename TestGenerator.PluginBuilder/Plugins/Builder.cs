@@ -64,6 +64,10 @@ public class Builder
         Directory.CreateDirectory(tempPath);
         foreach (var dll in GetDlls(Path.Join(path, "bin/Release/net8.0/publish")))
         {
+            var dir = Path.GetDirectoryName(Path.Join(tempPath,
+                Path.GetRelativePath(Path.Join(path, "bin/Release/net8.0/publish"), dll)));
+            if (!string.IsNullOrEmpty(dir))
+                Directory.CreateDirectory(dir);
             File.Copy(dll, Path.Join(tempPath,
                 Path.GetRelativePath(Path.Join(path, "bin/Release/net8.0/publish"), dll)));
         }
