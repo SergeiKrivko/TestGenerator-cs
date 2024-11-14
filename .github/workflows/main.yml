@@ -1,10 +1,9 @@
 ﻿name: Build Application
 on:
   push:
-    branches:
-      - master
     paths:
       - version.txt
+      - .github/workflows/main.yml
 
 jobs:
   build-win-x64:
