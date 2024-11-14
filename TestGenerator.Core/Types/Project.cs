@@ -27,8 +27,8 @@ public class Project : AProject
         Id = Guid.NewGuid();
         Path = path;
         Settings = SettingsFile.Open(System.IO.Path.Join(DataPath, "Settings.xml"));
-        Data = SettingsFile.Open(System.IO.Path.Join(DataPath, "Data.xml"));
-        Type = ProjectTypesService.Instance.Get(Data.Get<string>("type") ?? "");
+        var data = Data = SettingsFile.Open(System.IO.Path.Join(DataPath, "Data.xml"));
+        Type = ProjectTypesService.Instance.Get(data.Get<string>("type") ?? "");
     }
 
     private Project()
