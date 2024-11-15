@@ -12,7 +12,8 @@ public class Plugin
     public List<ProjectType> ProjectTypes { get; init; } = [];
     public List<IEditorProvider> EditorProviders { get; init; } = [];
     public List<IFileCreator> FileCreators { get; init; } = [];
-    public Dictionary<string, Control>? SettingsControls { get; init; } = [];
+    public List<IFileAction> FileActions { get; init; } = [];
+    public Dictionary<string, Control> SettingsControls { get; init; } = [];
 
     protected Plugin()
     {
@@ -26,6 +27,7 @@ public class Plugin
         List<ProjectType>? projectTypes = null,
         List<IEditorProvider>? editorProviders = null,
         List<IFileCreator>? fileCreators = null,
+        List<IFileAction>? fileActions = null,
         Dictionary<string, Control>? settingsControls = null)
     {
         Name = name;
@@ -41,6 +43,8 @@ public class Plugin
             EditorProviders = editorProviders;
         if (fileCreators != null)
             FileCreators = fileCreators;
+        if (fileActions != null)
+            FileActions = fileActions;
         if (settingsControls != null)
             SettingsControls = settingsControls;
     }

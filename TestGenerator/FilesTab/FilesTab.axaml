@@ -27,7 +27,7 @@
                             </MenuItem>
                             <Separator />
                             <MenuItem Header="Создать"></MenuItem>
-                            <Separator />
+                            <Separator Name="AfterActionsSeparator" />
                             <MenuItem Header="Копировать" Click="Copy_OnClick"></MenuItem>
                             <MenuItem Header="Копировать как путь" Click="CopyPath_OnClick"></MenuItem>
                             <MenuItem Header="Вставить" Click="Paste_OnClick"></MenuItem>

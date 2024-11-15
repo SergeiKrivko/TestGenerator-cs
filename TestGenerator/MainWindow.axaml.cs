@@ -143,6 +143,10 @@ public partial class MainWindow : Window
         {
             _filesTab.FileCreators.Add(creator);
         }
+        foreach (var creator in plugin.FileActions)
+        {
+            _filesTab.FileActions.Add(creator);
+        }
     }
 
     private void RemovePlugin(Plugin plugin)
@@ -164,6 +168,10 @@ public partial class MainWindow : Window
         foreach (var creator in plugin.FileCreators)
         {
             _filesTab.FileCreators.Remove(creator);
+        }
+        foreach (var creator in plugin.FileActions)
+        {
+            _filesTab.FileActions.Remove(creator);
         }
     }
 }

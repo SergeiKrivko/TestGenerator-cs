@@ -28,6 +28,7 @@ public partial class FilesTab : SideTab
 
     public List<IFileCreator> BuiltinFileCreators { get; } = [new FileCreator(), new DirectoryCreator()];
     public List<IFileCreator> FileCreators { get; } = [];
+    public List<IFileAction> FileActions { get; } = [];
 
     public FilesTab()
     {
@@ -83,6 +84,28 @@ public partial class FilesTab : SideTab
                         new OpenFileWithModel { Path = item.Path, ProviderKey = provider.Key });
                     openMenu?.Items.Add(menuItem);
                 }
+            }
+            
+            while ((border.ContextMenu?.Items[3] as Separator)?.Name != "AfterActionsSeparator")
+            {
+                border.ContextMenu?.Items.RemoveAt(3);
+            }
+
+            var flag = false;
+            foreach (var action in FileActions)
+            {
+                if (action.CanUse(item.Path))
+                {
+                    var menuItem = new MenuItem { Header = action.Name };
+                    menuItem.Click += (o, args) => action.Run(item.Path);
+                    border.ContextMenu?.Items.Insert(3, menuItem);
+                    flag = true;
+                }
+            }
+
+            if (flag)
+            {
+                border.ContextMenu?.Items.Insert(3, new Separator());
             }
         }
 
