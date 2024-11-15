@@ -6,6 +6,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using DynamicData;
+using TestGenerator.Core.Services;
 using TestGenerator.Settings;
 
 namespace TestGenerator.UI;
@@ -76,6 +77,13 @@ public partial class MainMenu : UserControl
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
             desktop.MainWindow != null)
         {
+            foreach (var plugin in PluginsService.Instance.Plugins.Values)
+            {
+                foreach (var item in plugin.Plugin.SettingsControls ?? [])
+                {
+                    dialog.Add(item.Key, item.Value);
+                }
+            }
             await dialog.ShowDialog(desktop.MainWindow);
         }
     }
