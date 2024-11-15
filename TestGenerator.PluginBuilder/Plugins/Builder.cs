@@ -68,10 +68,12 @@ public class Builder
                 Path.GetRelativePath(Path.Join(path, "bin/Release/net8.0/publish"), dll)));
             if (!string.IsNullOrEmpty(dir))
                 Directory.CreateDirectory(dir);
+            Console.WriteLine($"Copy {dll}...");
             File.Copy(dll, Path.Join(tempPath,
                 Path.GetRelativePath(Path.Join(path, "bin/Release/net8.0/publish"), dll)));
         }
 
+        Console.WriteLine("Writing config file...");
         var configFile = File.CreateText(Path.Join(tempPath, "Config.json"));
         configFile.Write(JsonSerializer.Serialize(pluginConfig));
         configFile.Close();
@@ -79,11 +81,15 @@ public class Builder
         outPath ??= Path.Join(path, $"{pluginConfig.Key}.zip");
         if (File.Exists(outPath))
             File.Delete(outPath);
+        Console.WriteLine("Creating ZIP...");
         ZipFile.CreateFromDirectory(tempPath, outPath);
 
         if (install)
         {
-            var installedPath = Path.Join(AppDataPath, "Plugins", pluginConfig.Key);
+            RemovePlugin(pluginConfig.Key);
+
+            Console.WriteLine("Installing plugin...");
+            var installedPath = Path.Join(AppDataPath, "Plugins", Guid.NewGuid().ToString());
             if (Directory.Exists(installedPath))
             {
                 Directory.Delete(installedPath, recursive: true);
@@ -95,5 +101,28 @@ public class Builder
             Directory.Delete(tempPath, recursive: true);
 
         return outPath;
+    }
+
+    private static void RemovePlugin(string key)
+    {
+        foreach (var directory in Directory.GetDirectories(Path.Join(AppDataPath, "Plugins")))
+        {
+            try
+            {
+                var installedPluginConfig =
+                    JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(directory, "Config.json")));
+                if (installedPluginConfig?.Key == key)
+                {
+                    Console.WriteLine($"Marking {directory} as deleted...");
+                    File.Create(Path.Join(directory, "IsDeleted"));
+                }
+            }
+            catch (FileNotFoundException)
+            {
+            }
+            catch (JsonException)
+            {
+            }
+        }
     }
 }
