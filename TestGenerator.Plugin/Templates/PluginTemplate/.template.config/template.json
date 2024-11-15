@@ -9,5 +9,14 @@
   "tags": {
     "language": "C#",
     "type": "project"
+  },
+  "symbols": {
+    "SharedLibVersion": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "1.4.1",
+      "replaces": "SharedLibVersion",
+      "displayName": "Версия TestGenerator.Shared"
+    }
   }
 }

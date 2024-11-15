@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         
         <PackageType>Template</PackageType>
-        <PackageVersion>1.2.3</PackageVersion>
+        <PackageVersion>1.3.0</PackageVersion>
         <PackageId>TestGenerator.Plugin</PackageId>
         <Title>TestGenerator Plugin template</Title>
         <Authors>SergeiKrivko</Authors>
