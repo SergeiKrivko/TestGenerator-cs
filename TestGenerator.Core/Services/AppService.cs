@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using System.Text.Json;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Types;
@@ -22,6 +23,8 @@ public class AppService : AAppService
             return _appService;
         }
     }
+
+    public override Version? AppVersion => Version.TryParse("{AppVersion}", out var res) ? res : null;
 
     public override string AppDataPath { get; } = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko", Config.AppName);
@@ -131,7 +134,7 @@ public class AppService : AAppService
         LogService.Logger.Information($"Process '{args}' (exit {proc.ExitCode})");
         return new CompletedProcess
         {
-            ExitCode = proc.ExitCode, 
+            ExitCode = proc.ExitCode,
             Stdout = await proc.StandardOutput.ReadToEndAsync(),
             Stderr = await proc.StandardError.ReadToEndAsync()
         };

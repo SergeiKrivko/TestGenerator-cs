@@ -17,6 +17,8 @@ public abstract class AAppService
         }
     }
     
+    public abstract Version? AppVersion { get; }
+    
     public abstract SettingsFile Settings { get; }
     
     public abstract string AppDataPath { get; }

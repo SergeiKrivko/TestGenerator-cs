@@ -3,7 +3,8 @@
 
 
 for file in ["Releases/win-x64/setup.iss", "Releases/mac-x64/TestGenerator.app/Contents/Info.plist", 
-             "Releases/linux-x64/debpkg/usr/share/applications/TestGenerator.desktop"]:
+             "Releases/linux-x64/debpkg/usr/share/applications/TestGenerator.desktop",
+             "TestGenerator.Core/Services/AppService.cs"]:
     with open(file, 'r') as f:
         text = f.read()
         
