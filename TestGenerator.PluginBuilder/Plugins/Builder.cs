@@ -76,7 +76,6 @@ public class Builder
                 Path.GetRelativePath(Path.Join(path, $"{netDir}/publish"), dll)));
         }
 
-        pluginConfig.Runtime = runtime;
         Console.WriteLine("Writing config file...");
         File.WriteAllText(Path.Join(tempPath, "Config.json"), JsonSerializer.Serialize(pluginConfig));
 

@@ -15,7 +15,7 @@ public class PluginPublisher
 
     private readonly HttpClient _client = new();
 
-    public async Task PublishByUrl(PluginConfig config, string url, string token)
+    public async Task PublishByUrl(PluginConfig config, string url, string token, string? runtime = null)
     {
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var resp = await _client.PostAsync(Url, JsonContent.Create(new PluginRequestBody
@@ -25,6 +25,7 @@ public class PluginPublisher
             Description = config.Description,
             Version = config.Version,
             Url = url,
+            Runtime = runtime,
         }));
         Console.WriteLine($"{resp.StatusCode}: {await resp.Content.ReadAsStringAsync()}");
         // if (!resp.IsSuccessStatusCode)
@@ -34,7 +35,7 @@ public class PluginPublisher
     }
 
     public async Task<string> PublishOnGithub(PluginConfig config, string githubUser, string githubRepo,
-        string githubToken, string path)
+        string githubToken, string path, string? runtime = null)
     {
         var client = new GitHubClient(new ProductHeaderValue("SergeiKrivko"));
         client.Credentials = new Credentials(githubToken);
@@ -53,7 +54,7 @@ public class PluginPublisher
             new NewRelease(tag));
 
         var asset = await client.Repository.Release.UploadAsset(release,
-            new ReleaseAssetUpload(config.Key + (config.Runtime == null ? "" : $"-{config.Runtime}") + ".zip",
+            new ReleaseAssetUpload(config.Key + (runtime == null ? "" : $"-{runtime}") + ".zip",
                 "application/zip", File.OpenRead(path),
                 TimeSpan.FromMinutes(5)));
         return asset.BrowserDownloadUrl;
@@ -70,22 +71,19 @@ public class PluginPublisher
             runtime: options.Runtime ?? RuntimeInformation.RuntimeIdentifier);
         Console.WriteLine(zipPath);
 
-        if (pluginConfig.PlatformSpecific)
-        {
-            pluginConfig.Runtime = options.Runtime ?? RuntimeInformation.RuntimeIdentifier;
-        }
+        var runtime = pluginConfig.PlatformSpecific ? options.Runtime ?? RuntimeInformation.RuntimeIdentifier : null;
 
         if (options.Github)
         {
             if (options.GithubUser == null || options.GithubRepo == null || options.GithubToken == null)
                 throw new Exception("Invalid Github credentials");
             var url = await PublishOnGithub(pluginConfig, options.GithubUser, options.GithubRepo, options.GithubToken,
-                zipPath);
-            await PublishByUrl(pluginConfig, url, options.Token);
+                zipPath, runtime: runtime);
+            await PublishByUrl(pluginConfig, url, options.Token, runtime: runtime);
         }
         else if (options.Url != null)
         {
-            await PublishByUrl(pluginConfig, options.Url, options.Token);
+            await PublishByUrl(pluginConfig, options.Url, options.Token, runtime: runtime);
         }
     }
 }

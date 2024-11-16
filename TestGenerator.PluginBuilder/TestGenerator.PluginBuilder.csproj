@@ -8,7 +8,7 @@
         <Nullable>enable</Nullable>
         <ToolCommandName>dotnet-testgen-plugin</ToolCommandName>
         <PackageId>TestGenerator.PluginBuilder</PackageId>
-        <PackageVersion>1.4.1</PackageVersion>
+        <PackageVersion>1.4.2</PackageVersion>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RootNamespace>TestGenerator.PluginBuilder</RootNamespace>

@@ -7,4 +7,5 @@ public class PluginRequestBody
     public string Description { get; set; } = "";
     public required Version Version { get; set; }
     public string? Url { get; set; }
+    public string? Runtime { get; set; }
 }

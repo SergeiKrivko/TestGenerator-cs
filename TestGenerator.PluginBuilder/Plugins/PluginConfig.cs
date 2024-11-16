@@ -8,5 +8,4 @@ public class PluginConfig
     public required Version Version { get; init; }
     public required string Assembly { get; init; }
     public bool PlatformSpecific { get; init; } = false;
-    public string? Runtime { get; set; } = null;
 }
