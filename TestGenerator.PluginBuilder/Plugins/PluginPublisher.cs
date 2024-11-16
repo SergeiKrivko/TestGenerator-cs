@@ -53,7 +53,8 @@ public class PluginPublisher
             new NewRelease(tag));
 
         var asset = await client.Repository.Release.UploadAsset(release,
-            new ReleaseAssetUpload(config.Key + ".zip", "application/zip", File.OpenRead(path),
+            new ReleaseAssetUpload(config.Key + (config.Runtime == null ? "" : $"-{config.Runtime}") + ".zip",
+                "application/zip", File.OpenRead(path),
                 TimeSpan.FromMinutes(5)));
         return asset.BrowserDownloadUrl;
     }
@@ -65,7 +66,7 @@ public class PluginPublisher
         if (pluginConfig == null)
             throw new Exception("Invalid config");
 
-        var zipPath = Builder.Build(options.Path ?? Directory.GetCurrentDirectory(), 
+        var zipPath = Builder.Build(options.Path ?? Directory.GetCurrentDirectory(),
             runtime: options.Runtime ?? RuntimeInformation.RuntimeIdentifier);
         Console.WriteLine(zipPath);
 
