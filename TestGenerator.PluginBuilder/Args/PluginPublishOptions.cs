@@ -32,4 +32,9 @@ public class PluginPublishOptions
     [Option("github-token", Required = false, Default = null, 
         HelpText = "Токен Github. Требуются права на создание релизов в указанном выше репозитории")]
     public string? GithubToken { get; set; }
+    
+    [Option('r', "runtime", Required = false, Default = null, 
+        HelpText = "Идентификатор среды выполнения. Имеет значение, только если в  Config.json указано \"PlatformSpecific\": true. " +
+                   "По умолчанию используется текущая среда")]
+    public string? Runtime { get; set; }
 }

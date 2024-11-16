@@ -3,5 +3,6 @@
   "Name": "MyPlugin",
   "Description": "Some description for MyPlugin",
   "Version": "1.0.0",
-  "Assembly": "MyPlugin.dll"
+  "Assembly": "MyPlugin.dll",
+  "PlatformSpecific": false
 }

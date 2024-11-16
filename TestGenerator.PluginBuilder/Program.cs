@@ -22,7 +22,7 @@ async Task Run(object obj)
             await new PluginPublisher().Publish(o);
             break;
         case PluginBuildOptions o:
-            Builder.Build(o.Path ?? Directory.GetCurrentDirectory(), o.Output, o.Install);
+            Builder.Build(o.Path ?? Directory.GetCurrentDirectory(), o.Output, o.Install, o.Runtime);
             break;
     }
 }

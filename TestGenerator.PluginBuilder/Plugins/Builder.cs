@@ -45,38 +45,40 @@ public class Builder
         "Serilog.Sinks.File.dll"
     ];
 
-    public static string Build(string path, string? outPath = null, bool install = false)
+    public static string Build(string path, string? outPath = null, bool install = false, string? runtime = null)
     {
         var pluginConfig = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(path, "Config.json")));
         if (pluginConfig == null)
             throw new Exception("Invalid plugin config");
+        var netDir = "bin/Release/net8.0";
+        if (runtime != null)
+            netDir += "/" + runtime;
 
         Process.Start(new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = "publish",
+            Arguments = "publish" + (runtime == null ? "" : $" -r {runtime}"),
             WorkingDirectory = path,
         })?.WaitForExit();
 
-        var tempPath = Path.Join(path, "bin/Release/net8.0/Plugin");
+        var tempPath = Path.Join(path, $"{netDir}/Plugin");
         if (Directory.Exists(tempPath))
             Directory.Delete(tempPath, recursive: true);
         Directory.CreateDirectory(tempPath);
-        foreach (var dll in GetDlls(Path.Join(path, "bin/Release/net8.0/publish")))
+        foreach (var dll in GetDlls(Path.Join(path, $"{netDir}/publish")))
         {
             var dir = Path.GetDirectoryName(Path.Join(tempPath,
-                Path.GetRelativePath(Path.Join(path, "bin/Release/net8.0/publish"), dll)));
+                Path.GetRelativePath(Path.Join(path, $"{netDir}/publish"), dll)));
             if (!string.IsNullOrEmpty(dir))
                 Directory.CreateDirectory(dir);
             Console.WriteLine($"Copy {dll}...");
             File.Copy(dll, Path.Join(tempPath,
-                Path.GetRelativePath(Path.Join(path, "bin/Release/net8.0/publish"), dll)));
+                Path.GetRelativePath(Path.Join(path, $"{netDir}/publish"), dll)));
         }
 
+        pluginConfig.Runtime = runtime;
         Console.WriteLine("Writing config file...");
-        var configFile = File.CreateText(Path.Join(tempPath, "Config.json"));
-        configFile.Write(JsonSerializer.Serialize(pluginConfig));
-        configFile.Close();
+        File.WriteAllText(Path.Join(tempPath, "Config.json"), JsonSerializer.Serialize(pluginConfig));
 
         outPath ??= Path.Join(path, $"{pluginConfig.Key}.zip");
         if (File.Exists(outPath))

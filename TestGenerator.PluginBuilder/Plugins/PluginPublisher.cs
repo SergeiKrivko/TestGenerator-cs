@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using Octokit;
 using TestGenerator.PluginBuilder.Args;
@@ -64,8 +65,14 @@ public class PluginPublisher
         if (pluginConfig == null)
             throw new Exception("Invalid config");
 
-        var zipPath = Builder.Build(options.Path ?? Directory.GetCurrentDirectory());
+        var zipPath = Builder.Build(options.Path ?? Directory.GetCurrentDirectory(), 
+            runtime: options.Runtime ?? RuntimeInformation.RuntimeIdentifier);
         Console.WriteLine(zipPath);
+
+        if (pluginConfig.PlatformSpecific)
+        {
+            pluginConfig.Runtime = options.Runtime ?? RuntimeInformation.RuntimeIdentifier;
+        }
 
         if (options.Github)
         {
