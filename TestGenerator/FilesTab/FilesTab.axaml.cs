@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -41,14 +40,23 @@ public partial class FilesTab : SideTab
 
     public void Update(Project? project = null)
     {
-        Nodes.Clear();
-        var path = (project ?? ProjectsService.Instance.Current).Path;
-        try
+        if (Nodes.Count == 0)
         {
-            Nodes.Add(new DirectoryNode(new DirectoryInfo(path)));
+            var path = (project ?? ProjectsService.Instance.Current).Path;
+            try
+            {
+                Nodes.Add(new DirectoryNode(new DirectoryInfo(path)));
+            }
+            catch (ArgumentException)
+            {
+            }
         }
-        catch (ArgumentException)
+        else
         {
+            foreach (var node in Nodes)
+            {
+                node.Update();
+            }
         }
     }
 
@@ -85,7 +93,7 @@ public partial class FilesTab : SideTab
                     openMenu?.Items.Add(menuItem);
                 }
             }
-            
+
             while ((border.ContextMenu?.Items[3] as Separator)?.Name != "AfterActionsSeparator")
             {
                 border.ContextMenu?.Items.RemoveAt(3);
@@ -117,6 +125,7 @@ public partial class FilesTab : SideTab
             menuItem.Click += (o, args) => CreateFile(SelectedItem?.Path, creator);
             createMenu?.Items.Add(menuItem);
         }
+
         if (FileCreators.Count > 0)
             createMenu?.Items.Add(new Separator());
         foreach (var creator in FileCreators.OrderBy(c => c.Priority))
@@ -138,7 +147,11 @@ public partial class FilesTab : SideTab
             var window = settingsControl == null
                 ? CreateFileDialog.Default()
                 : new CreateFileDialog(settingsControl);
-            window.Confirmed += (options) => { creator.Create(root, options); Update(); };
+            window.Confirmed += (options) =>
+            {
+                creator.Create(root, options);
+                Update();
+            };
             await window.ShowDialog(desktop.MainWindow);
         }
     }

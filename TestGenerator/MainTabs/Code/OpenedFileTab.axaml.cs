@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.MainTabs.Code;
@@ -22,6 +23,8 @@ public partial class OpenedFileTab : UserControl
         InitializeComponent();
 
         NameBlock.Text = file.File?.Name;
+        Icon.IsVisible = !string.IsNullOrEmpty(file.File?.Icon);
+        Icon.Data = PathGeometry.Parse(file.File?.Icon ?? "");
     }
 
     public delegate void OpenedFileHandler(OpenedFileModel file);

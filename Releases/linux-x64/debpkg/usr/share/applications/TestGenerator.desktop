@@ -1,9 +1,9 @@
 ﻿[Desktop Entry]
-Version={AppVersion}
 Name=TestGenerator
+Comment=IDE
 Exec=/opt/SergeiKrivko/TestGenerator/TestGenerator
-StartupNotify=true
-Terminal=false
 Icon=/opt/SergeiKrivko/TestGenerator/icon.png
+Terminal=false
 Type=Application
+StartupNotify=true
 Categories=Development;

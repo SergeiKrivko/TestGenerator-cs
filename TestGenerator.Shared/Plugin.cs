@@ -14,6 +14,7 @@ public class Plugin
     public List<IFileCreator> FileCreators { get; init; } = [];
     public List<IFileAction> FileActions { get; init; } = [];
     public Dictionary<string, Control> SettingsControls { get; init; } = [];
+    public Dictionary<string, IconElement> FileIcons { get; init; } = [];
 
     protected Plugin()
     {
@@ -28,7 +29,8 @@ public class Plugin
         List<IEditorProvider>? editorProviders = null,
         List<IFileCreator>? fileCreators = null,
         List<IFileAction>? fileActions = null,
-        Dictionary<string, Control>? settingsControls = null)
+        Dictionary<string, Control>? settingsControls = null,
+        Dictionary<string, IconElement>? fileIcons = null)
     {
         Name = name;
         if (mainTabs != null)
@@ -47,5 +49,7 @@ public class Plugin
             FileActions = fileActions;
         if (settingsControls != null)
             SettingsControls = settingsControls;
+        if (fileIcons != null)
+            FileIcons = fileIcons;
     }
 }

@@ -6,9 +6,9 @@
              x:Class="TestGenerator.Shared.Settings.PathField">
     <StackPanel Spacing="5">
         <TextBlock Name="Label"></TextBlock>
-        <StackPanel Orientation="Horizontal" Spacing="5">
+        <Grid ColumnDefinitions="* Auto">
             <TextBox Name="TextBox" LostFocus="TextBox_OnLostFocus"></TextBox>
-            <Button Click="Button_OnClick">Обзор</Button>
-        </StackPanel>
+            <Button Grid.Column="1" Margin="5 0 0 0" Click="Button_OnClick">Обзор</Button>
+        </Grid>
     </StackPanel>
 </UserControl>

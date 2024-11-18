@@ -1,11 +1,18 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:generation="clr-namespace:ActiproSoftware.UI.Avalonia.Themes.Generation;assembly=ActiproSoftware.Avalonia.Shared"
              x:Class="TestGenerator.App"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Styles>
         <FluentTheme />
+        <actipro:ModernTheme >
+            <actipro:ModernTheme.Definition>
+                <generation:ThemeDefinition TabAppearanceKind="Subtle" />
+            </actipro:ModernTheme.Definition>
+        </actipro:ModernTheme>
         <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
     </Application.Styles>
     

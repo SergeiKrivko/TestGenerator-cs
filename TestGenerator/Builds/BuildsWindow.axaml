@@ -23,7 +23,7 @@
                  SelectionChanged="BuildsList_OnSelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="-5">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
                         <PathIcon Data="{Binding Type.Icon}" VerticalAlignment="Center"></PathIcon>
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center"></TextBlock>
                     </StackPanel>

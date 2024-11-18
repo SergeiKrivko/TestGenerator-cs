@@ -24,7 +24,7 @@
         <ListBox Name="ListBox" MinHeight="150" ItemsSource="{Binding Subprocesses}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <builds:SubProcItem Margin="-5" Subprocess="{Binding .}"></builds:SubProcItem>
+                    <builds:SubProcItem Subprocess="{Binding .}"></builds:SubProcItem>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
