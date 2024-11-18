@@ -1,9 +1,14 @@
-﻿namespace TestGenerator.Shared.Settings.Shared;
+﻿using System.Collections.ObjectModel;
 
-public interface IItem
+namespace TestGenerator.Shared.Settings.Shared;
+
+public interface INode
 {
     public string Path { get; set; }
+    public string Name { get; }
 
+    public ObservableCollection<INode> Children { get; }
+    
     public delegate void SelectionChangeHandler(bool selected);
 
     public event SelectionChangeHandler? SelectionChanged;

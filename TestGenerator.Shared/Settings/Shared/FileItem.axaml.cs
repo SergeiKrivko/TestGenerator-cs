@@ -2,40 +2,38 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Reactive;
 
 namespace TestGenerator.Shared.Settings.Shared;
 
-public partial class FileItem : UserControl, IItem
+public partial class FileItem : UserControl
 {
-    public string Path { get; set; }
+    public static readonly StyledProperty<INode> NodeProperty = AvaloniaProperty.Register<FileItem, INode>("Node");
 
-    private string[] _extensions;
-
-    public event IItem.SelectionChangeHandler? SelectionChanged;
-
-    public bool Selected
+    public INode Node
     {
-        get => CheckBox.IsChecked ?? false;
-        set => CheckBox.IsChecked = value;
+        get => GetValue(NodeProperty);
+        set => SetValue(NodeProperty, value);
     }
-
-    public string[] Current => Selected ? [Path] : [];
-
-    public FileItem(string path, string[] extensions)
+    
+    
+    public FileItem()
     {
-        Path = path;
-        _extensions = extensions;
         InitializeComponent();
-        NameBlock.Text = System.IO.Path.GetFileName(path);
+        OnInit();
     }
 
-    public void Select(string[] items)
+    private async void OnInit()
     {
-        CheckBox.IsChecked = items.Contains(System.IO.Path.GetFullPath(Path));
+        await Task.Delay(100);
+        NameBlock.Text = Node.Name;
+        Node.SelectionChanged += selected => CheckBox.IsChecked = selected;
+        CheckBox.IsChecked = Node.Selected;
     }
 
     private void CheckBox_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
     {
-        SelectionChanged?.Invoke(Selected);
+        if (CheckBox.IsChecked != Node.Selected)
+            Node.Selected = CheckBox.IsChecked ?? false;
     }
 }

@@ -2,10 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:shared="clr-namespace:TestGenerator.Shared.Settings.Shared"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="shared:FileItem"
              x:Class="TestGenerator.Shared.Settings.Shared.FileItem">
-    <StackPanel Orientation="Horizontal" Spacing="5" Margin="25 0 0 0">
-        <CheckBox Name="CheckBox" VerticalAlignment="Center" IsCheckedChanged="CheckBox_OnIsCheckedChanged"></CheckBox>
-        <TextBlock Name="NameBlock" VerticalAlignment="Center"></TextBlock>
+    <StackPanel Orientation="Horizontal" Spacing="5">
+        <CheckBox Name="CheckBox" IsCheckedChanged="CheckBox_OnIsCheckedChanged" />
+        <TextBlock Name="NameBlock" />
     </StackPanel>
 </UserControl>

@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using System.Collections.ObjectModel;
+using Avalonia.Controls;
 using TestGenerator.Shared.Settings.Shared;
 using TestGenerator.Shared.Utils;
 
@@ -18,7 +19,9 @@ public partial class FilesField : UserControl, IField
     public string[] Extensions { get; }
     public string Path { get; }
 
-    private DirectoryItem? _topLevelItem = null;
+    private ObservableCollection<INode> Nodes { get; set; } = [];
+
+    private DirectoryNode? _topLevelItem = null;
 
     public event IField.ChangeHandler? ValueChanged;
 
@@ -27,15 +30,19 @@ public partial class FilesField : UserControl, IField
         Path = path;
         Extensions = extensions;
         InitializeComponent();
+        Tree.ItemsSource = Nodes;
         Update();
     }
 
     private void Update()
     {
-        Panel.Children.Clear();
-        _topLevelItem = new DirectoryItem(Path, Extensions);
+        _topLevelItem = new DirectoryNode(Path, Extensions);
         _topLevelItem.Changed += () => { ValueChanged?.Invoke(this, Value); };
-        Panel.Children.Add(_topLevelItem);
+        Nodes.Clear();
+        foreach (var node in _topLevelItem.Children)
+        {
+            Nodes.Add(node);
+        }
     }
 
     public void Load(SettingsSection section)
