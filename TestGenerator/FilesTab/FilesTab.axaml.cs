@@ -105,7 +105,7 @@ public partial class FilesTab : SideTab
                 if (action.CanUse(item.Path))
                 {
                     var menuItem = new MenuItem { Header = action.Name };
-                    menuItem.Click += (o, args) => action.Run(item.Path);
+                    menuItem.Click += (o, args) => RunAction(action, item.Path);
                     border.ContextMenu?.Items.Insert(3, menuItem);
                     flag = true;
                 }
@@ -133,6 +133,17 @@ public partial class FilesTab : SideTab
             var menuItem = new MenuItem { Header = creator.Name };
             menuItem.Click += (o, args) => CreateFile(SelectedItem?.Path, creator);
             createMenu?.Items.Add(menuItem);
+        }
+    }
+
+    private async void RunAction(IFileAction action, string path)
+    {
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
+            desktop.MainWindow != null)
+        {
+            var window = new ActionWindow();
+            window.Run(action, path);
+            await window.ShowDialog(desktop.MainWindow);
         }
     }
 

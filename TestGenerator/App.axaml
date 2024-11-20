@@ -14,6 +14,67 @@
             </actipro:ModernTheme.Definition>
         </actipro:ModernTheme>
         <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+        
+        <Style Selector="Arc.Spinner">
+            <Setter Property="StrokeThickness" Value="3" />
+            <Setter Property="Stroke" Value="{DynamicResource TextControlForeground}" />
+            <Style.Animations>
+                <Animation Duration="0:0:5" IterationCount="INFINITE">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="StartAngle" Value="0" />
+                        <Setter Property="SweepAngle" Value="30" />
+                    </KeyFrame>
+                    <KeyFrame Cue="5.56%">
+                        <Setter Property="StartAngle" Value="40" />
+                        <Setter Property="SweepAngle" Value="270" />
+                    </KeyFrame>
+                    <KeyFrame Cue="16.67%">
+                        <Setter Property="StartAngle" Value="120" />
+                        <Setter Property="SweepAngle" Value="270" />
+                    </KeyFrame>
+                    <KeyFrame Cue="22.22%">
+                        <Setter Property="StartAngle" Value="400" />
+                        <Setter Property="SweepAngle" Value="30" />
+                    </KeyFrame>
+                    <KeyFrame Cue="33.33%">
+                        <Setter Property="StartAngle" Value="480" />
+                        <Setter Property="SweepAngle" Value="30" />
+                    </KeyFrame>
+                    <KeyFrame Cue="38.89%">
+                        <Setter Property="StartAngle" Value="520" />
+                        <Setter Property="SweepAngle" Value="270" />
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="StartAngle" Value="600" />
+                        <Setter Property="SweepAngle" Value="270" />
+                    </KeyFrame>
+                    <KeyFrame Cue="55.56%">
+                        <Setter Property="StartAngle" Value="880" />
+                        <Setter Property="SweepAngle" Value="30" />
+                    </KeyFrame>
+                    <KeyFrame Cue="66.67%">
+                        <Setter Property="StartAngle" Value="960" />
+                        <Setter Property="SweepAngle" Value="30" />
+                    </KeyFrame>
+                    <KeyFrame Cue="72.22%">
+                        <Setter Property="StartAngle" Value="1000" />
+                        <Setter Property="SweepAngle" Value="270" />
+                    </KeyFrame>
+                    <KeyFrame Cue="83.33%">
+                        <Setter Property="StartAngle" Value="1080" />
+                        <Setter Property="SweepAngle" Value="270" />
+                    </KeyFrame>
+                    <KeyFrame Cue="88.89%">
+                        <Setter Property="StartAngle" Value="1360" />
+                        <Setter Property="SweepAngle" Value="30" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="StartAngle" Value="1440" />
+                        <Setter Property="SweepAngle" Value="30" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
     </Application.Styles>
     
     <Application.Resources>
@@ -26,6 +87,7 @@
         <StreamGeometry x:Key="IconAddCommand">M11.5 5H10V11.5H4V13H10V19.5H11.5V13H17.5V11.5H11.5V5Z M26 12L21 5H22.5L27.25 11.5C27.25 11.5 27.5 12 27.25 12.5C26.9492 13 22.5 19 22.5 19H21L26 12Z M27 17.5V19H36V17.5H27Z</StreamGeometry>
         <StreamGeometry x:Key="IconAddBuild">M11.5 5H10V11.5H4V13H10V19.5H11.5V13H17.5V11.5H11.5V5Z M28.7269 12.1717L27.9632 11.3092C27.7881 11.1118 27.551 11.0007 27.3036 11C27.0562 10.9993 26.8186 11.1093 26.6428 11.3057L21.3329 16.8346C21.1394 17.0402 21.0128 17.3021 21.0009 17.595C20.9952 17.7406 21.0162 17.8859 21.0626 18.022C21.109 18.1581 21.1798 18.2818 21.2705 18.3856L22.4111 19.6867C22.5875 19.8864 22.8269 19.999 23.0768 20H23.1112C23.3714 19.9887 23.6041 19.8514 23.7894 19.6311L28.7231 13.6678C28.8106 13.5699 28.8801 13.4535 28.9276 13.3253C28.9751 13.197 28.9997 13.0595 29 12.9204C29.0002 12.7814 28.9762 12.6437 28.9292 12.5152C28.8823 12.3868 28.8133 12.27 28.7263 12.1717H28.7269Z M35.813 10.0682L35.803 10.0587L34.7338 8.97056C34.671 8.90625 34.5966 8.85536 34.5146 8.82082C34.4327 8.78629 34.3449 8.7688 34.2564 8.76937C34.1132 8.76937 33.9734 8.8159 33.8569 8.90213C33.8569 8.88844 33.8596 8.87475 33.8602 8.86312C33.8742 8.6544 33.8962 8.3396 33.6978 8.05423C33.4615 7.72681 33.202 7.41779 32.9214 7.12968C32.506 6.70881 31.6012 5.91634 30.215 5.33533C29.6893 5.11357 29.1266 4.99966 28.5584 5C27.5731 5 26.8247 5.45646 26.5377 5.72746C26.3752 5.88681 26.2271 6.06088 26.095 6.24756C26.0319 6.33704 25.9986 6.44505 26 6.55553C26.0015 6.66601 26.0376 6.77306 26.1029 6.86077C26.1683 6.94849 26.2595 7.01218 26.3629 7.04238C26.4663 7.07258 26.5764 7.06768 26.6769 7.0284C26.7648 6.99486 26.854 6.9668 26.9452 6.94422C27.1343 6.90316 27.328 6.89084 27.5205 6.90727C27.9326 6.94217 28.4193 7.15226 28.6343 7.32745C28.9999 7.62856 29.1756 8.03575 29.2043 8.6455C29.2103 8.768 28.9633 9.22719 28.5804 9.7514C28.5073 9.85035 28.4716 9.97321 28.4799 10.0972C28.4882 10.2211 28.54 10.3378 28.6257 10.4255L29.6996 11.5286C29.7898 11.6216 29.9112 11.6756 30.0389 11.6795C30.1666 11.6832 30.2908 11.6366 30.3861 11.5492C30.6897 11.27 31.1517 10.8498 31.3142 10.7471C31.5539 10.5952 31.7257 10.5658 31.7729 10.561C31.8951 10.5486 32.0181 10.5751 32.1251 10.6369C32.1251 10.6424 32.1251 10.6479 32.1231 10.6534C32.1214 10.6584 32.1187 10.6631 32.1152 10.667L32.0586 10.7232L32.0492 10.7321C31.9863 10.7963 31.9365 10.8727 31.9024 10.9568C31.8685 11.041 31.851 11.1312 31.8512 11.2223C31.8513 11.3135 31.8689 11.4037 31.9032 11.4877C31.9374 11.5718 31.9875 11.648 32.0506 11.712L33.1198 12.8001C33.1825 12.8642 33.2569 12.9148 33.3387 12.9491C33.4205 12.9834 33.5081 13.0007 33.5966 13C33.7743 13 33.9448 12.9288 34.0719 12.8015L35.8044 11.0428C35.9282 10.9131 35.9983 10.739 36 10.5573C36.0016 10.3756 35.9345 10.2003 35.813 10.0682Z</StreamGeometry>
         <StreamGeometry x:Key="IconClose">M5 3C3.5 1.5 1.5 3.5 3 5L10 12L3 19C1.5 20.5 3.5 22.5 5 21L12 14L19 21C20.5 22.5 22.5 20.5 21 19L14 12L21 5C22.5 3.5 20.5 1.5 19 3L12 10L5 3Z</StreamGeometry>
+        <StreamGeometry x:Key="IconCheckmark">M9.00002 17L5.00002 13C4.00002 12 3 13 4.00002 14L8.50002 18.5C9.00002 19 9.50002 18.5 9.50002 18.5C9.50002 18.5 19 7.50002 20 6.5C21 5.49999 20 4.5 19 5.5C18 6.50001 9.00002 17 9.00002 17Z</StreamGeometry>
         <StreamGeometry x:Key="IconEmpty"></StreamGeometry>
     </Application.Resources>
 </Application>
