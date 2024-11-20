@@ -27,6 +27,10 @@
       <ProjectReference Include="..\TestGenerator.Core\TestGenerator.Core.csproj" />
       <ProjectReference Include="..\TestGenerator.Shared\TestGenerator.Shared.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**"/>
+    </ItemGroup>
 
     <ItemGroup>
       <Compile Update="Builds\SubBuildDialog.axaml.cs">
