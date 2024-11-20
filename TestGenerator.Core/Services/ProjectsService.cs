@@ -18,12 +18,12 @@ public class ProjectsService
 
     private ProjectsService()
     {
-        
     }
 
-    public void Load()
+    public async void Load()
     {
-        var currentPath = AppService.Instance.Settings.Get<string>("currentProject");
+        var currentPath = StartupService.StartupInfo?.Directory ??
+                          AppService.Instance.Settings.Get<string>("currentProject");
         foreach (var path in AppService.Instance.Settings.Get<string[]>("recentProjects", []))
         {
             var project = Project.Load(path);
@@ -31,20 +31,33 @@ public class ProjectsService
             if (path == currentPath)
                 Current = project;
         }
+
+        if (Current == Project.LightEditProject && StartupService.StartupInfo?.Directory != null)
+        {
+            Current = Load(StartupService.StartupInfo.Directory);
+        }
+
+        foreach (var file in StartupService.StartupInfo?.Files ?? [])
+        {
+            await AppService.Instance.Request<string?>("openFile", file);
+        }
     }
 
     public ObservableCollection<Project> Projects { get; } = new();
 
     private Project? _current;
-    
+
     public delegate void ProjectChangeHandler(Project project);
+
     public event ProjectChangeHandler? CurrentChanged;
-    
+
     public Project Current
     {
         get => _current ?? Project.LightEditProject;
         set
         {
+            if (value == Current)
+                return;
             if (value == Project.LightEditProject)
             {
                 LogService.Logger.Debug("Current project set to LightEdit");
@@ -61,6 +74,7 @@ public class ProjectsService
             {
                 throw new Exception("Unknown project!");
             }
+
             CurrentChanged?.Invoke(Current);
         }
     }

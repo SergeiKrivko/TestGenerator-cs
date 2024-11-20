@@ -49,13 +49,20 @@ public partial class CodeTab : MainTab
 
     private async Task<string?> Open(string path)
     {
-        foreach (var provider in Providers.OrderByDescending(p => p.Priority))
+        try
         {
-            if (provider.CanOpen(path))
+            foreach (var provider in Providers.OrderByDescending(p => p.Priority))
             {
-                OpenFileWithProvider(path, provider);
-                return provider.Key;
+                if (provider.CanOpen(path))
+                {
+                    OpenFileWithProvider(path, provider);
+                    return provider.Key;
+                }
             }
+        }
+        catch (Exception e)
+        {
+            LogService.Logger.Error($"Error while opening '{path}': {e.Message}");
         }
 
         return null;
@@ -66,8 +73,16 @@ public partial class CodeTab : MainTab
         var provider = Providers.Find(p => p.Key == model.ProviderKey);
         if (provider == null)
             return false;
-        OpenFileWithProvider(model.Path, provider);
-        return true;
+        try
+        {
+            OpenFileWithProvider(model.Path, provider);
+            return true;
+        }
+        catch (Exception e)
+        {
+            LogService.Logger.Error($"Error while opening '{model.Path}' with {model.ProviderKey}: {e.Message}");
+            return false;
+        }
     }
 
     private void OpenFileWithProvider(string path, IEditorProvider provider)

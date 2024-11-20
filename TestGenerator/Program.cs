@@ -10,8 +10,13 @@ class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args){
+    public static void Main(string[] args)
+    {
         LogService.Init();
+        var startupInfo = StartupService.ParseArgs(args);
+        if (!startupInfo.StartGui)
+            return;
+        StartupService.StartupInfo = startupInfo;
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }
