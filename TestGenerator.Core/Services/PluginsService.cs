@@ -129,11 +129,15 @@ public class PluginsService
         var dirPath = Path.GetFullPath(Path.Join(AppService.Instance.AppDataPath, "Plugins"));
         if (!path.StartsWith(dirPath))
             throw new Exception("Call not from plugin");
-        var pluginPath = path;
-        while (!string.IsNullOrEmpty(path = Path.GetDirectoryName(path)) && path != dirPath)
+        while (!string.IsNullOrEmpty(path = Path.GetDirectoryName(path)))
         {
-            pluginPath = path;
+            if (File.Exists(Path.Join(path, "Config.json")))
+            {
+                var config = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(path, "Config.json")));
+                if (config != null)
+                    return config.Key;
+            }
         }
-        return Plugins.Single(item => Path.GetFullPath(item.Value.Path) == pluginPath).Key;
+        throw new Exception("Plugin config not found");
     }
 }
