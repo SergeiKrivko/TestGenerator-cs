@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using CommandLine;
+using TestGenerator.PluginBuilder;
 using TestGenerator.PluginBuilder.Args;
 using TestGenerator.PluginBuilder.Plugins;
 
@@ -16,13 +17,20 @@ Type[] LoadVerbs() => Assembly.GetExecutingAssembly().GetTypes()
 
 async Task Run(object obj)
 {
-    switch (obj)
+    try
     {
-        case PluginPublishOptions o:
-            await new PluginPublisher().Publish(o);
-            break;
-        case PluginBuildOptions o:
-            Builder.Build(o.Path ?? Directory.GetCurrentDirectory(), o.Output, o.Install, o.Runtime);
-            break;
+        switch (obj)
+        {
+            case PluginPublishOptions o:
+                await new PluginPublisher().Publish(o);
+                break;
+            case PluginBuildOptions o:
+                Builder.Build(o.Path ?? Directory.GetCurrentDirectory(), o.Output, o.Install, o.Runtime);
+                break;
+        }
+    }
+    catch (PluginBuilderException)
+    {
+        Environment.Exit(1);
     }
 }

@@ -28,10 +28,10 @@ public class PluginPublisher
             Runtime = runtime,
         }));
         Console.WriteLine($"{resp.StatusCode}: {await resp.Content.ReadAsStringAsync()}");
-        // if (!resp.IsSuccessStatusCode)
-        // {
-        //     Console.WriteLine($"Error: {await resp.Content.ReadAsStringAsync()}");
-        // }
+        if (!resp.IsSuccessStatusCode)
+        {
+            throw new PluginBuilderException();
+        }
     }
 
     public async Task<string> PublishOnGithub(PluginConfig config, string githubUser, string githubRepo,
