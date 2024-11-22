@@ -33,6 +33,26 @@ public class AppService : AAppService
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
         Config.AppName, "Settings.xml"));
 
+    public override SettingsSection GetSettings(string key)
+    {
+        return Settings.GetSection(key);
+    }
+
+    public override SettingsSection GetSettings()
+    {
+        return GetSettings(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+    }
+
+    public override string GetDataPath(string key)
+    {
+        return Path.Join(AppDataPath, "PluginData", key);
+    }
+
+    public override string GetDataPath()
+    {
+        return GetDataPath(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+    }
+
     private Dictionary<string, IEvent> _events = [];
     private Dictionary<string, IRequestHandler> _requestHandlers = [];
 
@@ -41,19 +61,24 @@ public class AppService : AAppService
     public event ShowHandler? OnMainTabShow;
     public event ShowHandler? OnSideTabShow;
 
-    public override void MainTabShow(string key)
+    public override void ShowMainTab(string key)
     {
         LogService.Logger.Debug($"Show main tab '{key}'");
         OnMainTabShow?.Invoke(key);
     }
 
-    public override void SideTabShow(string key)
+    public override void ShowSideTab(string key)
     {
         LogService.Logger.Debug($"Show side tab '{key}'");
         OnSideTabShow?.Invoke(key);
     }
 
     public override Logger GetLogger(string name) => LogService.GetLogger(name);
+
+    public override Logger GetLogger()
+    {
+        return GetLogger(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+    }
 
     public delegate ITerminalController TerminalControllerFunc(string command, string? workingDirectory);
 
@@ -105,7 +130,7 @@ public class AppService : AAppService
     public override async Task<T> Request<T>(string key, object? data = null)
     {
         var res = await _requestHandlers[key].Call(data);
-        if (data is T)
+        if (res is T)
             return (T)res;
         var res2 = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(data));
         if (res2 != null)
@@ -115,10 +140,9 @@ public class AppService : AAppService
 
     public override AProject CurrentProject => ProjectsService.Instance.Current;
 
-    public override async Task<ICompletedProcess> RunProcess(string args)
+    public override async Task<ICompletedProcess> RunProcess(string filename, string args)
     {
-        var lst = args.Split();
-        var proc = Process.Start(new ProcessStartInfo(lst[0], string.Join(' ', lst.Skip(1)))
+        var proc = Process.Start(new ProcessStartInfo(filename, args)
         {
             CreateNoWindow = true,
             RedirectStandardOutput = true,
@@ -138,5 +162,12 @@ public class AppService : AAppService
             Stdout = await proc.StandardOutput.ReadToEndAsync(),
             Stderr = await proc.StandardError.ReadToEndAsync()
         };
+    }
+
+    public override async Task<ICompletedProcess> RunProcess(string args)
+    {
+        var lst = args.Split();
+        return await RunProcess(lst[0], string.Join(' ', lst.Skip(1)));
+
     }
 }

@@ -23,11 +23,19 @@ public abstract class AAppService
     
     public abstract string AppDataPath { get; }
 
-    public abstract void MainTabShow(string key);
+    public abstract SettingsSection GetSettings(string key);
+    public abstract SettingsSection GetSettings();
 
-    public abstract void SideTabShow(string key);
+    public abstract string GetDataPath(string key);
+
+    public abstract string GetDataPath();
+
+    public abstract void ShowMainTab(string key);
+
+    public abstract void ShowSideTab(string key);
 
     public abstract Logger GetLogger(string name);
+    public abstract Logger GetLogger();
 
     public abstract ITerminalController RunInConsole(string command, string? workingDirectory = null);
 
@@ -49,4 +57,5 @@ public abstract class AAppService
     public abstract AProject CurrentProject { get; }
 
     public abstract Task<ICompletedProcess> RunProcess(string args);
+    public abstract Task<ICompletedProcess> RunProcess(string filename, string args);
 }

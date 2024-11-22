@@ -122,4 +122,18 @@ public class PluginsService
         File.Create(Path.Join(plugin.Path, "IsDeleted"));
         LogService.Logger.Information($"Plugin '{key}' was unloaded and marked as deleted");
     }
+
+    public string GetPluginKeyByAssembly(Assembly assembly)
+    {
+        var path = Path.GetFullPath(assembly.Location);
+        var dirPath = Path.GetFullPath(Path.Join(AppService.Instance.AppDataPath, "Plugins"));
+        if (!path.StartsWith(dirPath))
+            throw new Exception("Call not from plugin");
+        var pluginPath = path;
+        while (!string.IsNullOrEmpty(path = Path.GetDirectoryName(path)) && path != dirPath)
+        {
+            pluginPath = path;
+        }
+        return Plugins.Single(item => Path.GetFullPath(item.Value.Path) == pluginPath).Key;
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using Avalonia.ReactiveUI;
 using TestGenerator.Core.Services;
 
 namespace TestGenerator;
@@ -17,8 +18,16 @@ class Program
         if (!startupInfo.StartGui)
             return;
         StartupService.StartupInfo = startupInfo;
-        BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+        try
+        {
+            BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+        }
+        catch (Exception e)
+        {
+            LogService.Logger.Fatal($"{e.GetType()}: {e.Message}");
+            Console.Error.WriteLine(e);
+        }
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
