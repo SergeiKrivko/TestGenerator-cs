@@ -45,7 +45,9 @@ public class AppService : AAppService
 
     public override string GetDataPath(string key)
     {
-        return Path.Join(AppDataPath, "PluginData", key);
+        var res = Path.Join(AppDataPath, "PluginData", key);
+        Directory.CreateDirectory(res);
+        return res;
     }
 
     public override string GetDataPath()

@@ -26,7 +26,7 @@ class Program
         catch (Exception e)
         {
             LogService.Logger.Fatal($"{e.GetType()}: {e.Message}");
-            Console.Error.WriteLine(e);
+            throw;
         }
     }
 
