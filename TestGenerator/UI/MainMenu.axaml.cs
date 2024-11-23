@@ -77,13 +77,6 @@ public partial class MainMenu : UserControl
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
             desktop.MainWindow != null)
         {
-            foreach (var plugin in PluginsService.Instance.Plugins.Values)
-            {
-                foreach (var item in plugin.Plugin.SettingsControls ?? [])
-                {
-                    dialog.Add(item.Key, item.Value);
-                }
-            }
             await dialog.ShowDialog(desktop.MainWindow);
         }
     }

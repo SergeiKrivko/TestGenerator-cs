@@ -25,8 +25,22 @@ public partial class SettingsWindow : Window
         Add("Проект", new SettingsPage("", [
             new StringField { Key = "name", FieldName = "Название проекта" },
         ], SettingsPage.SettingsPageType.ProjectData));
+        
+        foreach (var plugin in PluginsService.Instance.Plugins.Values)
+        {
+            foreach (var item in plugin.Plugin.SettingsControls ?? [])
+            {
+                Add(item.Key, item.Value);
+            }
+        }
+        Closed += OnClosed;
 
         ProjectsService.Instance.CurrentChanged += OnCurrentProjectChanged;
+    }
+
+    private void OnClosed(object? sender, EventArgs e)
+    {
+        PagesPanel.Children.Clear();
     }
 
     private void OnCurrentProjectChanged(Project project)
