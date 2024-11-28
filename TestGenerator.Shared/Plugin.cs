@@ -14,7 +14,7 @@ public class Plugin
     public List<IFileCreator> FileCreators { get; init; } = [];
     public List<IFileAction> FileActions { get; init; } = [];
     public Dictionary<string, Control> SettingsControls { get; init; } = [];
-    public Dictionary<string, IconElement> FileIcons { get; init; } = [];
+    public Dictionary<string, string> FileIcons { get; init; } = [];
 
     protected Plugin()
     {
@@ -30,7 +30,7 @@ public class Plugin
         List<IFileCreator>? fileCreators = null,
         List<IFileAction>? fileActions = null,
         Dictionary<string, Control>? settingsControls = null,
-        Dictionary<string, IconElement>? fileIcons = null)
+        Dictionary<string, string>? fileIcons = null)
     {
         Name = name;
         if (mainTabs != null)
