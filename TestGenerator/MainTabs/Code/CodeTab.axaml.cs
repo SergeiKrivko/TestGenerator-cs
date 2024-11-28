@@ -85,8 +85,19 @@ public partial class CodeTab : MainTab
         }
     }
 
+    private bool ShowFileIfOpened(string path, IEditorProvider provider)
+    {
+        var openedFile = _files.Values.FirstOrDefault(f => f.Path == path && f.Provider == provider.Key);
+        if (openedFile == null)
+            return false;
+        _tabs[openedFile.Id].IsSelected = true;
+        return true;
+    }
+
     private void OpenFileWithProvider(string path, IEditorProvider provider)
     {
+        if (ShowFileIfOpened(path, provider))
+            return;
         var opened = provider.Open(path);
         if (opened == null)
             return;
@@ -152,7 +163,6 @@ public partial class CodeTab : MainTab
         }
 
         openedFile.Widget.IsVisible = true;
-        ProjectsService.Instance.Current.Settings.Set("currentFile",
-            file);
+        ProjectsService.Instance.Current.Settings.Set("currentFile", file);
     }
 }

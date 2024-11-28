@@ -6,6 +6,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TestGenerator.MainTabs.Code.CodeEditor">
     <avaloniaEdit:TextEditor Name="Editor"
-                             ShowLineNumbers="True"
-                             FontFamily="Cascadia Code,Consolas,Menlo,Monospace" />
+                             ShowLineNumbers="True" TextChanged="Editor_OnTextChanged"
+                             FontFamily="Cascadia Code,Consolas,Menlo,Monospace,Ubuntu" />
 </UserControl>

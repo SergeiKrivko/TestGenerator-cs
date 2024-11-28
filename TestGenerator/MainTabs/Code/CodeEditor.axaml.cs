@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using Avalonia.Controls;
+using Avalonia.Input;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.TextMate;
@@ -13,6 +14,8 @@ public partial class CodeEditor : UserControl
 {
     private readonly TextMate.Installation _textMateInstallation;
     private readonly RegistryOptions _registryOptions;
+    
+    public string? FileName { get; private set; }
 
     public CodeEditor()
     {
@@ -29,18 +32,32 @@ public partial class CodeEditor : UserControl
             _registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".cs").Id));
     }
 
-    public void Open(string fileName)
+    public async void Open(string fileName)
     {
+        FileName = fileName;
+        
         _textMateInstallation.SetGrammar(null);
-        Editor.Document = new TextDocument(File.ReadAllText(fileName));
+        Editor.Document = new TextDocument(await File.ReadAllTextAsync(fileName));
         try
         {
             _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(
-                _registryOptions.GetLanguageByExtension("." + fileName.Split('.')[^1]).Id
+                _registryOptions.GetLanguageByExtension(Path.GetExtension(fileName)).Id
             ));
         }
         catch (NullReferenceException)
         {
         }
+    }
+
+    public async void Save()
+    {
+        if (FileName == null)
+            return;
+        await File.WriteAllTextAsync(FileName, Editor.Text);
+    }
+
+    private void Editor_OnTextChanged(object? sender, EventArgs e)
+    {
+        Save();
     }
 }
