@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.MainTabs.Code;
@@ -134,7 +135,8 @@ public partial class FilesTab : SideTab
         createMenu?.Items.Clear();
         foreach (var creator in BuiltinFileCreators)
         {
-            var menuItem = new MenuItem { Header = creator.Name };
+            var menuItem = new MenuItem
+                { Header = creator.Name, Icon = new PathIcon { Data = PathGeometry.Parse(creator.Icon ?? "") } };
             menuItem.Click += (o, args) => CreateFile(SelectedItem?.Path, creator);
             createMenu?.Items.Add(menuItem);
         }
@@ -143,7 +145,8 @@ public partial class FilesTab : SideTab
             createMenu?.Items.Add(new Separator());
         foreach (var creator in FileCreators.OrderBy(c => c.Priority))
         {
-            var menuItem = new MenuItem { Header = creator.Name };
+            var menuItem = new MenuItem
+                { Header = creator.Name, Icon = new PathIcon { Data = PathGeometry.Parse(creator.Icon ?? "") } };
             menuItem.Click += (o, args) => CreateFile(SelectedItem?.Path, creator);
             createMenu?.Items.Add(menuItem);
         }

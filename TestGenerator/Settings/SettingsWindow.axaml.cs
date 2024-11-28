@@ -24,10 +24,10 @@ public partial class SettingsWindow : Window
 
         Add("Плагины", new PluginsView());
         Add("Проект", new SettingsPage("", [
-            new StringField { Key = "name", FieldName = "Название проекта" },
+            new StringField { Key = "name", FieldName = "Название проекта:" },
             new SelectField<string>()
             {
-                Key = "type", FieldName = "Тип проекта",
+                Key = "type", FieldName = "Тип проекта:",
                 Items = new ObservableCollection<SelectItem<string>>(ProjectTypesService.Instance.Types.Values.Select(type =>
                     new SelectItem<string> { Name = type.Name, Icon = type.IconPath, Value = type.Key }))
             },
