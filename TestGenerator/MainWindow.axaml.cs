@@ -8,6 +8,7 @@ using Avalonia.Interactivity;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared;
 using TestGenerator.Builds;
+using TestGenerator.FilesTab;
 using TestGenerator.Shared.Types;
 using TestGenerator.TerminalTab;
 
@@ -147,6 +148,10 @@ public partial class MainWindow : Window
         foreach (var creator in plugin.FileActions)
         {
             _filesTab.FileActions.Add(creator);
+        }
+        foreach (var item in plugin.FileIcons)
+        {
+            FileNode.FileIcons[item.Key] = item.Value;
         }
     }
 

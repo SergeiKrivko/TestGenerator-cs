@@ -34,8 +34,21 @@ public partial class FilesTab : SideTab
         InitializeComponent();
         Nodes = new ObservableCollection<Node>();
         TreeView.ItemsSource = Nodes;
-        ProjectsService.Instance.CurrentChanged += Update;
+        ProjectsService.Instance.CurrentChanged += FullUpdate;
         // Update();
+    }
+
+    public void FullUpdate(Project? project = null)
+    {
+        Nodes.Clear();
+        var path = (project ?? ProjectsService.Instance.Current).Path;
+        try
+        {
+            Nodes.Add(new DirectoryNode(new DirectoryInfo(path)));
+        }
+        catch (ArgumentException)
+        {
+        }
     }
 
     public void Update(Project? project = null)
