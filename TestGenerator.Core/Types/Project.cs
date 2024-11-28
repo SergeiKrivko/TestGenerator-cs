@@ -38,10 +38,10 @@ public class Project : AProject
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
             Config.AppName, "LightEdit");
         Settings = SettingsFile.Open(System.IO.Path.Join(path, "Settings.xml"));
-        Data = SettingsFile.Open(System.IO.Path.Join(path, "Data.xml"));
-        if (Data.Get<string>("name") != "LightEdit")
-            Data.Set("name", "LightEdit");
-        Type = ProjectTypesService.Default;
+        var data = Data = SettingsFile.Open(System.IO.Path.Join(path, "Data.xml"));
+        if (data.Get<string>("name") != "LightEdit")
+            data.Set("name", "LightEdit");
+        Type = ProjectTypesService.Instance.Get(data.Get<string>("type", ""));
     }
 
     public static Project LightEditProject { get; } = new();

@@ -7,6 +7,7 @@ using DynamicData;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Settings;
+using TestGenerator.Shared.Settings.Shared;
 
 namespace TestGenerator.Settings;
 
@@ -24,8 +25,14 @@ public partial class SettingsWindow : Window
         Add("Плагины", new PluginsView());
         Add("Проект", new SettingsPage("", [
             new StringField { Key = "name", FieldName = "Название проекта" },
+            new SelectField<string>()
+            {
+                Key = "type", FieldName = "Тип проекта",
+                Items = new ObservableCollection<SelectItem<string>>(ProjectTypesService.Instance.Types.Values.Select(type =>
+                    new SelectItem<string> { Name = type.Name, Icon = type.IconPath, Value = type.Key }))
+            },
         ], SettingsPage.SettingsPageType.ProjectData));
-        
+
         foreach (var plugin in PluginsService.Instance.Plugins.Values)
         {
             foreach (var item in plugin.Plugin.SettingsControls ?? [])
@@ -33,6 +40,7 @@ public partial class SettingsWindow : Window
                 Add(item.Key, item.Value);
             }
         }
+
         Closed += OnClosed;
 
         ProjectsService.Instance.CurrentChanged += OnCurrentProjectChanged;

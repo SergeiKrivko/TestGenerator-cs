@@ -22,4 +22,10 @@
         <None Include="README.md" Pack="true" PackagePath=""/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Settings\BaseSelectField.axaml.cs">
+        <DependentUpon>BaseSelectField.axaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

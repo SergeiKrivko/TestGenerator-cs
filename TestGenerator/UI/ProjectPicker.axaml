@@ -27,9 +27,9 @@
                              SelectionChanged="ProjectsListBox_OnSelectionChanged" BorderThickness="0">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
                                     <PathIcon Data="{Binding Type.IconPath}" Width="30" Height="30" />
-                                    <StackPanel>
+                                    <StackPanel Spacing="2">
                                         <TextBlock Text="{Binding Name}" />
                                         <TextBlock Text="{Binding Path}" FontSize="10" />
                                     </StackPanel>

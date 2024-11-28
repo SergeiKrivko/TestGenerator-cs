@@ -153,6 +153,10 @@ public partial class MainWindow : Window
         {
             FileNode.FileIcons[item.Key] = item.Value;
         }
+        foreach (var buildType in plugin.ProjectTypes)
+        {
+            ProjectTypesService.Instance.Types.Add(buildType.Key, buildType);
+        }
     }
 
     private void RemovePlugin(Plugin plugin)
@@ -178,6 +182,10 @@ public partial class MainWindow : Window
         foreach (var creator in plugin.FileActions)
         {
             _filesTab.FileActions.Remove(creator);
+        }
+        foreach (var buildType in plugin.ProjectTypes)
+        {
+            ProjectTypesService.Instance.Types.Remove(buildType.Key);
         }
     }
 }

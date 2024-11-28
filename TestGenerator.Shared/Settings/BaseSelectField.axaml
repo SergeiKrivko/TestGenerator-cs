@@ -1,0 +1,21 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:shared="clr-namespace:TestGenerator.Shared.Settings.Shared"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TestGenerator.Shared.Settings.BaseSelectField">
+    <StackPanel Orientation="Horizontal" Spacing="5">
+        <TextBlock Name="Label" VerticalAlignment="Center"></TextBlock>
+        <ComboBox Name="Box" SelectionChanged="Box_OnSelectionChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="shared:ISelectItem">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Data="{Binding Icon}" IsVisible="{Binding HasIcon}"></PathIcon>
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Name}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+    </StackPanel>
+</UserControl>
