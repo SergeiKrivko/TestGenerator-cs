@@ -23,6 +23,9 @@ public partial class BuildRunner : UserControl
     {
         var build = ComboBox.SelectedValue as Build;
         if (build != null)
+        {
+            AppService.Instance.ShowSideTab("Run");
             await build.ExecuteConsole();
+        }
     }
 }

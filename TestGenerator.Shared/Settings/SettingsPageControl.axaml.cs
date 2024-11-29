@@ -4,27 +4,19 @@ using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
-public partial class SettingsPage : UserControl
+internal partial class SettingsPageControl : UserControl
 {
-    public enum SettingsPageType
-    {
-        GlobalSettings,
-        ProjectSettings,
-        ProjectData,
-    }
-    
     public virtual string Key { get; }
     public virtual SettingsPageType Type { get; }
-    public virtual bool Enabled => true;
 
-    public SettingsPage(string key, SettingsPageType type = SettingsPageType.GlobalSettings)
+    public SettingsPageControl(string key, SettingsPageType type = SettingsPageType.GlobalSettings)
     {
         Key = key;
         Type = type;
         InitializeComponent();
     }
 
-    public SettingsPage(string key, ICollection<IField> fields, SettingsPageType type = SettingsPageType.GlobalSettings)
+    public SettingsPageControl(string key, ICollection<IField> fields, SettingsPageType type = SettingsPageType.GlobalSettings)
     {
         Key = key;
         Type = type;

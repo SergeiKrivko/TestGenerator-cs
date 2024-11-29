@@ -14,7 +14,7 @@ namespace TestGenerator.Settings;
 
 public partial class SettingsWindow : Window
 {
-    private Dictionary<string, Control> _pages = [];
+    private Dictionary<string, TestGenerator.Shared.Settings.SettingsNode> _pages = [];
     private ObservableCollection<SettingsNode> Nodes { get; } = [];
     private string? _currentPage = null;
 
@@ -23,8 +23,8 @@ public partial class SettingsWindow : Window
         InitializeComponent();
         TreeView.ItemsSource = Nodes;
 
-        Add("Плагины", new PluginsView());
-        Add("Проект", new SettingsPage("", [
+        Add(new Shared.Settings.SettingsNode("Плагины", new PluginsView()));
+        Add(new SettingsPage("Проект", "", [
             new StringField { Key = "name", FieldName = "Название проекта:" },
             new SelectField<string>
             {
@@ -33,14 +33,13 @@ public partial class SettingsWindow : Window
                     type =>
                         new SelectItem<string> { Name = type.Name, Icon = type.IconPath, Value = type.Key })),
             },
-            // new ProgramField { Program = python, FieldName = "Python", Key = "python" }
-        ], SettingsPage.SettingsPageType.ProjectData));
+        ], SettingsPageType.ProjectData, () => ProjectsService.Instance.Current != Project.LightEditProject));
 
         foreach (var plugin in PluginsService.Instance.Plugins.Values)
         {
             foreach (var item in plugin.Plugin.SettingsControls ?? [])
             {
-                Add(item.Key, item.Value);
+                Add(item);
             }
         }
 
@@ -60,10 +59,10 @@ public partial class SettingsWindow : Window
         {
             switch (page?.Type)
             {
-                case SettingsPage.SettingsPageType.ProjectSettings:
+                case SettingsPageType.ProjectSettings:
                     page.Section = project.Settings.GetSection(page.Key);
                     break;
-                case SettingsPage.SettingsPageType.ProjectData:
+                case SettingsPageType.ProjectData:
                     page.Section = project.Data.GetSection(page.Key);
                     break;
             }
@@ -98,24 +97,24 @@ public partial class SettingsWindow : Window
         return node;
     }
 
-    public void Add(string pageName, Control control)
+    public void Add(TestGenerator.Shared.Settings.SettingsNode page)
     {
-        _pages[pageName] = control;
-        CreateNode(pageName);
-        PagesPanel.Children.Add(control);
-        control.IsVisible = false;
+        _pages[page.Path] = page;
+        CreateNode(page.Path);
+        PagesPanel.Children.Add(page.Control);
+        page.Control.IsVisible = false;
 
-        if (control is SettingsPage settingsPage)
+        if (page is SettingsPage settingsPage)
         {
             switch (settingsPage.Type)
             {
-                case SettingsPage.SettingsPageType.GlobalSettings:
+                case SettingsPageType.GlobalSettings:
                     settingsPage.Section = AppService.Instance.Settings.GetSection(settingsPage.Key);
                     break;
-                case SettingsPage.SettingsPageType.ProjectSettings:
+                case SettingsPageType.ProjectSettings:
                     settingsPage.Section = ProjectsService.Instance.Current.Settings.GetSection(settingsPage.Key);
                     break;
-                case SettingsPage.SettingsPageType.ProjectData:
+                case SettingsPageType.ProjectData:
                     settingsPage.Section = ProjectsService.Instance.Current.Data.GetSection(settingsPage.Key);
                     break;
             }
@@ -128,11 +127,11 @@ public partial class SettingsWindow : Window
         {
             if (_currentPage != null)
             {
-                _pages[_currentPage].IsVisible = false;
+                _pages[_currentPage].Control.IsVisible = false;
             }
 
             _currentPage = node.FullName;
-            _pages[_currentPage].IsVisible = true;
+            _pages[_currentPage].Control.IsVisible = true;
         }
     }
 }

@@ -12,8 +12,7 @@ public interface IVirtualSystem
     public Task<ICompletedProcess> Execute(string filename, string args);
     public Task<ICompletedProcess> Execute(string command);
 
-    public ITerminalController ExecuteInConsole(string filename, string args);
-    public ITerminalController ExecuteInConsole(string command);
+    public ITerminalController ExecuteInConsole(string command, string? workingDirectory = null);
 
     public bool IsActive => true;
 

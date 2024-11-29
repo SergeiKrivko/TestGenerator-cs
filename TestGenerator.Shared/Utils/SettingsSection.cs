@@ -49,9 +49,7 @@ public class SettingsSection
 
     private string? Get(string key)
     {
-        if (_dictionary.TryGetValue(key, out var res))
-            return res;
-        return null;
+        return _dictionary.GetValueOrDefault(key);
     }
 
     private string Get(string key, string defaultValue)

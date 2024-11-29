@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using TestGenerator.Shared.Settings;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Shared;
@@ -13,7 +14,7 @@ public class Plugin
     public List<IEditorProvider> EditorProviders { get; init; } = [];
     public List<IFileCreator> FileCreators { get; init; } = [];
     public List<IFileAction> FileActions { get; init; } = [];
-    public Dictionary<string, Control> SettingsControls { get; init; } = [];
+    public List<SettingsNode> SettingsControls { get; init; } = [];
     public Dictionary<string, string> FileIcons { get; init; } = [];
 
     protected Plugin()
@@ -29,7 +30,7 @@ public class Plugin
         List<IEditorProvider>? editorProviders = null,
         List<IFileCreator>? fileCreators = null,
         List<IFileAction>? fileActions = null,
-        Dictionary<string, Control>? settingsControls = null,
+        List<SettingsNode>? settingsControls = null,
         Dictionary<string, string>? fileIcons = null)
     {
         Name = name;

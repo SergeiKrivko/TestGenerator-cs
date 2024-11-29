@@ -38,6 +38,11 @@ public class SideProgramFile
         return await VirtualSystem.Execute(Path, command);
     }
 
+    public ITerminalController ExecuteInConsole(string command)
+    {
+        return VirtualSystem.ExecuteInConsole(Path, command);
+    }
+
     public ProgramFileModel ToModel()
     {
         return new ProgramFileModel { Path = Path, Program = Program.Key, VirtualSystem = VirtualSystem.Key };
