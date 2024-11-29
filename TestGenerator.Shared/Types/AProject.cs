@@ -8,8 +8,14 @@ public abstract class AProject
     public static string TestGeneratorDir { get; } = ".TestGenerator";
     public static string DataFile { get; } = "TestGeneratorData.json";
     
-    public abstract SettingsSection Settings { get; }
-    public abstract SettingsSection Data { get; }
+    public abstract SettingsFile Settings { get; }
+    public abstract SettingsFile Data { get; }
+
+    public abstract SettingsSection GetSettings();
+    public abstract SettingsSection GetSettings(string key);
+
+    public abstract SettingsSection GetData();
+    public abstract SettingsSection GetData(string key);
 
     public abstract Guid Id { get; }
 

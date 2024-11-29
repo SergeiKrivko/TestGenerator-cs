@@ -1,4 +1,5 @@
-﻿using TestGenerator.Core.Services;
+﻿using System.Reflection;
+using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
 using TestGenerator.Shared.Utils;
 
@@ -49,5 +50,25 @@ public class Project : AProject
     public static Project Load(string path)
     {
         return new Project(path);
+    }
+
+    public override SettingsSection GetSettings(string key)
+    {
+        return Settings.GetSection(key);
+    }
+
+    public override SettingsSection GetSettings()
+    {
+        return GetSettings(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+    }
+
+    public override SettingsSection GetData(string key)
+    {
+        return Data.GetSection(key);
+    }
+
+    public override SettingsSection GetData()
+    {
+        return GetData(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
     }
 }
