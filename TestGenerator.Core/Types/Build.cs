@@ -82,9 +82,9 @@ public class Build : ABuild
 
     public override Task<int> Compile() => Builder.Compile();
 
-    public override Task<int> Run(string args = "") => Builder.Run(args);
+    public override Task<int> Run(string args = "") => Builder.Run(args, WorkingDirectory);
 
-    public override Task<int> RunConsole(string args = "") => Builder.RunConsole(args);
+    public override Task<int> RunConsole(string args = "") => Builder.RunConsole(args, WorkingDirectory);
 
     private Build? _getBuild(Guid id)
     {

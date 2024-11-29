@@ -43,11 +43,6 @@ public class SideProgramFile
         return VirtualSystem.ExecuteInConsole($"{Path} {command}", workingDirectory);
     }
 
-    public ITerminalController ExecuteInConsole(string command)
-    {
-        return VirtualSystem.ExecuteInConsole($"{Path} {command}");
-    }
-
     public ProgramFileModel ToModel()
     {
         return new ProgramFileModel { Path = Path, Program = Program.Key, VirtualSystem = VirtualSystem.Key };

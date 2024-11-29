@@ -36,7 +36,7 @@ public partial class SettingsWindow : Window
 
         foreach (var plugin in PluginsService.Instance.Plugins.Values)
         {
-            foreach (var item in plugin.Plugin.SettingsControls ?? [])
+            foreach (var item in plugin.Plugin.SettingsControls.Where(c => c.IsVisible))
             {
                 Add(item);
             }
@@ -79,7 +79,7 @@ public partial class SettingsWindow : Window
             node = parent.Children.FirstOrDefault(n => n.Name == name);
             if (node == null)
             {
-                node = new SettingsNode { Name = name, FullName = folderName };
+                node = new SettingsNode { Name = name.Trim('/'), FullName = folderName };
                 parent.Children.Add(node);
             }
 
@@ -126,11 +126,23 @@ public partial class SettingsWindow : Window
         {
             if (_currentPage != null)
             {
-                _pages[_currentPage].Control.IsVisible = false;
+                try
+                {
+                    _pages[_currentPage].Control.IsVisible = false;
+                }
+                catch (KeyNotFoundException)
+                {
+                }
             }
 
             _currentPage = node.FullName;
-            _pages[_currentPage].Control.IsVisible = true;
+            try
+            {
+                _pages[_currentPage].Control.IsVisible = true;
+            }
+            catch (KeyNotFoundException)
+            {
+            }
         }
     }
 }
