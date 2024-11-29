@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TestGenerator.Shared.Settings;assembly=TestGenerator.Shared"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TestGenerator.Settings.SettingsPage">
+             x:Class="TestGenerator.Shared.Settings.SettingsPage">
     <ScrollViewer>
         <settings:SettingsControl Name="SettingsControl" Margin="0 0 10 0" />
     </ScrollViewer>

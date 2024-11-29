@@ -8,6 +8,7 @@ using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Settings;
 using TestGenerator.Shared.Settings.Shared;
+using TestGenerator.Shared.SidePrograms;
 
 namespace TestGenerator.Settings;
 
@@ -25,12 +26,14 @@ public partial class SettingsWindow : Window
         Add("Плагины", new PluginsView());
         Add("Проект", new SettingsPage("", [
             new StringField { Key = "name", FieldName = "Название проекта:" },
-            new SelectField<string>()
+            new SelectField<string>
             {
                 Key = "type", FieldName = "Тип проекта:",
-                Items = new ObservableCollection<SelectItem<string>>(ProjectTypesService.Instance.Types.Values.Select(type =>
-                    new SelectItem<string> { Name = type.Name, Icon = type.IconPath, Value = type.Key }))
+                Items = new ObservableCollection<SelectItem<string>>(ProjectTypesService.Instance.Types.Values.Select(
+                    type =>
+                        new SelectItem<string> { Name = type.Name, Icon = type.IconPath, Value = type.Key })),
             },
+            // new ProgramField { Program = python, FieldName = "Python", Key = "python" }
         ], SettingsPage.SettingsPageType.ProjectData));
 
         foreach (var plugin in PluginsService.Instance.Plugins.Values)

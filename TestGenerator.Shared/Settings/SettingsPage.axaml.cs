@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using TestGenerator.Shared.Settings;
 using TestGenerator.Shared.Utils;
 
-namespace TestGenerator.Settings;
+namespace TestGenerator.Shared.Settings;
 
 public partial class SettingsPage : UserControl
 {

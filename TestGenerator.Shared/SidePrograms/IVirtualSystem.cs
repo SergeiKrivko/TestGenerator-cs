@@ -12,6 +12,9 @@ public interface IVirtualSystem
     public Task<ICompletedProcess> Execute(string filename, string args);
     public Task<ICompletedProcess> Execute(string command);
 
+    public ITerminalController ExecuteInConsole(string filename, string args);
+    public ITerminalController ExecuteInConsole(string command);
+
     public bool IsActive => true;
 
     public Task<string> ConvertPath(string path);

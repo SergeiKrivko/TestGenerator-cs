@@ -31,6 +31,16 @@ internal class NoVirtualSystem : IVirtualSystem
         return await AAppService.Instance.RunProcess(command);
     }
 
+    public ITerminalController ExecuteInConsole(string filename, string args)
+    {
+        return AAppService.Instance.RunInConsole($"\"{filename}\" {args}");
+    }
+
+    public ITerminalController ExecuteInConsole(string command)
+    {
+        return AAppService.Instance.RunInConsole(command);
+    }
+
     public async Task<string> ConvertPath(string path)
     {
         return path;

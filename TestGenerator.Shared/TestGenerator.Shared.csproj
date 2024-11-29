@@ -7,7 +7,7 @@
         <PackageId>TestGenerator.Shared</PackageId>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>1.7.1</PackageVersion>
+        <PackageVersion>1.7.2</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,6 +28,10 @@
       </Compile>
       <Compile Update="Settings\ProgramField.axaml.cs">
         <DependentUpon>ProgramField.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Settings\SettingsPage.axaml.cs">
+        <DependentUpon>SettingsPage.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
