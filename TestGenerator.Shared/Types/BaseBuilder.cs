@@ -20,22 +20,28 @@ public abstract class BaseBuilder
     public virtual async Task<int> Compile() => 0;
     public virtual string? Command => null;
     
-    public virtual async Task<int> Run(string args = "")
+    public virtual async Task<int> Run(string args = "", string? workingDirectory = null)
     {
         if (Command == null)
             throw new Exception("Builder base runner: command is null");
         var lst = Command.Split();
-        var proc = Process.Start(lst[0], string.Join(' ', lst.Skip(1)) + " " + args);
+        var proc = Process.Start(new ProcessStartInfo
+        {
+            FileName = lst[0], 
+            Arguments = string.Join(' ', lst.Skip(1)) + " " + args,
+            WorkingDirectory = workingDirectory
+        });
+        if (proc == null)
+            return -1;
         await proc.WaitForExitAsync();
         return proc.ExitCode;
     }
 
-    public virtual async Task<int> RunConsole(string args)
+    public virtual async Task<int> RunConsole(string args, string? workingDirectory = null)
     {
         if (Command == null)
             throw new Exception("Builder base runner: command is null");
-        var controller = AAppService.Instance.RunInConsole(Command + " " + args, 
-            Settings.Get<string>("workingDirectory"));
+        var controller = AAppService.Instance.RunInConsole(Command + " " + args, workingDirectory);
         return await controller.RunAsync();
     }
 

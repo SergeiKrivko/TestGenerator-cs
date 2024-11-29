@@ -97,6 +97,7 @@ public partial class Terminal : UserControl
 
     protected virtual async Task<Process?> RunProcess(string? command)
     {
+        Console.WriteLine($"Starting {command}");
         if (!string.IsNullOrWhiteSpace(command))
         {
             _lastCommands.Add(command);

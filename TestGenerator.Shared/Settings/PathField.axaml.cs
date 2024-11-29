@@ -68,7 +68,7 @@ public partial class PathField : UserControl, IField
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "Выберите файл",
-                FileTypeFilter = Extension == null ? [] : [new FilePickerFileType(Extension)],
+                FileTypeFilter = Extension == null ? [] : [new FilePickerFileType("Python file"){Patterns = [$"*{Extension}"]}],
                 AllowMultiple = false
             });
 

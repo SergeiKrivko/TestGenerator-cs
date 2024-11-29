@@ -38,9 +38,14 @@ public class SideProgramFile
         return await VirtualSystem.Execute(Path, command);
     }
 
+    public ITerminalController ExecuteInConsole(string command, string? workingDirectory = null)
+    {
+        return VirtualSystem.ExecuteInConsole($"{Path} {command}", workingDirectory);
+    }
+
     public ITerminalController ExecuteInConsole(string command)
     {
-        return VirtualSystem.ExecuteInConsole(Path, command);
+        return VirtualSystem.ExecuteInConsole($"{Path} {command}");
     }
 
     public ProgramFileModel ToModel()

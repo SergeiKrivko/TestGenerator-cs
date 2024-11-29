@@ -31,7 +31,7 @@ public class RunTerminal: Terminal
 
     protected override async Task<Process?> RunProcess(string? command)
     {
-        var proc = await  base.RunProcess(command);
+        var proc = await base.RunProcess(command);
         if (proc != null)
         {
             Write($"\nProcess finished with exit code {proc.ExitCode}\n");

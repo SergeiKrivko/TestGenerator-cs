@@ -8,7 +8,6 @@ using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Settings;
 using TestGenerator.Shared.Settings.Shared;
-using TestGenerator.Shared.SidePrograms;
 
 namespace TestGenerator.Settings;
 
