@@ -9,17 +9,14 @@ public class SideProgramFile
     public bool IsValid { get; private set; } = true;
     public IVirtualSystem VirtualSystem { get; }
 
-    private static readonly IVirtualSystem NoVirtualSystem = new NoVirtualSystem();
-
-    internal SideProgramFile(SideProgram program, string path, IVirtualSystem? virtualSystem = null)
+    internal SideProgramFile(SideProgram program, string path, IVirtualSystem virtualSystem)
     {
         Program = program;
         Path = path;
-        VirtualSystem = virtualSystem ?? NoVirtualSystem;
-        ValidateAsync();
+        VirtualSystem = virtualSystem;
     }
 
-    private async void ValidateAsync() => await Validate();
+    public async void ValidateAsync() => await Validate();
 
     public async Task<bool> Validate()
     {
@@ -39,5 +36,10 @@ public class SideProgramFile
     public async Task<ICompletedProcess> Execute(string command)
     {
         return await VirtualSystem.Execute(Path, command);
+    }
+
+    public ProgramFileModel ToModel()
+    {
+        return new ProgramFileModel { Path = Path, Program = Program.Key, VirtualSystem = VirtualSystem.Key };
     }
 }

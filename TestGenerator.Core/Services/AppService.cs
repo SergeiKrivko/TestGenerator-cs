@@ -157,7 +157,7 @@ public class AppService : AAppService
         }
 
         await proc.WaitForExitAsync();
-        LogService.Logger.Information($"Process '{args}' (exit {proc.ExitCode})");
+        LogService.Logger.Information($"Process '\"{filename}\" {args}' (exit {proc.ExitCode})");
         return new CompletedProcess
         {
             ExitCode = proc.ExitCode,

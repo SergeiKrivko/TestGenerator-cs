@@ -3,14 +3,13 @@
 public class SideProgram
 {
     public required string Key { get; init; }
-    public required string Name { get; init; }
     public List<ISideProgramValidator> Validators { get; init; } = [];
 
     public Dictionary<string, ICollection<string>> Locations { get; init; } = [];
 
     public SideProgramFile FromPath(string path)
     {
-        return new SideProgramFile(this, path);
+        return new SideProgramFile(this, path, NoVirtualSystem);
     }
 
     public SideProgramFile FromPath(string path, IVirtualSystem virtualSystem)
@@ -21,6 +20,15 @@ public class SideProgram
     public SideProgramFile FromPath(string path, string virtualSystem)
     {
         return new SideProgramFile(this, path, VirtualSystems.Single(s => s.Key == virtualSystem));
+    }
+
+    public SideProgramFile? FromModel(ProgramFileModel? model)
+    {
+        Console.WriteLine(model?.Path);
+        if (model?.Program != Key)
+            return null;
+        var virtualSystem = VirtualSystems.SingleOrDefault(s => s.Key == model.VirtualSystem);
+        return virtualSystem == null ? null : new SideProgramFile(this, model.Path, virtualSystem);
     }
 
     public async Task<ICollection<SideProgramFile>> Search()
@@ -41,8 +49,10 @@ public class SideProgram
 
         return res;
     }
+    
+    private static readonly IVirtualSystem NoVirtualSystem = new NoVirtualSystem();
 
-    public static List<IVirtualSystem> VirtualSystems { get; } = [];
+    public static List<IVirtualSystem> VirtualSystems { get; } = [NoVirtualSystem];
 
     public static bool HasVirtualSystem(string key)
     {

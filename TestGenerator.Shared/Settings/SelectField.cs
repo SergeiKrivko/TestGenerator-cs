@@ -22,9 +22,7 @@ public class SelectField<T> : BaseSelectField where T : class
     {
         if (Key != null)
         {
-            Console.WriteLine(section.Get<T>(Key));
             Value = section.Get<T>(Key);
-            Console.WriteLine($"AFTER: {Value}");
         }
     }
 
