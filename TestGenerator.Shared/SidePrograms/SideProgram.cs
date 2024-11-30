@@ -31,8 +31,23 @@ public class SideProgram
         return virtualSystem == null ? null : new SideProgramFile(this, model.Path, virtualSystem);
     }
 
+    private bool _searchStarted = false;
+    private ICollection<SideProgramFile>? _programFiles;
+
     public async Task<ICollection<SideProgramFile>> Search()
     {
+        if (_programFiles != null)
+            return _programFiles;
+        if (_searchStarted)
+        {
+            while (_programFiles == null)
+            {
+                await Task.Delay(100);
+            }
+
+            return _programFiles;
+        }
+        _searchStarted = true;
         var res = new List<SideProgramFile>();
         foreach (var virtualSystem in VirtualSystems.Where(s => s.IsActive))
         {
@@ -41,16 +56,17 @@ public class SideProgram
                 foreach (var location in Locations.GetValueOrDefault(tag, []))
                 {
                     var prog = FromPath(Environment.ExpandEnvironmentVariables(location), virtualSystem);
-                    Console.WriteLine(prog.DisplayName);
-                    if (await prog.Validate())
+                    if (res.FirstOrDefault(p => p.Path == prog.Path && p.VirtualSystem.Key == prog.VirtualSystem.Key) ==
+                        null && await prog.Validate())
                         res.Add(prog);
                 }
             }
         }
 
+        _programFiles = res;
         return res;
     }
-    
+
     private static readonly IVirtualSystem NoVirtualSystem = new NoVirtualSystem();
 
     public static List<IVirtualSystem> VirtualSystems { get; } = [NoVirtualSystem];

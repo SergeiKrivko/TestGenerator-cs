@@ -7,6 +7,7 @@ public class SideProgramFile
     public SideProgram Program { get; }
     public string Path { get; }
     public bool IsValid { get; private set; } = true;
+    public DateTime? LastValidation { get; private set; }
     public IVirtualSystem VirtualSystem { get; }
 
     internal SideProgramFile(SideProgram program, string path, IVirtualSystem virtualSystem)
@@ -18,18 +19,22 @@ public class SideProgramFile
 
     public async void ValidateAsync() => await Validate();
 
-    public async Task<bool> Validate()
+    public async Task<bool> Validate(bool force = false)
     {
+        if (!force && LastValidation != null)
+            return IsValid;
         foreach (var validator in Program.Validators)
         {
             if (!await validator.Validate(this))
             {
                 IsValid = false;
+                LastValidation = DateTime.Now;
                 return false;
             }
         }
 
         IsValid = true;
+        LastValidation = DateTime.Now;
         return IsValid;
     }
 
