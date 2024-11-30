@@ -154,12 +154,19 @@ public partial class FilesTab : SideTab
 
     private async void RunAction(IFileAction action, string path)
     {
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
-            desktop.MainWindow != null)
+        if (action.CreateWindow)
         {
-            var window = new ActionWindow();
-            window.Run(action, path);
-            await window.ShowDialog(desktop.MainWindow);
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
+                desktop.MainWindow != null)
+            {
+                var window = new ActionWindow();
+                window.Run(action, path);
+                await window.ShowDialog(desktop.MainWindow);
+            }
+        }
+        else
+        {
+            await action.Run(path);
         }
     }
 
