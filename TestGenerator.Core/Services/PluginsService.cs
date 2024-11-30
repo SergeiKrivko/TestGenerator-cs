@@ -29,7 +29,7 @@ public class PluginsService
     public event PluginLoadedHandler? OnPluginLoaded;
     public event PluginLoadedHandler? OnPluginUnloaded;
 
-    public void Load()
+    public async void Load()
     {
         var path = Path.Join(AppService.Instance.AppDataPath, "Plugins");
         Directory.CreateDirectory(path);
@@ -50,7 +50,7 @@ public class PluginsService
             {
                 try
                 {
-                    LoadPlugin(directory);
+                    await LoadPlugin(directory);
                 }
                 catch (Exception e)
                 {
@@ -60,7 +60,7 @@ public class PluginsService
         }
     }
 
-    public void LoadPlugin(string pluginPath)
+    private async Task LoadPlugin(string pluginPath)
     {
         var config = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(pluginPath, "Config.json")));
         if (config == null)
@@ -78,6 +78,7 @@ public class PluginsService
                         new InstalledPlugin { Config = config, Plugin = plugin, Path = pluginPath });
                     LogService.Logger.Debug($"Plugin '{config.Key}' loaded");
                     OnPluginLoaded?.Invoke(plugin);
+                    await plugin.Init();
                 }
             }
         }
@@ -106,10 +107,10 @@ public class PluginsService
         var installedPath = Path.Join(AppService.Instance.AppDataPath, "Plugins", Guid.NewGuid().ToString());
         var stream = await _httpClient.GetStreamAsync(url);
         await Task.Run(() => ZipFile.ExtractToDirectory(stream, installedPath));
-        LoadPlugin(installedPath);
+        await LoadPlugin(installedPath);
     }
 
-    public void RemovePlugin(string key)
+    public async Task RemovePlugin(string key)
     {
         if (!Plugins.ContainsKey(key))
         {
@@ -118,6 +119,7 @@ public class PluginsService
         }
 
         var plugin = Plugins[key];
+        await plugin.Plugin.Destroy();
         UnloadPlugin(key);
         File.Create(Path.Join(plugin.Path, "IsDeleted"));
         LogService.Logger.Information($"Plugin '{key}' was unloaded and marked as deleted");

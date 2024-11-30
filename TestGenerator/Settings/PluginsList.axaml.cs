@@ -153,11 +153,11 @@ public abstract partial class PluginsList : UserControl
         }
     }
 
-    private void RemoveButton_OnClick(object? sender, RoutedEventArgs e)
+    private async void RemoveButton_OnClick(object? sender, RoutedEventArgs e)
     {
         if (_selectedKey != null)
         {
-            PluginsService.Instance.RemovePlugin(_selectedKey);
+            await PluginsService.Instance.RemovePlugin(_selectedKey);
             Open(_selectedKey);
         }
     }
@@ -167,7 +167,7 @@ public abstract partial class PluginsList : UserControl
         if (_latestRelease != null && _selectedKey != null)
         {
             AddDownloading(_selectedKey);
-            PluginsService.Instance.RemovePlugin(_selectedKey);
+            await PluginsService.Instance.RemovePlugin(_selectedKey);
             await PluginsService.Instance.InstallPlugin(_latestRelease.Url);
             RemoveDownloading(_selectedKey);
         }

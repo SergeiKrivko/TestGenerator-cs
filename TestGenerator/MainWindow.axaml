@@ -8,15 +8,7 @@
         x:Class="TestGenerator.MainWindow"
         Icon="/Assets/icon.ico"
         Title="TestGenerator">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+    <Grid RowDefinitions="50 * 30" ColumnDefinitions="50 *">
 
         <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Gray"
                 BorderThickness="0 0 0 1">
@@ -43,6 +35,12 @@
                 <code:CodeTab Name="CodeTab"></code:CodeTab>
             </Panel>
         </SplitView>
+        
+        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="0 1 0 0" BorderBrush="Gray">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:BackgroundTasksBar IsVisible="False"></ui:BackgroundTasksBar>
+            </StackPanel>
+        </Border>
 
     </Grid>
 </Window>

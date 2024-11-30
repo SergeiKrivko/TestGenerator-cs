@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
 using TestGenerator.Core.Types;
@@ -171,6 +172,31 @@ public class AppService : AAppService
     {
         var lst = args.Split();
         return await RunProcess(lst[0], string.Join(' ', lst.Skip(1)));
+    }
 
+    public ObservableCollection<IBackgroundTask> BackgroundTasks { get; } = [];
+
+    public override IBackgroundTask RunBackgroundTask(string name, BackgroundTaskFunc func)
+    {
+        return RunBackgroundTask(new BackgroundTask(name, func));
+    }
+
+    public override IBackgroundTask RunBackgroundTask(string name, BackgroundTaskProgressFunc func)
+    {
+        return RunBackgroundTask(new BackgroundTask(name, func));
+    }
+
+    public override IBackgroundTask RunBackgroundTask(IBackgroundTask task)
+    {
+        task.Run();
+        BackgroundTasks.Add(task);
+        WaitBackgroundTask(task);
+        return task;
+    }
+
+    private async void WaitBackgroundTask(IBackgroundTask task)
+    {
+        await task.Wait();
+        BackgroundTasks.Remove(task);
     }
 }

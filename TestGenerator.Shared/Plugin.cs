@@ -1,10 +1,9 @@
-﻿using Avalonia.Controls;
-using TestGenerator.Shared.Settings;
+﻿using TestGenerator.Shared.Settings;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Shared;
 
-public class Plugin
+public abstract class Plugin
 {
     public required string Name { get; init; }
     public List<MainTab> MainTabs { get; init; } = [];
@@ -52,5 +51,13 @@ public class Plugin
             SettingsControls = settingsControls;
         if (fileIcons != null)
             FileIcons = fileIcons;
+    }
+
+    public virtual async Task Init()
+    {
+    }
+
+    public virtual async Task Destroy()
+    {
     }
 }

@@ -100,7 +100,7 @@ public class Build : ABuild
         {
             if (proc.Compile)
             {
-                code = await Compile();
+                code = await AppService.Instance.RunBackgroundTask($"{Name} - компиляция", Compile).Wait();
             }
             else if (proc.Command != null)
             {

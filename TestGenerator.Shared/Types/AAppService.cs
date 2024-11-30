@@ -58,4 +58,11 @@ public abstract class AAppService
 
     public abstract Task<ICompletedProcess> RunProcess(string args);
     public abstract Task<ICompletedProcess> RunProcess(string filename, string args, string? workingDirectory = null);
+
+    public delegate Task<int> BackgroundTaskProgressFunc(IBackgroundTask task);
+    public delegate Task<int> BackgroundTaskFunc();
+
+    public abstract IBackgroundTask RunBackgroundTask(string name, BackgroundTaskProgressFunc func);
+    public abstract IBackgroundTask RunBackgroundTask(string name, BackgroundTaskFunc func);
+    public abstract IBackgroundTask RunBackgroundTask(IBackgroundTask task);
 }
