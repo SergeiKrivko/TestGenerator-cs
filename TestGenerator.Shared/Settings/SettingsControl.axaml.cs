@@ -16,7 +16,7 @@ public partial class SettingsControl : UserControl
         }
     }
     
-    private List<IField> _fields = [];
+    private readonly List<IField> _fields = [];
     
     public SettingsControl()
     {

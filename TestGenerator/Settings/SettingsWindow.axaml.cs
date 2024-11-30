@@ -15,7 +15,7 @@ public partial class SettingsWindow : Window
 {
     private Dictionary<string, TestGenerator.Shared.Settings.SettingsNode> _pages = [];
     private ObservableCollection<SettingsNode> Nodes { get; } = [];
-    private string? _currentPage = null;
+    private string? _currentPage;
 
     public SettingsWindow()
     {

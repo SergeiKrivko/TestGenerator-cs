@@ -6,6 +6,7 @@ public interface IFileAction
     public string Key { get; }
     public string Name => Key;
     public string? Icon => null;
+    public bool CreateWindow => true;
     public int Priority => 1;
     
     public Task Run(string path);
