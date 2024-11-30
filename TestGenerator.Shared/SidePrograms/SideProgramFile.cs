@@ -47,4 +47,6 @@ public class SideProgramFile
     {
         return new ProgramFileModel { Path = Path, Program = Program.Key, VirtualSystem = VirtualSystem.Key };
     }
+
+    internal string DisplayName => VirtualSystem.Key == "" ? Path : $"[{VirtualSystem.Name}] {Path}";
 }

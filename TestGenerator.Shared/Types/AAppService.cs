@@ -57,5 +57,5 @@ public abstract class AAppService
     public abstract AProject CurrentProject { get; }
 
     public abstract Task<ICompletedProcess> RunProcess(string args);
-    public abstract Task<ICompletedProcess> RunProcess(string filename, string args);
+    public abstract Task<ICompletedProcess> RunProcess(string filename, string args, string? workingDirectory = null);
 }

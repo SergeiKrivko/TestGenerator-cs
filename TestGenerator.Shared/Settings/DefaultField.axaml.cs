@@ -34,9 +34,6 @@ public partial class DefaultField : UserControl, IField
     public DefaultField(ICollection<IField> fields)
     {
         InitializeComponent();
-        ChildrenPanel.IsVisible = CheckBox.IsChecked == true;
-        if (Inversion)
-            ChildrenPanel.IsVisible = !ChildrenPanel.IsVisible;
         foreach (var field in fields)
         {
             Add(field);
@@ -57,6 +54,9 @@ public partial class DefaultField : UserControl, IField
     {
         if (Key != null)
             Value = section.Get<bool>(Key);
+        ChildrenPanel.IsVisible = CheckBox.IsChecked == true;
+        if (Inversion)
+            ChildrenPanel.IsVisible = !ChildrenPanel.IsVisible;
         foreach (var field in _fields)
         {
             field.Load(section);

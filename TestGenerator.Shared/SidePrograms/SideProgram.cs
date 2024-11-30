@@ -41,6 +41,7 @@ public class SideProgram
                 foreach (var location in Locations.GetValueOrDefault(tag, []))
                 {
                     var prog = FromPath(Environment.ExpandEnvironmentVariables(location), virtualSystem);
+                    Console.WriteLine(prog.DisplayName);
                     if (await prog.Validate())
                         res.Add(prog);
                 }

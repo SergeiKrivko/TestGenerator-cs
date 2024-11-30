@@ -14,7 +14,7 @@
                         <StackPanel Orientation="Horizontal" Spacing="5">
                             <PathIcon Name="IconOk" IsVisible="{Binding IsValid}" Data="{DynamicResource IconCheckmark}"></PathIcon>
                             <PathIcon Name="IconInvalid" IsVisible="{Binding !IsValid}" Data="{DynamicResource IconClose}"></PathIcon>
-                            <TextBlock Text="{Binding Path}"></TextBlock>
+                            <TextBlock Text="{Binding DisplayName}"></TextBlock>
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>

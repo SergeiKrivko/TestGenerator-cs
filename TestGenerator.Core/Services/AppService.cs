@@ -142,13 +142,14 @@ public class AppService : AAppService
 
     public override AProject CurrentProject => ProjectsService.Instance.Current;
 
-    public override async Task<ICompletedProcess> RunProcess(string filename, string args)
+    public override async Task<ICompletedProcess> RunProcess(string filename, string args, string? workingDirectory = null)
     {
         var proc = Process.Start(new ProcessStartInfo(filename, args)
         {
             CreateNoWindow = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
+            WorkingDirectory = workingDirectory,
         });
         if (proc == null)
         {

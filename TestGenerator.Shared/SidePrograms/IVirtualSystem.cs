@@ -9,7 +9,7 @@ public interface IVirtualSystem
 
     public ICollection<string> Tags => ["Default"];
 
-    public Task<ICompletedProcess> Execute(string filename, string args);
+    public Task<ICompletedProcess> Execute(string filename, string args, string? workingDirectory = null);
     public Task<ICompletedProcess> Execute(string command);
 
     public ITerminalController ExecuteInConsole(string command, string? workingDirectory = null);
