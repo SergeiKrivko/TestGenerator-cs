@@ -162,12 +162,14 @@ public class AppService : AAppService
                 {
                     res.Add(await RunBackgroundProcess(arg));
                 }
+
                 break;
             case RunProcessArgs.ProcessRunProvider.RunTab:
                 foreach (var arg in args)
                 {
                     res.Add(await Request<ICompletedProcess>("runProcessInTabRun", arg));
                 }
+
                 break;
             default:
                 throw new Exception();
@@ -183,14 +185,24 @@ public class AppService : AAppService
 
     private async Task<ICompletedProcess> RunBackgroundProcess(RunProcessArgs args)
     {
-        var proc = Process.Start(new ProcessStartInfo(args.Filename, args.Args)
+        Process? proc;
+        try
         {
-            CreateNoWindow = true,
-            RedirectStandardInput = args.Stdin != null,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            WorkingDirectory = args.WorkingDirectory,
-        });
+            proc = Process.Start(new ProcessStartInfo(args.Filename, args.Args)
+            {
+                CreateNoWindow = true,
+                RedirectStandardInput = args.Stdin != null,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WorkingDirectory = args.WorkingDirectory,
+            });
+        }
+        catch (Exception e)
+        {
+            LogService.Logger.Error(e.Message);
+            return new CompletedProcess { ExitCode = -1 };
+        }
+
         if (proc == null)
         {
             LogService.Logger.Information($"Can not start '{args.Filename}'");
@@ -238,6 +250,7 @@ public class AppService : AAppService
     private async void WaitBackgroundTask(IBackgroundTask task)
     {
         await task.Wait();
+        LogService.Logger.Information($"Task {task.Name} finished");
         BackgroundTasks.Remove(task);
     }
 }

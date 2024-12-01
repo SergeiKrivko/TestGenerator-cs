@@ -24,7 +24,6 @@ public class SideProgram
 
     public SideProgramFile? FromModel(ProgramFileModel? model)
     {
-        Console.WriteLine(model?.Path);
         if (model?.Program != Key)
             return null;
         var virtualSystem = VirtualSystems.SingleOrDefault(s => s.Key == model.VirtualSystem);

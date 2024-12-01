@@ -3,7 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:types="clr-namespace:TestGenerator.Shared.Types;assembly=TestGenerator.Shared"
+             xmlns:ui="clr-namespace:TestGenerator.UI"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="ui:BackgroundTasksBar"
              x:Class="TestGenerator.UI.BackgroundTasksBar">
     <Button BorderThickness="0" Name="MainButton">
         <StackPanel Orientation="Horizontal" Spacing="5">
@@ -16,15 +18,7 @@
                     <ItemsControl Name="ItemsControl">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="types:IBackgroundTask">
-                                <StackPanel Orientation="Vertical" Spacing="5" Margin="10">
-                                    <TextBlock Text="{Binding Name}" FontSize="16" />
-                                    <ProgressBar Height="5" Maximum="100"
-                                                 Value="{Binding Progress, UpdateSourceTrigger=PropertyChanged}"
-                                                 IsIndeterminate="{Binding IsIndeterminate, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <TextBlock FontSize="12"
-                                               Text="{Binding Status, UpdateSourceTrigger=PropertyChanged}"
-                                               IsVisible="{Binding Status, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
+                                <ui:BackgroundTaskItem BackgroundTask="{Binding .}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

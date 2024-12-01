@@ -1,4 +1,5 @@
-﻿using TestGenerator.Shared.Types;
+﻿using TestGenerator.Core.Services;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Core.Types;
 
@@ -55,7 +56,8 @@ public class BackgroundTask : IBackgroundTask
 
     public Task Run()
     {
-        return _task = _func(this);
+        LogService.Logger.Information($"Task {Name} started");
+        return _task = Task.Run(() => _func(this));
     }
 
     public async Task<int> Wait()

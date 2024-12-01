@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
 
@@ -38,9 +40,12 @@ public partial class BackgroundTasksBar : UserControl
 
     private void CurrentTaskOnProgressChanged(double? progress)
     {
-        ProgressBar.IsIndeterminate = progress == null;
-        Console.WriteLine(progress);
-        if (progress != null)
-            ProgressBar.Value = progress.Value;
+        Dispatcher.UIThread.Post(() =>
+        {
+            ProgressBar.IsIndeterminate = progress == null;
+            Console.WriteLine(progress);
+            if (progress != null)
+                ProgressBar.Value = progress.Value;
+        });
     }
 }

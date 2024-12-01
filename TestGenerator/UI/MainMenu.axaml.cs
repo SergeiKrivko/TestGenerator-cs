@@ -5,8 +5,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using DynamicData;
-using TestGenerator.Core.Services;
 using TestGenerator.Settings;
 
 namespace TestGenerator.UI;

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DynamicData;
+using AvaloniaEdit.Utils;
 
 namespace TestGenerator.FilesTab;
 

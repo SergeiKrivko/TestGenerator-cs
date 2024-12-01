@@ -4,9 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
-using DynamicData;
+using AvaloniaEdit.Utils;
 using TestGenerator.Core.Models;
 using TestGenerator.Core.Services;
 
