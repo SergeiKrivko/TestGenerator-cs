@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using TestGenerator.Core.Services;
+using TestGenerator.Core.Types;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.UI;
 
@@ -18,7 +20,7 @@ public partial class Terminal : UserControl
     public string TerminalAppArgs { get; set; }
 
     public bool TerminalQuotes { get; set; } = false;
-    
+
     private List<string> _lastCommands = [];
     private int _lastCommandIndex = 0;
 
@@ -30,7 +32,8 @@ public partial class Terminal : UserControl
         {
             TerminalApp = "powershell";
             TerminalAppArgs = "-Command";
-        } else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        }
+        else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
         {
             TerminalApp = "bash";
             TerminalAppArgs = "-c";
@@ -95,14 +98,13 @@ public partial class Terminal : UserControl
         }
     }
 
-    protected virtual async Task<Process?> RunProcess(string? command)
+    protected virtual async Task<ICompletedProcess?> RunProcess(string? command, string? stdin = null)
     {
-        Console.WriteLine($"Starting {command}");
         if (!string.IsNullOrWhiteSpace(command))
         {
             _lastCommands.Add(command);
             _lastCommandIndex = _lastCommands.Count;
-            
+
             if (command.Trim() == "clear")
                 Clear();
             else if (command.Trim().StartsWith("cd "))
@@ -127,6 +129,11 @@ public partial class Terminal : UserControl
                     CurrentProcess.Start();
                     ReadOutputLoop();
                     ReadErrorLoop();
+                    if (stdin != null)
+                    {
+                        await CurrentProcess.StandardInput.WriteAsync(stdin);
+                        await CurrentProcess.StandardInput.FlushAsync();
+                    }
 
                     await CurrentProcess.WaitForExitAsync();
                     CurrentProcess = null;
@@ -141,7 +148,9 @@ public partial class Terminal : UserControl
                     Write(e.Message + "\n");
                     CurrentProcess = null;
                 }
-                return proc;
+
+                return new CompletedProcess
+                    { ExitCode = proc.ExitCode, Stdout = _stdout, Stderr = _stderr, Time = proc.TotalProcessorTime };
             }
         }
 
@@ -149,17 +158,26 @@ public partial class Terminal : UserControl
         return null;
     }
 
+    private string _stdout = "";
+    private string _stderr = "";
+
     private async void ReadOutputLoop()
     {
         if (CurrentProcess == null)
             return;
+        _stdout = "";
         var pid = CurrentProcess.Id;
         var chars = new Memory<char>(new char[100]);
         while (pid == CurrentProcess?.Id)
         {
             var count = await CurrentProcess.StandardOutput.ReadAsync(chars);
             if (count > 0)
-                Write(chars.Slice(0, count).ToString());
+            {
+                var el = chars.Slice(0, count).ToString();
+                _stdout += el;
+                Write(el);
+            }
+
             await Task.Delay(10);
         }
     }
@@ -168,13 +186,19 @@ public partial class Terminal : UserControl
     {
         if (CurrentProcess == null)
             return;
+        _stdout = "";
         var pid = CurrentProcess.Id;
         var chars = new Memory<char>(new char[100]);
         while (pid == CurrentProcess?.Id)
         {
             var count = await CurrentProcess.StandardError.ReadAsync(chars);
             if (count > 0)
-                Write(chars.Slice(0, count).ToString());
+            {
+                var el = chars.Slice(0, count).ToString();
+                _stdout += el;
+                Write(el);
+            }
+
             await Task.Delay(10);
         }
     }

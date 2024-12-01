@@ -1,16 +1,14 @@
 ﻿using System.Collections.ObjectModel;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using TestGenerator.Core.Services;
-using TestGenerator.Core.Types;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.UI;
 
 public partial class BuildRunner : UserControl
 {
-    public ObservableCollection<Build> Builds { get; }
+    public ObservableCollection<ABuild> Builds { get; }
     
     public BuildRunner()
     {
@@ -21,8 +19,7 @@ public partial class BuildRunner : UserControl
 
     private async void RunButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        var build = ComboBox.SelectedValue as Build;
-        if (build != null)
+        if (ComboBox.SelectedValue is ABuild build)
         {
             AppService.Instance.ShowSideTab("Run");
             await build.ExecuteConsole();

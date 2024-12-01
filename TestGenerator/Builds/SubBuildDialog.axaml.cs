@@ -11,7 +11,7 @@ public partial class SubBuildDialog : Window
 {
     private BuildSubprocess _subprocess;
     
-    public ObservableCollection<Build> Builds { get; }
+    public ObservableCollection<ABuild> Builds { get; }
     
     public SubBuildDialog(BuildSubprocess subprocess)
     {

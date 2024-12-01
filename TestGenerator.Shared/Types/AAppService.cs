@@ -16,11 +16,11 @@ public abstract class AAppService
             return _instance;
         }
     }
-    
+
     public abstract Version? AppVersion { get; }
-    
+
     public abstract SettingsFile Settings { get; }
-    
+
     public abstract string AppDataPath { get; }
 
     public abstract SettingsSection GetSettings(string key);
@@ -37,29 +37,33 @@ public abstract class AAppService
     public abstract Logger GetLogger(string name);
     public abstract Logger GetLogger();
 
-    public abstract ITerminalController RunInConsole(string command, string? workingDirectory = null);
-
     public abstract void Emit(string key, object? data = null);
 
     public delegate void Handler<T>(T obj);
+
     public delegate void Handler();
 
     public abstract ISubscription Subscribe<T>(string key, Handler<T> handler);
     public abstract ISubscription Subscribe(string key, Handler handler);
 
     public delegate Task<TO> RequestHandler<TI, TO>(TI data);
+
     public delegate Task<TO> RequestHandler<TO>();
 
     public abstract Task<T> Request<T>(string key, object? data = null);
     public abstract void AddRequestHandler<TI, TO>(string key, RequestHandler<TI, TO> handler);
     public abstract void AddRequestHandler<TO>(string key, RequestHandler<TO> handler);
-    
+
     public abstract AProject CurrentProject { get; }
 
-    public abstract Task<ICompletedProcess> RunProcess(string args);
-    public abstract Task<ICompletedProcess> RunProcess(string filename, string args, string? workingDirectory = null);
+    public abstract Task<ICompletedProcess> RunProcess(RunProcessArgs.ProcessRunProvider where, RunProcessArgs args);
+    public abstract Task<ICompletedProcess> RunProcess(RunProcessArgs args);
+
+    public abstract Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs.ProcessRunProvider where, params RunProcessArgs[] args);
+    public abstract Task<ICollection<ICompletedProcess>> RunProcess(params RunProcessArgs[] args);
 
     public delegate Task<int> BackgroundTaskProgressFunc(IBackgroundTask task);
+
     public delegate Task<int> BackgroundTaskFunc();
 
     public abstract IBackgroundTask RunBackgroundTask(string name, BackgroundTaskProgressFunc func);

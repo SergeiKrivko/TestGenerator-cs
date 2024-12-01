@@ -6,6 +6,7 @@ public class ProgramOutputValidator : ISideProgramValidator
 {
     public Dictionary<string, string> Args { get; } = new()
         { { "Default", "--version" } };
+
     public Dictionary<string, string> Output { get; } = new()
         { { "Default", "" } };
 
@@ -33,6 +34,7 @@ public class ProgramOutputValidator : ISideProgramValidator
             if (Args.TryGetValue(tag, out arg))
                 break;
         }
+
         foreach (var tag in program.VirtualSystem.Tags)
         {
             if (Output.TryGetValue(tag, out output))
@@ -43,7 +45,7 @@ public class ProgramOutputValidator : ISideProgramValidator
             return false;
         try
         {
-            var res = await program.Execute(arg);
+            var res = await program.Execute(new RunProgramArgs { Args = arg });
             return res.ExitCode == 0 && res.Stdout.Contains(output);
         }
         catch (Exception)

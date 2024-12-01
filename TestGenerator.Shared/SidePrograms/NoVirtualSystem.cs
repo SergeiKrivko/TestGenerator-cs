@@ -21,19 +21,25 @@ internal class NoVirtualSystem : IVirtualSystem
             return res;
         }
     }
-    public async Task<ICompletedProcess> Execute(string filename, string args, string? workingDirectory = null)
+
+    public async Task<ICompletedProcess> Execute(RunProcessArgs.ProcessRunProvider where, RunProcessArgs args)
     {
-        return await AAppService.Instance.RunProcess(filename, args, workingDirectory);
+        return await AAppService.Instance.RunProcess(where, args);
     }
 
-    public async Task<ICompletedProcess> Execute(string command)
+    public async Task<ICompletedProcess> Execute(RunProcessArgs args)
     {
-        return await AAppService.Instance.RunProcess(command);
+        return await AAppService.Instance.RunProcess(args);
     }
 
-    public ITerminalController ExecuteInConsole(string command, string? workingDirectory = null)
+    public async Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs.ProcessRunProvider where, params RunProcessArgs[] args)
     {
-        return AAppService.Instance.RunInConsole(command, workingDirectory);
+        return await AAppService.Instance.RunProcess(where, args);
+    }
+
+    public async Task<ICollection<ICompletedProcess>> Execute(params RunProcessArgs[] args)
+    {
+        return await AAppService.Instance.RunProcess(args);
     }
 
     public async Task<string> ConvertPath(string path)

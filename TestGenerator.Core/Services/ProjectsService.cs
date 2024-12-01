@@ -76,6 +76,7 @@ public class ProjectsService
             }
 
             CurrentChanged?.Invoke(Current);
+            AppService.Instance.Emit("projectChanged", Current.Path);
         }
     }
 

@@ -83,17 +83,6 @@ public class AppService : AAppService
         return GetLogger(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
     }
 
-    public delegate ITerminalController TerminalControllerFunc(string command, string? workingDirectory);
-
-    public TerminalControllerFunc? TerminalController { get; set; }
-
-    public override ITerminalController RunInConsole(string command, string? workingDirectory = null)
-    {
-        if (TerminalController == null)
-            throw new Exception("Fail to run get TerminalController");
-        return TerminalController(command, workingDirectory);
-    }
-
     public override void Emit(string key, object? data = null)
     {
         if (_events.TryGetValue(key, out var ev))
@@ -143,35 +132,87 @@ public class AppService : AAppService
 
     public override AProject CurrentProject => ProjectsService.Instance.Current;
 
-    public override async Task<ICompletedProcess> RunProcess(string filename, string args, string? workingDirectory = null)
+    public override async Task<ICompletedProcess> RunProcess(RunProcessArgs.ProcessRunProvider where,
+        RunProcessArgs args)
     {
-        var proc = Process.Start(new ProcessStartInfo(filename, args)
+        switch (where)
+        {
+            case RunProcessArgs.ProcessRunProvider.Background:
+                return await RunBackgroundProcess(args);
+            case RunProcessArgs.ProcessRunProvider.RunTab:
+                return await Request<ICompletedProcess>("runProcessInTabRun", args);
+            default:
+                throw new Exception();
+        }
+    }
+
+    public override async Task<ICompletedProcess> RunProcess(RunProcessArgs args)
+    {
+        return await RunProcess(RunProcessArgs.ProcessRunProvider.Background, args);
+    }
+
+    public override async Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs.ProcessRunProvider where,
+        params RunProcessArgs[] args)
+    {
+        var res = new List<ICompletedProcess>();
+        switch (where)
+        {
+            case RunProcessArgs.ProcessRunProvider.Background:
+                foreach (var arg in args)
+                {
+                    res.Add(await RunBackgroundProcess(arg));
+                }
+                break;
+            case RunProcessArgs.ProcessRunProvider.RunTab:
+                foreach (var arg in args)
+                {
+                    res.Add(await Request<ICompletedProcess>("runProcessInTabRun", arg));
+                }
+                break;
+            default:
+                throw new Exception();
+        }
+
+        return res;
+    }
+
+    public override async Task<ICollection<ICompletedProcess>> RunProcess(params RunProcessArgs[] args)
+    {
+        return await RunProcess(RunProcessArgs.ProcessRunProvider.Background, args);
+    }
+
+    private async Task<ICompletedProcess> RunBackgroundProcess(RunProcessArgs args)
+    {
+        var proc = Process.Start(new ProcessStartInfo(args.Filename, args.Args)
         {
             CreateNoWindow = true,
+            RedirectStandardInput = args.Stdin != null,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
-            WorkingDirectory = workingDirectory,
+            WorkingDirectory = args.WorkingDirectory,
         });
         if (proc == null)
         {
-            LogService.Logger.Information($"Can not start '{args}'");
+            LogService.Logger.Information($"Can not start '{args.Filename}'");
             return new CompletedProcess { ExitCode = -1 };
         }
 
+        if (args.Stdin != null)
+        {
+            await proc.StandardInput.WriteAsync(args.Stdin);
+            await proc.StandardInput.FlushAsync();
+        }
+
         await proc.WaitForExitAsync();
-        LogService.Logger.Information($"Process '\"{filename}\" {args}' (exit {proc.ExitCode})");
+        var filename = args.Filename.Contains(' ') ? "\"" + args.Filename + "\"" : args.Filename;
+        LogService.Logger.Information($"Process '{filename} {args.Args}' (exit {proc.ExitCode})");
         return new CompletedProcess
         {
             ExitCode = proc.ExitCode,
             Stdout = await proc.StandardOutput.ReadToEndAsync(),
-            Stderr = await proc.StandardError.ReadToEndAsync()
+            Stderr = await proc.StandardError.ReadToEndAsync(),
+            Time = proc.TotalProcessorTime,
         };
-    }
-
-    public override async Task<ICompletedProcess> RunProcess(string args)
-    {
-        var lst = args.Split();
-        return await RunProcess(lst[0], string.Join(' ', lst.Skip(1)));
     }
 
     public ObservableCollection<IBackgroundTask> BackgroundTasks { get; } = [];

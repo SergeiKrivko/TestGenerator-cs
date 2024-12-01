@@ -6,7 +6,6 @@ namespace TestGenerator.Shared.Types;
 public abstract class AProject
 {
     public static string TestGeneratorDir { get; } = ".TestGenerator";
-    public static string DataFile { get; } = "TestGeneratorData.json";
     
     public abstract SettingsFile Settings { get; }
     public abstract SettingsFile Data { get; }

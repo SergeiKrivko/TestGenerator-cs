@@ -6,10 +6,10 @@ namespace TestGenerator.Shared.Types;
 public abstract class BaseBuilder
 {
     public SettingsSection Settings { get; }
-    
+
     public Guid BuildId { get; }
     public AProject Project { get; }
-    
+
     public BaseBuilder(Guid id, AProject project, SettingsSection settings)
     {
         BuildId = id;
@@ -19,30 +19,34 @@ public abstract class BaseBuilder
 
     public virtual async Task<int> Compile() => 0;
     public virtual string? Command => null;
-    
-    public virtual async Task<int> Run(string args = "", string? workingDirectory = null)
+
+    public virtual async Task<ICompletedProcess> Run(string args = "", string? workingDirectory = null,
+        string? stdin = null)
+    {
+        return await RunAsync(RunProcessArgs.ProcessRunProvider.Background, args, workingDirectory, stdin);
+    }
+
+    public virtual async Task<ICompletedProcess> RunConsole(string args = "",
+        string? workingDirectory = null,
+        string? stdin = null)
+    {
+        return await RunAsync(RunProcessArgs.ProcessRunProvider.RunTab, args, workingDirectory, stdin);
+    }
+
+    private async Task<ICompletedProcess> RunAsync(RunProcessArgs.ProcessRunProvider where, string args,
+        string? workingDirectory = null,
+        string? stdin = null)
     {
         if (Command == null)
             throw new Exception("Builder base runner: command is null");
         var lst = Command.Split();
-        var proc = Process.Start(new ProcessStartInfo
+        return await AAppService.Instance.RunProcess(where, new RunProcessArgs
         {
-            FileName = lst[0], 
-            Arguments = string.Join(' ', lst.Skip(1)) + " " + args,
-            WorkingDirectory = workingDirectory
+            Filename = lst[0],
+            Args = string.Join(' ', lst.Skip(1) + args),
+            WorkingDirectory = workingDirectory,
+            Stdin = stdin
         });
-        if (proc == null)
-            return -1;
-        await proc.WaitForExitAsync();
-        return proc.ExitCode;
-    }
-
-    public virtual async Task<int> RunConsole(string args, string? workingDirectory = null)
-    {
-        if (Command == null)
-            throw new Exception("Builder base runner: command is null");
-        var controller = AAppService.Instance.RunInConsole(Command + " " + args, workingDirectory);
-        return await controller.RunAsync();
     }
 
     public string TempPath => Path.Join(AAppService.Instance.AppDataPath, "Temp", "Builds", BuildId.ToString());

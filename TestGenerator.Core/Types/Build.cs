@@ -40,7 +40,7 @@ public class Build : ABuild
         Builder = type.Builder(id, _project, Settings.GetSection("typeSettings"));
     }
 
-    public delegate Build? BuildGetter(Guid id);
+    public delegate ABuild? BuildGetter(Guid id);
 
     public BuildGetter? GetBuild { get; set; }
 
@@ -82,11 +82,13 @@ public class Build : ABuild
 
     public override Task<int> Compile() => Builder.Compile();
 
-    public override Task<int> Run(string args = "") => Builder.Run(args, WorkingDirectory);
+    public override Task<ICompletedProcess> Run(string args = "", string? stdin = null) =>
+        Builder.Run(args, WorkingDirectory, stdin);
 
-    public override Task<int> RunConsole(string args = "") => Builder.RunConsole(args, WorkingDirectory);
+    public override Task<ICompletedProcess> RunConsole(string args = "", string? stdin = null) =>
+        Builder.RunConsole(args, WorkingDirectory, stdin);
 
-    private Build? _getBuild(Guid id)
+    private ABuild? _getBuild(Guid id)
     {
         if (GetBuild == null)
             throw new Exception("Can not get build");
@@ -104,13 +106,55 @@ public class Build : ABuild
             }
             else if (proc.Command != null)
             {
-                code = await AppService.Instance.RunInConsole(proc.Command, WorkingDirectory).RunAsync();
+                var lst = proc.Command.Split();
+                code = (await AppService.Instance
+                    .RunProcess(RunProcessArgs.ProcessRunProvider.RunTab,
+                        new RunProcessArgs
+                        {
+                            Filename = lst[0],
+                            Args = string.Join(' ', lst.Skip(1)),
+                            WorkingDirectory = WorkingDirectory
+                        })).ExitCode;
             }
             else if (proc.BuildId != null)
             {
                 var build = _getBuild(proc.BuildId.Value);
                 if (build != null)
                     code = await build.ExecuteConsole();
+            }
+
+            if (code != 0)
+                return code;
+        }
+
+        return code;
+    }
+
+    private async Task<int> RunSubProc(List<BuildSubprocess> procs)
+    {
+        var code = 0;
+        foreach (var proc in procs)
+        {
+            if (proc.Compile)
+            {
+                code = await AppService.Instance.RunBackgroundTask($"{Name} - компиляция", Compile).Wait();
+            }
+            else if (proc.Command != null)
+            {
+                var lst = proc.Command.Split();
+                code = (await AppService.Instance
+                    .RunProcess(new RunProcessArgs
+                    {
+                        Filename = lst[0],
+                        Args = string.Join(' ', lst.Skip(1)),
+                        WorkingDirectory = WorkingDirectory
+                    })).ExitCode;
+            }
+            else if (proc.BuildId != null)
+            {
+                var build = _getBuild(proc.BuildId.Value);
+                if (build != null)
+                    code = await build.Execute();
             }
 
             if (code != 0)
@@ -130,14 +174,35 @@ public class Build : ABuild
         return await RunSubProcConsole(PostProc);
     }
 
-    public override async Task<int> ExecuteConsole(string args = "")
+    public override async Task<int> RunPreProc()
+    {
+        return await RunSubProc(PreProc);
+    }
+
+    public override async Task<int> RunPostProc()
+    {
+        return await RunSubProc(PostProc);
+    }
+
+    public override async Task<int> ExecuteConsole(string args = "", string? stdin = null)
     {
         var code = await RunPreProcConsole();
         if (code != 0)
             return code;
-        code = await RunConsole(args);
+        code = (await RunConsole(args, stdin)).ExitCode;
         if (code != 0)
             return code;
         return await RunPostProcConsole();
+    }
+
+    public override async Task<int> Execute(string args = "", string? stdin = null)
+    {
+        var code = await RunPreProc();
+        if (code != 0)
+            return code;
+        code = (await Run(args, stdin)).ExitCode;
+        if (code != 0)
+            return code;
+        return await RunPostProc();
     }
 }

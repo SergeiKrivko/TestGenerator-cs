@@ -4,12 +4,13 @@ using Avalonia.Interactivity;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Settings;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Builds;
 
 public partial class BuildsWindow : Window
 {
-    public ObservableCollection<Build> Builds { get; }
+    public ObservableCollection<ABuild> Builds { get; }
 
     public BuildsWindow()
     {

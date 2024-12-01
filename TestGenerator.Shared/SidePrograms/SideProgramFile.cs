@@ -38,14 +38,24 @@ public class SideProgramFile
         return IsValid;
     }
 
-    public async Task<ICompletedProcess> Execute(string command)
+    public async Task<ICompletedProcess> Execute(RunProcessArgs.ProcessRunProvider where, RunProgramArgs args)
     {
-        return await VirtualSystem.Execute(Path, command);
+        return await VirtualSystem.Execute(where, args.ToProcessArgs(Path));
     }
 
-    public ITerminalController ExecuteInConsole(string command, string? workingDirectory = null)
+    public async Task<ICompletedProcess> Execute(RunProgramArgs args)
     {
-        return VirtualSystem.ExecuteInConsole($"{Path} {command}", workingDirectory);
+        return await VirtualSystem.Execute(args.ToProcessArgs(Path));
+    }
+
+    public async Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs.ProcessRunProvider where, params RunProgramArgs[] args)
+    {
+        return await VirtualSystem.Execute(where, args.Select(a => a.ToProcessArgs(Path)).ToArray());
+    }
+
+    public async Task<ICollection<ICompletedProcess>> Execute(params RunProgramArgs[] args)
+    {
+        return await VirtualSystem.Execute(args.Select(a => a.ToProcessArgs(Path)).ToArray());
     }
 
     public ProgramFileModel ToModel()

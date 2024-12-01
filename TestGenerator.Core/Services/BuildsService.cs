@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using TestGenerator.Core.Types;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Core.Services;
 
@@ -16,12 +17,14 @@ public class BuildsService
         }
     }
 
-    public ObservableCollection<Build> Builds { get; } = [];
+    public ObservableCollection<ABuild> Builds { get; } = [];
 
     private BuildsService()
     {
         ProjectsService.Instance.CurrentChanged += Load;
         Load(ProjectsService.Instance.Current);
+        AppService.Instance.AddRequestHandler("getAllBuilds", async () => Builds);
+        AppService.Instance.AddRequestHandler("getBuild", async (Guid id) => Get(id));
     }
 
     private void Load(Project project)
@@ -36,7 +39,7 @@ public class BuildsService
         }
     }
 
-    public Build New(string buildType)
+    public ABuild New(string buildType)
     {
         var build = Build.New(BuildTypesService.Instance.Get(buildType));
         build.GetBuild = Get;
@@ -52,7 +55,7 @@ public class BuildsService
         ProjectsService.Instance.Current.Data.Set("builds", Builds.Select(b => b.Id));
     }
 
-    public Build? Get(Guid id)
+    public ABuild? Get(Guid id)
     {
         try
         {

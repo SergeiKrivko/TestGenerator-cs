@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using TestGenerator.Core.Services;
+using TestGenerator.Core.Types;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.TerminalTab;
@@ -15,13 +16,17 @@ public partial class RunTab : SideTab
     public RunTab()
     {
         InitializeComponent();
-        AppService.Instance.TerminalController = (command, directory) =>
-            new TerminalController(Terminal, command) { WorkingDirectory = directory };
+        AppService.Instance.AddRequestHandler<RunProcessArgs, ICompletedProcess>("runProcessInTabRun", RunProcess);
     }
-    
-    private async Task<int> Run(string command)
+
+    private async Task<ICompletedProcess> RunProcess(RunProcessArgs args)
     {
-        var proc = await Terminal.Run(command);
-        return proc?.ExitCode ?? -1;
+        if (args.WorkingDirectory != null)
+            Terminal.CurrentDirectory = args.WorkingDirectory;
+        var proc = await Terminal.Run(args);
+        return new CompletedProcess
+        {
+            ExitCode = proc.ExitCode
+        };
     }
 }
