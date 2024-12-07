@@ -43,7 +43,6 @@ public partial class BackgroundTasksBar : UserControl
         Dispatcher.UIThread.Post(() =>
         {
             ProgressBar.IsIndeterminate = progress == null;
-            Console.WriteLine(progress);
             if (progress != null)
                 ProgressBar.Value = progress.Value;
         });

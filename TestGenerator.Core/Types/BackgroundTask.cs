@@ -56,7 +56,7 @@ public class BackgroundTask : IBackgroundTask
 
     public Task Run()
     {
-        LogService.Logger.Information($"Task {Name} started");
+        LogService.Logger.Information($"Task '{Name}' started");
         return _task = Task.Run(() => _func(this));
     }
 

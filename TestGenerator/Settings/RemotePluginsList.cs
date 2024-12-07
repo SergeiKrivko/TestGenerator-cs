@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TestGenerator.Core.Exceptions;
 using TestGenerator.Core.Models;
 
@@ -8,7 +9,14 @@ public class RemotePluginsList : PluginsList
 {
     protected override async Task<RemotePlugin[]> LoadAllPlugins()
     {
-        return await HttpService.GetAllPlugins();
+        try
+        {
+            return await HttpService.GetAllPlugins();
+        }
+        catch (HttpServiceException)
+        {
+            return [];
+        }
     }
 
     protected override async Task<RemotePluginRelease?> LoadLatestRelease(string key)
