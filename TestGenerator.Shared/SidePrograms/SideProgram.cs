@@ -32,11 +32,10 @@ public class SideProgram
 
     private bool _searchStarted = false;
     private ICollection<SideProgramFile>? _programFiles;
+    private int _vsHash = 0;
 
     public async Task<ICollection<SideProgramFile>> Search()
     {
-        if (_programFiles != null)
-            return _programFiles;
         if (_searchStarted)
         {
             while (_programFiles == null)
@@ -46,9 +45,13 @@ public class SideProgram
 
             return _programFiles;
         }
+        var virtualSystems = VirtualSystems.Where(s => s.IsActive).ToArray();
+        if (virtualSystems.GetHashCode() != _vsHash && _programFiles != null)
+            return _programFiles;
+        _vsHash = virtualSystems.GetHashCode();
         _searchStarted = true;
         var res = new List<SideProgramFile>();
-        foreach (var virtualSystem in VirtualSystems.Where(s => s.IsActive))
+        foreach (var virtualSystem in virtualSystems)
         {
             foreach (var tag in virtualSystem.Tags)
             {

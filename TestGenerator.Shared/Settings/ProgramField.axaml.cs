@@ -59,10 +59,9 @@ public partial class ProgramField : UserControl, IField
     {
         InitializeComponent();
         ComboBox.ItemsSource = Items;
-        Search();
     }
 
-    private async void Search()
+    private async Task Search()
     {
         await Task.Delay(100);
         foreach (var programFile in await Program.Search())
@@ -76,7 +75,7 @@ public partial class ProgramField : UserControl, IField
         if (Key != null)
         {
             var value = section.Get<ProgramFileModel>(Key);
-            await Task.Delay(200);
+            await Search();
             Value = value;
         }
     }

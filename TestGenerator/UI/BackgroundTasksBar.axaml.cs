@@ -22,20 +22,23 @@ public partial class BackgroundTasksBar : UserControl
 
     private void BackgroundTasksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (_currentTask != null)
-            _currentTask.ProgressChanged -= CurrentTaskOnProgressChanged;
-        _currentTask = AppService.Instance.BackgroundTasks.FirstOrDefault();
-        IsVisible = _currentTask != null;
-        if (_currentTask != null)
+        Dispatcher.UIThread.Post(() =>
         {
-            TaskNameBlock.Text = _currentTask.Name;
-            CurrentTaskOnProgressChanged(_currentTask.Progress);
-            _currentTask.ProgressChanged += CurrentTaskOnProgressChanged;
-        }
-        else
-        {
-            MainButton.Flyout?.Hide();
-        }
+            if (_currentTask != null)
+                _currentTask.ProgressChanged -= CurrentTaskOnProgressChanged;
+            _currentTask = AppService.Instance.BackgroundTasks.FirstOrDefault();
+            IsVisible = _currentTask != null;
+            if (_currentTask != null)
+            {
+                TaskNameBlock.Text = _currentTask.Name;
+                CurrentTaskOnProgressChanged(_currentTask.Progress);
+                _currentTask.ProgressChanged += CurrentTaskOnProgressChanged;
+            }
+            else
+            {
+                MainButton.Flyout?.Hide();
+            }
+        });
     }
 
     private void CurrentTaskOnProgressChanged(double? progress)

@@ -29,7 +29,7 @@ public class PluginsService
     public event PluginLoadedHandler? OnPluginLoaded;
     public event PluginLoadedHandler? OnPluginUnloaded;
 
-    public async void Load()
+    public void Load()
     {
         var path = Path.Join(AppService.Instance.AppDataPath, "Plugins");
         Directory.CreateDirectory(path);
@@ -50,7 +50,7 @@ public class PluginsService
             {
                 try
                 {
-                    await LoadPlugin(directory);
+                    LoadPlugin(directory);
                 }
                 catch (Exception e)
                 {
@@ -60,7 +60,7 @@ public class PluginsService
         }
     }
 
-    private async Task LoadPlugin(string pluginPath)
+    private void LoadPlugin(string pluginPath)
     {
         var config = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(pluginPath, "Config.json")));
         if (config == null)
@@ -78,7 +78,11 @@ public class PluginsService
                         new InstalledPlugin { Config = config, Plugin = plugin, Path = pluginPath });
                     LogService.Logger.Debug($"Plugin '{config.Key}' loaded");
                     OnPluginLoaded?.Invoke(plugin);
-                    await plugin.Init();
+                    AppService.Instance.RunBackgroundTask($"Инициализация плагина {config.Name}", async () =>
+                    {
+                        await plugin.Init();
+                        return 0;
+                    });
                 }
             }
         }
@@ -95,7 +99,7 @@ public class PluginsService
         return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
     }
 
-    public void UnloadPlugin(string key)
+    private void UnloadPlugin(string key)
     {
         var plugin = Plugins[key];
         OnPluginUnloaded?.Invoke(plugin.Plugin);
@@ -107,7 +111,7 @@ public class PluginsService
         var installedPath = Path.Join(AppService.Instance.AppDataPath, "Plugins", Guid.NewGuid().ToString());
         var stream = await _httpClient.GetStreamAsync(url);
         await Task.Run(() => ZipFile.ExtractToDirectory(stream, installedPath));
-        await LoadPlugin(installedPath);
+        LoadPlugin(installedPath);
     }
 
     public async Task RemovePlugin(string key)

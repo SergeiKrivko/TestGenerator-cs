@@ -43,7 +43,7 @@ public partial class SettingsWindow : Window
 
         Closed += OnClosed;
 
-        ProjectsService.Instance.CurrentChanged += OnCurrentProjectChanged;
+        // ProjectsService.Instance.CurrentChanged += OnCurrentProjectChanged;
     }
 
     private void OnClosed(object? sender, EventArgs e)
@@ -101,22 +101,6 @@ public partial class SettingsWindow : Window
         CreateNode(page.Path);
         PagesPanel.Children.Add(page.Control);
         page.Control.IsVisible = false;
-
-        if (page is SettingsPage settingsPage)
-        {
-            switch (settingsPage.Type)
-            {
-                case SettingsPageType.GlobalSettings:
-                    settingsPage.Section = AppService.Instance.Settings.GetSection(settingsPage.Key);
-                    break;
-                case SettingsPageType.ProjectSettings:
-                    settingsPage.Section = ProjectsService.Instance.Current.Settings.GetSection(settingsPage.Key);
-                    break;
-                case SettingsPageType.ProjectData:
-                    settingsPage.Section = ProjectsService.Instance.Current.Data.GetSection(settingsPage.Key);
-                    break;
-            }
-        }
     }
 
     private void TreeView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -138,6 +122,21 @@ public partial class SettingsWindow : Window
             try
             {
                 _pages[_currentPage].Control.IsVisible = true;
+                if (_pages[_currentPage] is SettingsPage settingsPage)
+                {
+                    switch (settingsPage.Type)
+                    {
+                        case SettingsPageType.GlobalSettings:
+                            settingsPage.Section = AppService.Instance.Settings.GetSection(settingsPage.Key);
+                            break;
+                        case SettingsPageType.ProjectSettings:
+                            settingsPage.Section = ProjectsService.Instance.Current.Settings.GetSection(settingsPage.Key);
+                            break;
+                        case SettingsPageType.ProjectData:
+                            settingsPage.Section = ProjectsService.Instance.Current.Data.GetSection(settingsPage.Key);
+                            break;
+                    }
+                }
             }
             catch (KeyNotFoundException)
             {

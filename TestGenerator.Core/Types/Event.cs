@@ -40,7 +40,6 @@ class Event : IEvent
         
         public void Call(object? data)
         {
-            Console.WriteLine($"{data?.GetType()} {typeof(T)}");
             if (data is T)
                 _func((T)data);
             else
