@@ -10,6 +10,10 @@ namespace TestGenerator.MainTabs.Code;
 
 public partial class CodeTab : MainTab
 {
+    public override string TabKey => "Code";
+    public override string TabName => "Код";
+    public override int TabPriority => 100;
+
     private readonly Dictionary<Guid, OpenedFileModel> _files = [];
     private readonly Dictionary<Guid, OpenedFileTab> _tabs = [];
     private Guid? _currentFileId = null;

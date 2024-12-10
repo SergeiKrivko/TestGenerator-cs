@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using TestGenerator.Settings;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.UI;
 
 public partial class MainMenu : UserControl
 {
-    private Dictionary<string, ToggleButton> _buttons = new();
+    private readonly Dictionary<string, ToggleButton> _buttons = new();
+    private readonly List<MainTab> _tabs = [];
     private string _current = "";
 
     public string Current
     {
         get => _current;
-        set => _onClicked(value);
+        set => OnTabClicked(value);
     }
     
     public static readonly RoutedEvent<RoutedEventArgs> TabChangeEvent =
@@ -34,16 +37,28 @@ public partial class MainMenu : UserControl
         remove => RemoveHandler(TabChangeEvent, value);
     }
 
-    public void Add(string key, string text)
+    public void Add(MainTab tab)
     {
-        var button = new ToggleButton();
-        button.Content = text;
-        button.Click += (obj, args) => _onClicked(key);
-        _buttons[key] = button;
-        ButtonsPanel.Children.Add(button);
+        var button = new ToggleButton()
+        {
+            Content = tab.TabName
+        };
+        button.Click += (obj, args) => OnTabClicked(tab.TabKey);
+        _tabs.Add(tab);
+        _buttons[tab.TabKey] = button;
+        SortButtons();
         if (_buttons.Count == 1)
         {
-            _onClicked(key);
+            OnTabClicked(tab.TabKey);
+        }
+    }
+
+    private void SortButtons()
+    {
+        ButtonsPanel.Children.Clear();
+        foreach (var tab in _tabs.OrderByDescending(t => t.TabPriority))
+        {
+            ButtonsPanel.Children.Add(_buttons[tab.TabKey]);
         }
     }
 
@@ -51,10 +66,11 @@ public partial class MainMenu : UserControl
     {
         var button = _buttons[key];
         ButtonsPanel.Children.Remove(button);
+        _tabs.RemoveAll(t => t.TabKey == key);
         _buttons.Remove(key);
     }
 
-    private void _onClicked(string key)
+    private void OnTabClicked(string key)
     {
         foreach (var btn in _buttons.Values)
         {

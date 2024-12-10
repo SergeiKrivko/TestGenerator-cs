@@ -33,7 +33,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         
         _mainTabs.Add("Code", CodeTab);
-        MainMenu.Add("Code", "Код");
+        MainMenu.Add(CodeTab);
 
         AddSideTab(_filesTab = new FilesTab.FilesTab());
         AddSideTab(new SideWindow{TabKey = "Builds", TabName = "Сценарии запуска", Window = () => new BuildsWindow(), TabIcon = "M13.133 11.383L11.909 10.158C11.6285 9.87766 11.2485 9.71975 10.852 9.71882C10.4555 9.71788 10.0747 9.87399 9.79297 10.153L1.28297 18.006C0.972969 18.298 0.769969 18.67 0.750969 19.086C0.741861 19.2928 0.775527 19.4993 0.849859 19.6926C0.924191 19.8858 1.03759 20.0616 1.18297 20.209L3.01097 22.057C3.29377 22.3406 3.67744 22.5006 4.07797 22.502H4.13297C4.54997 22.486 4.92297 22.291 5.21997 21.978L13.127 13.508C13.2671 13.369 13.3785 13.2036 13.4546 " +
@@ -131,7 +131,7 @@ public partial class MainWindow : Window
             _mainTabs.Add(tab.TabKey, tab);
             MainTabsPanel.Children.Add(tab);
             tab.IsVisible = false;
-            MainMenu.Add(tab.TabKey, tab.TabName);
+            MainMenu.Add(tab);
         }
         foreach (var tab in plugin.SideTabs)
         {
