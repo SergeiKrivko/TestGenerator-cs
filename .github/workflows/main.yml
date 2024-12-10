@@ -79,16 +79,21 @@ jobs:
           cp -r TestGenerator/bin/Release/net8.0/linux-x64/. Releases/linux-x64/debpkg/opt/SergeiKrivko/TestGenerator
           chmod 755 Releases/linux-x64/debpkg/DEBIAN/postinst
           chmod 755 Releases/linux-x64/debpkg/DEBIAN/prerm
+          
+          dpkg-deb --build Releases/linux-x64/debpkg
+          
+          ls
+          ls -R Releases/linux-x64
 
-      - name: Create DEB package
-        uses: jiro4989/build-deb-action@v3
-        with:
-          package: testgenerator
-          package_root: Releases/linux-x64/debpkg
-          maintainer: SergeiKrivko
-          version: ${{ steps.build.outputs.version }}
-          arch: amd64
-          desc: TestGenerator
+#      - name: Create DEB package
+#        uses: jiro4989/build-deb-action@v3
+#        with:
+#          package: testgenerator
+#          package_root: Releases/linux-x64/debpkg
+#          maintainer: SergeiKrivko
+#          version: ${{ steps.build.outputs.version }}
+#          arch: amd64
+#          desc: TestGenerator
 
       - name: Upload release
         env:
