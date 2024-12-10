@@ -100,13 +100,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install PyGithub
-          python3 upload_release.py testgenerator_${{ steps.build.outputs.version }}_amd64.deb amd64
+          python3 upload_release.py Releases/linux-x64/debpkg.deb amd64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: TestGenerator-linux-x64.deb
-          path: testgenerator_${{ steps.build.outputs.version }}_amd64.deb
+          path: Releases/linux-x64/debpkg.deb
           
   build-macos-x64:
     name: Build for macOS
