@@ -74,27 +74,21 @@ jobs:
           cd TestGenerator
           dotnet build --sc --runtime linux-x64 -c Release
 
-      - name: Create DEP package
+      - name: Prepare DEP package
         run: |
-          apt-get install dpkg debconf debhelper
           cp -r TestGenerator/bin/Release/net8.0/linux-x64/. Releases/linux-x64/debpkg/opt/SergeiKrivko/TestGenerator
-          cd Releases/linux-x64
-          echo --------------------------------
-          ls
-          fakeroot dpkg-deb --build debpkg
-          echo --------------------------------
-          ls
-          mv debpkg.deb testgenerator_${{ steps.build.outputs.version }}_amd64.deb
+          chmod 755 Releases/linux-x64/debpkg/DEBIAN/postinst
+          chmod 755 Releases/linux-x64/debpkg/DEBIAN/prerm
 
-#      - name: Create DEB package
-#        uses: jiro4989/build-deb-action@v3
-#        with:
-#          package: testgenerator
-#          package_root: Releases/linux-x64/debpkg
-#          maintainer: SergeiKrivko
-#          version: ${{ steps.build.outputs.version }}
-#          arch: amd64
-#          desc: TestGenerator
+      - name: Create DEB package
+        uses: jiro4989/build-deb-action@v3
+        with:
+          package: testgenerator
+          package_root: Releases/linux-x64/debpkg
+          maintainer: SergeiKrivko
+          version: ${{ steps.build.outputs.version }}
+          arch: amd64
+          desc: TestGenerator
 
       - name: Upload release
         env:
