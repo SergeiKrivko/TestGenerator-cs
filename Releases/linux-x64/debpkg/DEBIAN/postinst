@@ -1,4 +1,4 @@
-﻿#!/bin/sh
+#!/bin/sh
 
 # Add icons to the system icons
 XDG_ICON_RESOURCE="`command -v xdg-icon-resource 2> /dev/null || true`"

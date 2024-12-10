@@ -1,5 +1,5 @@
-﻿Package: testgenerator
-Version: {AppVersion}
+Package: testgenerator
+Version: 1.0.0
 Architecture: amd64
 Maintainer: Sergei Krivko
 Pre-Depends: dpkg (>= 1.14.0)
