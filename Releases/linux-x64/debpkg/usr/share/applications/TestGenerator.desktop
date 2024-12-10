@@ -2,7 +2,7 @@
 Name=TestGenerator
 Comment=IDE
 Exec=/opt/SergeiKrivko/TestGenerator/TestGenerator
-Icon=/opt/SergeiKrivko/TestGenerator/icon.png
+Icon=sergeikrivko-testgenerator
 Terminal=false
 Type=Application
 StartupNotify=true

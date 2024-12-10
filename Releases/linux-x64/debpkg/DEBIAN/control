@@ -1,0 +1,8 @@
+﻿Package: testgenerator
+Version: {AppVersion}
+Architecture: amd64
+Maintainer: Sergei Krivko
+Pre-Depends: dpkg (>= 1.14.0)
+Section: development
+Priority: optional
+Description: IDE
