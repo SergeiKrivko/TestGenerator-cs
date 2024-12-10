@@ -63,7 +63,7 @@ public partial class ProgramField : UserControl, IField
 
     private async Task Search()
     {
-        await Task.Delay(100);
+        Items.Clear();
         foreach (var programFile in await Program.Search())
         {
             Items.Add(programFile);
