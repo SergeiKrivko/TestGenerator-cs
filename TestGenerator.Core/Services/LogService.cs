@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Serilog.Events;
 using Logger = TestGenerator.Shared.Utils.Logger;
 
 namespace TestGenerator.Core.Services;
@@ -22,8 +23,16 @@ public class LogService
         Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .Enrich.FromLogContext()
-            .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}")
-            .WriteTo.File(LogFilePath, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}")
+            .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}",
+                restrictedToMinimumLevel:
+#if DEBUG
+                LogEventLevel.Debug
+#else
+                LogEventLevel.Warning
+#endif
+            )
+            .WriteTo.File(LogFilePath,
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
     }
 

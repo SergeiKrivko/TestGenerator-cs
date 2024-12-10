@@ -27,6 +27,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TestGenerator.Core\TestGenerator.Core.csproj" />
+      <ProjectReference Include="..\TestGenerator.ErrorHandler\TestGenerator.ErrorHandler.csproj" />
       <ProjectReference Include="..\TestGenerator.Shared\TestGenerator.Shared.csproj" />
     </ItemGroup>
     

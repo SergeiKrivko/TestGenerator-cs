@@ -1,0 +1,21 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TestGenerator.ErrorHandler.MainWindow"
+        Title="TestGenerator error handler" Width="500">
+    <Grid RowDefinitions="Auto * Auto Auto" Margin="10">
+        <TextBlock FontSize="16" Margin="5" TextWrapping="Wrap">
+            В приложении TestGenerator произошла критическая ошибка
+        </TextBlock>
+        <TextBox Grid.Row="1" Margin="5" TextWrapping="Wrap" Name="LogBlock" FontFamily="Consolas" Padding="5" />
+        <TextBlock Grid.Row="2" FontSize="16" Margin="5" TextWrapping="Wrap">
+            Отправить отчет об ошибке на сервер? Таким образом вы поможете улучшить работу приложения.
+        </TextBlock>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5" Spacing="5">
+            <Button Click="ButtonSend_OnClick">Отправить</Button>
+            <Button Click="ButtonNotSend_OnClick">Не отправлять</Button>
+        </StackPanel>
+    </Grid>
+</Window>

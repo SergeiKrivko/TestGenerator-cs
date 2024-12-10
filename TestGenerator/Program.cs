@@ -1,5 +1,8 @@
 ﻿using Avalonia;
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using TestGenerator.Core.Services;
 
 namespace TestGenerator;
@@ -25,7 +28,12 @@ class Program
         catch (Exception e)
         {
             LogService.Logger.Fatal($"{e.GetType()}: {e.Message}");
+#if DEBUG
             throw;
+#else
+            Process.Start(Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                "TestGenerator.ErrorHandler"));
+#endif
         }
     }
 
