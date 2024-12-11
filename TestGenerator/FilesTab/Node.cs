@@ -34,7 +34,6 @@ internal abstract class Node
     {
         foreach (var regexIcon in RegexIcons)
         {
-            Console.WriteLine($"{regexIcon.Key} {regexIcon.Key.IsMatch(Path)}");
             if (regexIcon.Key.IsMatch(Path))
                 return regexIcon.Value;
         }
