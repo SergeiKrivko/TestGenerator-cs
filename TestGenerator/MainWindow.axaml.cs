@@ -153,6 +153,10 @@ public partial class MainWindow : Window
         {
             FileNode.FileIcons[item.Key] = item.Value;
         }
+        foreach (var item in plugin.RegexFileIcons)
+        {
+            Node.RegexIcons[item.Key] = item.Value;
+        }
         foreach (var buildType in plugin.ProjectTypes)
         {
             ProjectTypesService.Instance.Types.Add(buildType.Key, buildType);

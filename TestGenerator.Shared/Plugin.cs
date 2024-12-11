@@ -1,4 +1,5 @@
-﻿using TestGenerator.Shared.Settings;
+﻿using System.Text.RegularExpressions;
+using TestGenerator.Shared.Settings;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Shared;
@@ -15,6 +16,7 @@ public abstract class Plugin
     public List<IFileAction> FileActions { get; init; } = [];
     public List<SettingsNode> SettingsControls { get; init; } = [];
     public Dictionary<string, string> FileIcons { get; init; } = [];
+    public Dictionary<Regex, string> RegexFileIcons { get; init; } = [];
 
     protected Plugin()
     {
