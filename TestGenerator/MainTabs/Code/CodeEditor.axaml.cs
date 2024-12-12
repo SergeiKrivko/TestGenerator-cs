@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using Avalonia.Controls;
-using Avalonia.Input;
-using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Grammars;
@@ -14,13 +11,13 @@ public partial class CodeEditor : UserControl
 {
     private readonly TextMate.Installation _textMateInstallation;
     private readonly RegistryOptions _registryOptions;
-    
+
     public string? FileName { get; private set; }
 
     public CodeEditor()
     {
         InitializeComponent();
-        
+
         _registryOptions = new RegistryOptions(ThemeName.DarkPlus);
 
         //Initial setup of TextMate.
@@ -35,13 +32,16 @@ public partial class CodeEditor : UserControl
     public async void Open(string fileName)
     {
         FileName = fileName;
-        
+
         _textMateInstallation.SetGrammar(null);
         Editor.Document = new TextDocument(await File.ReadAllTextAsync(fileName));
         try
         {
             _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(
-                _registryOptions.GetLanguageByExtension(Path.GetExtension(fileName)).Id
+                string.Equals(Path.GetFileNameWithoutExtension(fileName), "makefile",
+                    StringComparison.InvariantCultureIgnoreCase)
+                    ? "makefile"
+                    : _registryOptions.GetLanguageByExtension(Path.GetExtension(fileName)).Id
             ));
         }
         catch (NullReferenceException)
