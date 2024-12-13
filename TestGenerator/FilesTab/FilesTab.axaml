@@ -10,6 +10,8 @@
     <TreeView Name="TreeView"
               ItemsSource="{Binding Nodes}"
               SelectionMode="Multiple"
+              Background="Transparent"
+              BorderThickness="0"
               DoubleTapped="TreeView_OnDoubleTapped">
         <TreeView.DataTemplates>
             <TreeDataTemplate DataType="filesTab:Node" ItemsSource="{Binding SubNodes}">

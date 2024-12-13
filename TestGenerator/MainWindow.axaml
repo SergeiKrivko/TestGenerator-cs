@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TestGenerator.MainWindow"
         Icon="/Assets/icon.ico"
-        Title="TestGenerator">
+        Title="TestGenerator" Closing="Window_OnClosing">
     <Grid RowDefinitions="50 * 30" ColumnDefinitions="50 *">
 
         <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Gray"
@@ -17,7 +17,7 @@
 
         <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray"
                 BorderThickness="0 0 1 0">
-            <ui:SideBar Name="SideBar" TabChanged="SideBar_OnTabChanged"></ui:SideBar>
+            <ui:SideBar Name="SideBar" TabChanged="SideBar_OnTabChanged" WindowSelected="SideBar_OnWindowSelected"></ui:SideBar>
         </Border>
 
         <SplitView Grid.Row="1" Grid.Column="1" PanePlacement="Left" OpenPaneLength="300" DisplayMode="Inline"
