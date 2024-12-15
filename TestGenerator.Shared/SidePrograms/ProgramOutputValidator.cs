@@ -25,7 +25,7 @@ public class ProgramOutputValidator : ISideProgramValidator
         Output["Default"] = output;
     }
 
-    public async Task<bool> Validate(SideProgramFile program)
+    public async Task<bool> Validate(SideProgramFile program, CancellationToken token = new())
     {
         string? arg = null;
         string? output = null;
@@ -45,7 +45,7 @@ public class ProgramOutputValidator : ISideProgramValidator
             return false;
         try
         {
-            var res = await program.Execute(new RunProgramArgs { Args = arg });
+            var res = await program.Execute(new RunProgramArgs { Args = arg }, token);
             return res.ExitCode == 0 && res.Stdout.Contains(output);
         }
         catch (Exception)

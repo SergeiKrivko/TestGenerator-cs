@@ -19,13 +19,13 @@ public class SideProgramFile
 
     public async void ValidateAsync() => await Validate();
 
-    public async Task<bool> Validate(bool force = false)
+    public async Task<bool> Validate(bool force = false, CancellationToken token = new())
     {
         if (!force && LastValidation != null)
             return IsValid;
         foreach (var validator in Program.Validators)
         {
-            if (!await validator.Validate(this))
+            if (!await validator.Validate(this, token))
             {
                 IsValid = false;
                 LastValidation = DateTime.Now;
@@ -38,24 +38,24 @@ public class SideProgramFile
         return IsValid;
     }
 
-    public async Task<ICompletedProcess> Execute(RunProcessArgs.ProcessRunProvider where, RunProgramArgs args)
+    public async Task<ICompletedProcess> Execute(RunProcessArgs.ProcessRunProvider where, RunProgramArgs args, CancellationToken token = new())
     {
-        return await VirtualSystem.Execute(where, args.ToProcessArgs(Path));
+        return await VirtualSystem.Execute(where, args.ToProcessArgs(Path), token);
     }
 
-    public async Task<ICompletedProcess> Execute(RunProgramArgs args)
+    public async Task<ICompletedProcess> Execute(RunProgramArgs args, CancellationToken token = new())
     {
-        return await VirtualSystem.Execute(args.ToProcessArgs(Path));
+        return await VirtualSystem.Execute(args.ToProcessArgs(Path), token);
     }
 
-    public async Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs.ProcessRunProvider where, params RunProgramArgs[] args)
+    public async Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs.ProcessRunProvider where, RunProgramArgs[] args, CancellationToken token = new())
     {
-        return await VirtualSystem.Execute(where, args.Select(a => a.ToProcessArgs(Path)).ToArray());
+        return await VirtualSystem.Execute(where, args.Select(a => a.ToProcessArgs(Path)).ToArray(), token);
     }
 
-    public async Task<ICollection<ICompletedProcess>> Execute(params RunProgramArgs[] args)
+    public async Task<ICollection<ICompletedProcess>> Execute(RunProgramArgs[] args, CancellationToken token = new())
     {
-        return await VirtualSystem.Execute(args.Select(a => a.ToProcessArgs(Path)).ToArray());
+        return await VirtualSystem.Execute(args.Select(a => a.ToProcessArgs(Path)).ToArray(), token);
     }
 
     public ProgramFileModel ToModel()

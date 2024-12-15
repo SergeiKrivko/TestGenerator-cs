@@ -2,5 +2,5 @@
 
 public interface ISideProgramValidator
 {
-    public Task<bool> Validate(SideProgramFile program);
+    public Task<bool> Validate(SideProgramFile program, CancellationToken token = new());
 }

@@ -22,24 +22,24 @@ internal class NoVirtualSystem : IVirtualSystem
         }
     }
 
-    public async Task<ICompletedProcess> Execute(RunProcessArgs.ProcessRunProvider where, RunProcessArgs args)
+    public async Task<ICompletedProcess> Execute(RunProcessArgs.ProcessRunProvider where, RunProcessArgs args, CancellationToken token = new())
     {
-        return await AAppService.Instance.RunProcess(where, args);
+        return await AAppService.Instance.RunProcess(where, args, token);
     }
 
-    public async Task<ICompletedProcess> Execute(RunProcessArgs args)
+    public async Task<ICompletedProcess> Execute(RunProcessArgs args, CancellationToken token = new())
     {
-        return await AAppService.Instance.RunProcess(args);
+        return await AAppService.Instance.RunProcess(args, token);
     }
 
-    public async Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs.ProcessRunProvider where, params RunProcessArgs[] args)
+    public async Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs.ProcessRunProvider where, RunProcessArgs[] args, CancellationToken token = new())
     {
-        return await AAppService.Instance.RunProcess(where, args);
+        return await AAppService.Instance.RunProcess(where, args, token);
     }
 
-    public async Task<ICollection<ICompletedProcess>> Execute(params RunProcessArgs[] args)
+    public async Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs[] args, CancellationToken token = new())
     {
-        return await AAppService.Instance.RunProcess(args);
+        return await AAppService.Instance.RunProcess(args, token);
     }
 
     public async Task<string> ConvertPath(string path)

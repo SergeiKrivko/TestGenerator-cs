@@ -34,13 +34,13 @@ public class SideProgram
     private ICollection<SideProgramFile>? _programFiles;
     private int _vsHash = 0;
 
-    public async Task<ICollection<SideProgramFile>> Search()
+    public async Task<ICollection<SideProgramFile>> Search(CancellationToken token = new())
     {
         if (_searchStarted)
         {
             while (_programFiles == null)
             {
-                await Task.Delay(100);
+                await Task.Delay(100, token);
             }
 
             return _programFiles;
@@ -59,7 +59,7 @@ public class SideProgram
                 {
                     var prog = FromPath(Environment.ExpandEnvironmentVariables(location), virtualSystem);
                     if (res.FirstOrDefault(p => p.Path == prog.Path && p.VirtualSystem.Key == prog.VirtualSystem.Key) ==
-                        null && await prog.Validate())
+                        null && await prog.Validate(token: token))
                         res.Add(prog);
                 }
             }

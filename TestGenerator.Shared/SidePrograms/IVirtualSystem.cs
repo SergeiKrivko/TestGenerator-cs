@@ -9,10 +9,10 @@ public interface IVirtualSystem
 
     public ICollection<string> Tags => ["Default"];
 
-    public Task<ICompletedProcess> Execute(RunProcessArgs.ProcessRunProvider where, RunProcessArgs args);
-    public Task<ICompletedProcess> Execute(RunProcessArgs args);
-    public Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs.ProcessRunProvider where, params RunProcessArgs[] args);
-    public Task<ICollection<ICompletedProcess>> Execute(params RunProcessArgs[] args);
+    public Task<ICompletedProcess> Execute(RunProcessArgs.ProcessRunProvider where, RunProcessArgs args, CancellationToken token = new());
+    public Task<ICompletedProcess> Execute(RunProcessArgs args, CancellationToken token = new());
+    public Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs.ProcessRunProvider where, RunProcessArgs[] args, CancellationToken token = new());
+    public Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs[] args, CancellationToken token = new());
 
     public bool IsActive => true;
 
