@@ -28,24 +28,24 @@ public partial class ProjectPicker : UserControl
         ProjectsListBox.SelectedItem = project == Project.LightEditProject ? null : project;
     }
 
-    private void ProjectsListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    private async void ProjectsListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (ProjectsListBox.SelectedItem is Project)
         {
             var project = (Project)ProjectsListBox.SelectedItem;
             if (project != Service.Current)
             {
-                Service.Current = project;
+                await Service.SetCurrentProject(project);
             }
         }
     }
 
-    private void LightEditButton_OnClick(object? sender, RoutedEventArgs e)
+    private async void LightEditButton_OnClick(object? sender, RoutedEventArgs e)
     {
         LightEditButton.IsChecked = true;
         if (Service.Current != Project.LightEditProject)
         {
-            Service.Current = Project.LightEditProject;
+            await Service.SetCurrentProject(Project.LightEditProject);
         }
     }
     
@@ -63,7 +63,7 @@ public partial class ProjectPicker : UserControl
 
         if (files.Count >= 1)
         {
-            ProjectsService.Instance.Current = ProjectsService.Instance.Load(files[0].Path.AbsolutePath);
+            await ProjectsService.Instance.SetCurrentProject(ProjectsService.Instance.Load(files[0].Path.AbsolutePath));
         }
     }
 }

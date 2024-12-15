@@ -14,17 +14,17 @@ public abstract class ABuild
     public abstract BuildType Type { get; }
     public abstract BaseBuilder Builder { get; }
 
-    public abstract Task<int> Compile();
+    public abstract Task<int> Compile(CancellationToken token = new());
 
     public abstract string? Command { get; }
 
-    public abstract Task<ICompletedProcess> Run(string args = "", string? stdin = null);
+    public abstract Task<ICompletedProcess> Run(string args = "", string? stdin = null, CancellationToken token = new());
 
-    public abstract Task<ICompletedProcess> RunConsole(string args = "", string? stdin = null);
-    public abstract Task<int> RunPreProc();
-    public abstract Task<int> RunPostProc();
-    public abstract Task<int> RunPreProcConsole();
-    public abstract Task<int> RunPostProcConsole();
-    public abstract Task<int> Execute(string args = "", string? stdin = null);
-    public abstract Task<int> ExecuteConsole(string args = "", string? stdin = null);
+    public abstract Task<ICompletedProcess> RunConsole(string args = "", string? stdin = null, CancellationToken token = new());
+    public abstract Task<int> RunPreProc(CancellationToken token = new());
+    public abstract Task<int> RunPostProc(CancellationToken token = new());
+    public abstract Task<int> RunPreProcConsole(CancellationToken token = new());
+    public abstract Task<int> RunPostProcConsole(CancellationToken token = new());
+    public abstract Task<int> Execute(string args = "", string? stdin = null, CancellationToken token = new());
+    public abstract Task<int> ExecuteConsole(string args = "", string? stdin = null, CancellationToken token = new());
 }

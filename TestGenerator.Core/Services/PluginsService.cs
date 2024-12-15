@@ -78,9 +78,9 @@ public class PluginsService
                         new InstalledPlugin { Config = config, Plugin = plugin, Path = pluginPath });
                     LogService.Logger.Debug($"Plugin '{config.Key}' loaded");
                     OnPluginLoaded?.Invoke(plugin);
-                    AppService.Instance.RunBackgroundTask($"Инициализация плагина {config.Name}", async () =>
+                    AppService.Instance.RunBackgroundTask($"Инициализация плагина {config.Name}", async token =>
                     {
-                        await plugin.Init();
+                        await plugin.Init(token);
                         return 0;
                     });
                 }

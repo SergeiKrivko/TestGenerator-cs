@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls.Documents;
 using TestGenerator.Core.Types;
@@ -16,7 +17,7 @@ public class RunTerminal : Terminal
 
     protected override string Prompt => "";
 
-    public async Task<ICompletedProcess> Run(RunProcessArgs args)
+    public async Task<ICompletedProcess> Run(RunProcessArgs args, CancellationToken token = new())
     {
         if (CurrentProcess == null)
         {
@@ -26,7 +27,7 @@ public class RunTerminal : Terminal
             var command = args.Filename + ' ' + args.Args;
             Write(command + "\n");
             Box.IsReadOnly = false;
-            var proc = await RunProcess(command, args.Stdin);
+            var proc = await RunProcess(command, args.Stdin, token: token);
             Box.IsReadOnly = true;
             if (proc != null)
                 return proc;
@@ -35,9 +36,9 @@ public class RunTerminal : Terminal
         return new CompletedProcess { ExitCode = -1 };
     }
 
-    protected override async Task<ICompletedProcess?> RunProcess(string? command, string? stdin = null)
+    protected override async Task<ICompletedProcess?> RunProcess(string? command, string? stdin = null, CancellationToken token = new())
     {
-        var proc = await base.RunProcess(command, stdin);
+        var proc = await base.RunProcess(command, stdin, token);
         if (proc != null)
         {
             Write($"\nProcess finished with exit code {proc.ExitCode}\n");

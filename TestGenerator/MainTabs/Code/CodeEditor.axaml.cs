@@ -22,11 +22,6 @@ public partial class CodeEditor : UserControl
 
         //Initial setup of TextMate.
         _textMateInstallation = Editor.InstallTextMate(_registryOptions);
-
-        //Here we are getting the language by the extension and right after that we are initializing grammar with this language.
-        //And that's all 😀, you are ready to use AvaloniaEdit with syntax highlighting!
-        _textMateInstallation.SetGrammar(
-            _registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".cs").Id));
     }
 
     public async void Open(string fileName)

@@ -55,7 +55,7 @@ public abstract class Plugin
             FileIcons = fileIcons;
     }
 
-    public virtual async Task Init()
+    public virtual async Task Init(CancellationToken token)
     {
     }
 

@@ -3,5 +3,5 @@
 public interface IRequestHandler
 {
     public string Key { get; }
-    public Task<object?> Call(object? data);
+    public Task<object?> Call(object? data, CancellationToken token = new());
 }

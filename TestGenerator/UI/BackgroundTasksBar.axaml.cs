@@ -17,7 +17,7 @@ public partial class BackgroundTasksBar : UserControl
     {
         InitializeComponent();
         ItemsControl.ItemsSource = AppService.Instance.BackgroundTasks;
-        AppService.Instance.BackgroundTasks.CollectionChanged += BackgroundTasksOnCollectionChanged;
+        AppService.Instance.VisibleBackgroundTasks.CollectionChanged += BackgroundTasksOnCollectionChanged;
     }
 
     private void BackgroundTasksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -26,7 +26,7 @@ public partial class BackgroundTasksBar : UserControl
         {
             if (_currentTask != null)
                 _currentTask.ProgressChanged -= CurrentTaskOnProgressChanged;
-            _currentTask = AppService.Instance.BackgroundTasks.FirstOrDefault();
+            _currentTask = AppService.Instance.VisibleBackgroundTasks.FirstOrDefault();
             IsVisible = _currentTask != null;
             if (_currentTask != null)
             {

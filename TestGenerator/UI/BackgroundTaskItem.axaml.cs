@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Reactive;
 using Avalonia.Threading;
 using TestGenerator.Shared.Types;
@@ -20,18 +21,18 @@ public partial class BackgroundTaskItem : UserControl
     public BackgroundTaskItem()
     {
         InitializeComponent();
-        BackgroundTaskProperty.Changed.Subscribe(
-            new AnonymousObserver<AvaloniaPropertyChangedEventArgs<IBackgroundTask?>>(value =>
+        PropertyChanged += (sender, args) =>
+        {
+            if (args.Property == BackgroundTaskProperty && args.NewValue is IBackgroundTask task)
             {
-                if (value.NewValue.Value != null)
-                {
-                    NameBlock.Text = value.NewValue.Value.Name;
-                    value.NewValue.Value.ProgressChanged += UpdateProgress;
-                    UpdateProgress(value.NewValue.Value.Progress);
-                    value.NewValue.Value.StatusChanged += UpdateStatus;
-                    UpdateStatus(value.NewValue.Value.Status);
-                }
-            }));
+                NameBlock.Text = task.Name;
+                task.ProgressChanged += UpdateProgress;
+                UpdateProgress(task.Progress);
+                task.StatusChanged += UpdateStatus;
+                UpdateStatus(task.Status);
+                ButtonCancel.IsVisible = (task.Flags & BackgroundTaskFlags.CanBeCancelled) > 0;
+            }
+        };
     }
 
     private void UpdateProgress(double? progress)
@@ -50,5 +51,10 @@ public partial class BackgroundTaskItem : UserControl
             StatusBlock.IsVisible = status != null;
             StatusBlock.Text = status;
         });
+    }
+
+    private void ButtonCancel_OnClick(object? sender, RoutedEventArgs e)
+    {
+        BackgroundTask?.Cancel();
     }
 }

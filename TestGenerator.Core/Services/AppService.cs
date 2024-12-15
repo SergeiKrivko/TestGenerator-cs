@@ -56,8 +56,8 @@ public class AppService : AAppService
         return GetDataPath(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
     }
 
-    private Dictionary<string, IEvent> _events = [];
-    private Dictionary<string, IRequestHandler> _requestHandlers = [];
+    private readonly Dictionary<string, IEvent> _events = [];
+    private readonly Dictionary<string, IRequestHandler> _requestHandlers = [];
 
     public delegate void ShowHandler(string key);
 
@@ -91,39 +91,53 @@ public class AppService : AAppService
         }
     }
 
-    public override ISubscription Subscribe<T>(string key, Handler<T> handler)
+    public override ISubscription Subscribe<T>(string key, Action<T> handler)
     {
         if (!_events.ContainsKey(key))
             _events[key] = new Event(key);
         return _events[key].Subscribe(handler);
     }
 
-    public override ISubscription Subscribe(string key, Handler handler)
+    public override ISubscription Subscribe(string key, Action handler)
     {
         if (!_events.ContainsKey(key))
             _events[key] = new Event(key);
         return _events[key].Subscribe(handler);
     }
 
-    public override void AddRequestHandler<TI, TO>(string key, RequestHandler<TI, TO> handler)
+    public override void AddRequestHandler<TI, TO>(string key, Func<TI, Task<TO>> handler)
     {
         var h = new RequestHandler(key);
         h.SetHandler(handler);
         _requestHandlers[key] = h;
     }
 
-    public override void AddRequestHandler<TO>(string key, RequestHandler<TO> handler)
+    public override void AddRequestHandler<TO>(string key, Func<Task<TO>> handler)
     {
         var h = new RequestHandler(key);
         h.SetHandler(handler);
         _requestHandlers[key] = h;
     }
 
-    public override async Task<T> Request<T>(string key, object? data = null)
+    public override void AddRequestHandler<TI, TO>(string key, Func<TI, CancellationToken, Task<TO>> handler)
     {
-        var res = await _requestHandlers[key].Call(data);
-        if (res is T)
-            return (T)res;
+        var h = new RequestHandler(key);
+        h.SetHandler(handler);
+        _requestHandlers[key] = h;
+    }
+
+    public override void AddRequestHandler<TO>(string key, Func<CancellationToken, Task<TO>> handler)
+    {
+        var h = new RequestHandler(key);
+        h.SetHandler(handler);
+        _requestHandlers[key] = h;
+    }
+
+    public override async Task<T> Request<T>(string key, object? data = null, CancellationToken token = new())
+    {
+        var res = await _requestHandlers[key].Call(data, token);
+        if (res is T tRes)
+            return tRes;
         var res2 = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(data));
         if (res2 != null)
             return res2;
@@ -133,26 +147,26 @@ public class AppService : AAppService
     public override AProject CurrentProject => ProjectsService.Instance.Current;
 
     public override async Task<ICompletedProcess> RunProcess(RunProcessArgs.ProcessRunProvider where,
-        RunProcessArgs args)
+        RunProcessArgs args, CancellationToken token = new())
     {
         switch (where)
         {
             case RunProcessArgs.ProcessRunProvider.Background:
-                return await RunBackgroundProcess(args);
+                return await RunBackgroundProcess(args, token: token);
             case RunProcessArgs.ProcessRunProvider.RunTab:
-                return await Request<ICompletedProcess>("runProcessInTabRun", args);
+                return await Request<ICompletedProcess>("runProcessInTabRun", args, token);
             default:
                 throw new Exception();
         }
     }
 
-    public override async Task<ICompletedProcess> RunProcess(RunProcessArgs args)
+    public override async Task<ICompletedProcess> RunProcess(RunProcessArgs args, CancellationToken token = new())
     {
-        return await RunProcess(RunProcessArgs.ProcessRunProvider.Background, args);
+        return await RunProcess(RunProcessArgs.ProcessRunProvider.Background, args, token: token);
     }
 
     public override async Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs.ProcessRunProvider where,
-        params RunProcessArgs[] args)
+        RunProcessArgs[] args, CancellationToken token = new())
     {
         var res = new List<ICompletedProcess>();
         switch (where)
@@ -160,14 +174,14 @@ public class AppService : AAppService
             case RunProcessArgs.ProcessRunProvider.Background:
                 foreach (var arg in args)
                 {
-                    res.Add(await RunBackgroundProcess(arg));
+                    res.Add(await RunBackgroundProcess(arg, token: token));
                 }
 
                 break;
             case RunProcessArgs.ProcessRunProvider.RunTab:
                 foreach (var arg in args)
                 {
-                    res.Add(await Request<ICompletedProcess>("runProcessInTabRun", arg));
+                    res.Add(await Request<ICompletedProcess>("runProcessInTabRun", arg, token));
                 }
 
                 break;
@@ -178,12 +192,12 @@ public class AppService : AAppService
         return res;
     }
 
-    public override async Task<ICollection<ICompletedProcess>> RunProcess(params RunProcessArgs[] args)
+    public override async Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs[] args, CancellationToken token = new())
     {
-        return await RunProcess(RunProcessArgs.ProcessRunProvider.Background, args);
+        return await RunProcess(RunProcessArgs.ProcessRunProvider.Background, args, token: token);
     }
 
-    private async Task<ICompletedProcess> RunBackgroundProcess(RunProcessArgs args)
+    private async Task<ICompletedProcess> RunBackgroundProcess(RunProcessArgs args, CancellationToken token = new())
     {
         Process? proc;
         try
@@ -209,48 +223,60 @@ public class AppService : AAppService
             return new CompletedProcess { ExitCode = -1 };
         }
 
+        token.Register(proc.Kill);
+
         if (args.Stdin != null)
         {
             await proc.StandardInput.WriteAsync(args.Stdin);
-            await proc.StandardInput.FlushAsync();
+            await proc.StandardInput.FlushAsync(token);
         }
 
-        await proc.WaitForExitAsync();
+        await proc.WaitForExitAsync(token);
         var filename = args.Filename.Contains(' ') ? "\"" + args.Filename + "\"" : args.Filename;
         LogService.Logger.Information($"Process '{filename} {args.Args}' (exit {proc.ExitCode})");
         return new CompletedProcess
         {
             ExitCode = proc.ExitCode,
-            Stdout = await proc.StandardOutput.ReadToEndAsync(),
-            Stderr = await proc.StandardError.ReadToEndAsync(),
+            Stdout = await proc.StandardOutput.ReadToEndAsync(token),
+            Stderr = await proc.StandardError.ReadToEndAsync(token),
             Time = proc.TotalProcessorTime,
         };
     }
 
     public ObservableCollection<IBackgroundTask> BackgroundTasks { get; } = [];
+    public ObservableCollection<IBackgroundTask> VisibleBackgroundTasks { get; } = [];
 
-    public override IBackgroundTask RunBackgroundTask(string name, BackgroundTaskFunc func)
+    public override IBackgroundTask RunBackgroundTask(string name, Func<IBackgroundTask, CancellationToken, Task<int>> func, BackgroundTaskFlags? flags = null)
     {
-        return RunBackgroundTask(new BackgroundTask(name, func));
+        return RunBackgroundTask(new BackgroundTask(name, func, flags));
     }
-
-    public override IBackgroundTask RunBackgroundTask(string name, BackgroundTaskProgressFunc func)
+    
+    public override IBackgroundTask RunBackgroundTask(string name, Func<CancellationToken, Task<int>> func, BackgroundTaskFlags? flags = null)
     {
-        return RunBackgroundTask(new BackgroundTask(name, func));
+        return RunBackgroundTask(new BackgroundTask(name, func, flags));
     }
 
     public override IBackgroundTask RunBackgroundTask(IBackgroundTask task)
     {
         task.Run();
         BackgroundTasks.Add(task);
+        if ((task.Flags & BackgroundTaskFlags.Hidden) == 0)
+            VisibleBackgroundTasks.Add(task);
         WaitBackgroundTask(task);
         return task;
     }
 
     private async void WaitBackgroundTask(IBackgroundTask task)
     {
-        await task.Wait();
-        LogService.Logger.Information($"Task {task.Name} finished");
+        var code = await task.Wait();
+        if (task is BackgroundTask backgroundTask)
+            backgroundTask.ExitCode = code;
+        if (task.IsCancelled)
+            LogService.Logger.Information($"Task '{task.Name}' cancelled");
+        else
+            LogService.Logger.Information($"Task '{task.Name}' finished");
         BackgroundTasks.Remove(task);
+        if ((task.Flags & BackgroundTaskFlags.Hidden) == 0)
+            VisibleBackgroundTasks.Remove(task);
     }
 }

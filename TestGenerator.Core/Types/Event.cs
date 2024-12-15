@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata;
-using System.Text.Json;
-using TestGenerator.Shared;
+﻿using System.Text.Json;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Core.Types;
@@ -16,9 +14,9 @@ class Event : IEvent
     
     private class HandlerNoParam : IHandler
     {
-        private readonly AAppService.Handler _func;
+        private readonly Action _func;
 
-        public HandlerNoParam(AAppService.Handler func)
+        public HandlerNoParam(Action func)
         {
             _func = func;
         }
@@ -31,9 +29,9 @@ class Event : IEvent
     
     private class Handler<T> : IHandler
     {
-        private readonly AAppService.Handler<T> _func;
+        private readonly Action<T> _func;
 
-        public Handler(AAppService.Handler<T> func)
+        public Handler(Action<T> func)
         {
             _func = func;
         }
@@ -68,14 +66,14 @@ class Event : IEvent
         }
     }
 
-    public ISubscription Subscribe<T>(AAppService.Handler<T> handler)
+    public ISubscription Subscribe<T>(Action<T> handler)
     {
         var h = new Handler<T>(handler);
         _handlers.Add(h);
         return new Subscription(() => _handlers.Remove(h));
     }
 
-    public ISubscription Subscribe(AAppService.Handler handler)
+    public ISubscription Subscribe(Action handler)
     {
         var h = new HandlerNoParam(handler);
         _handlers.Add(h);

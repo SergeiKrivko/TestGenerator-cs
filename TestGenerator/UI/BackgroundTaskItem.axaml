@@ -4,9 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TestGenerator.UI.BackgroundTaskItem">
-    <StackPanel Orientation="Vertical" Spacing="5" Margin="10">
-        <TextBlock Name="NameBlock" FontSize="16" />
-        <ProgressBar Height="5" Maximum="100" Name="ProgressBar" />
-        <TextBlock FontSize="12" Name="StatusBlock" />
-    </StackPanel>
+    <Grid ColumnDefinitions="* Auto" Margin="5">
+        <StackPanel Orientation="Vertical" Spacing="5" Margin="5">
+            <TextBlock Name="NameBlock" FontSize="16" />
+            <ProgressBar Height="5" Maximum="100" Name="ProgressBar" />
+            <TextBlock FontSize="12" Name="StatusBlock" />
+        </StackPanel>
+        <Button Grid.Column="1" Name="ButtonCancel" Width="20" Height="20" Margin="5" 
+                CornerRadius="10" Click="ButtonCancel_OnClick" BorderThickness="0">
+            <PathIcon Data="{DynamicResource IconClose}" Width="10" Height="10"></PathIcon>
+        </Button>
+    </Grid>
 </UserControl>

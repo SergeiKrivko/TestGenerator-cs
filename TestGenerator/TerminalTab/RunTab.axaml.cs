@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Types;
@@ -19,11 +20,11 @@ public partial class RunTab : SideTab
         AppService.Instance.AddRequestHandler<RunProcessArgs, ICompletedProcess>("runProcessInTabRun", RunProcess);
     }
 
-    private async Task<ICompletedProcess> RunProcess(RunProcessArgs args)
+    private async Task<ICompletedProcess> RunProcess(RunProcessArgs args, CancellationToken token)
     {
         if (args.WorkingDirectory != null)
             Terminal.CurrentDirectory = args.WorkingDirectory;
-        var proc = await Terminal.Run(args);
+        var proc = await Terminal.Run(args, token);
         return new CompletedProcess
         {
             ExitCode = proc.ExitCode

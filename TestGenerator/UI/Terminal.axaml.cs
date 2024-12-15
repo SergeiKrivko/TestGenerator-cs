@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
@@ -98,7 +99,7 @@ public partial class Terminal : UserControl
         }
     }
 
-    protected virtual async Task<ICompletedProcess?> RunProcess(string? command, string? stdin = null)
+    protected virtual async Task<ICompletedProcess?> RunProcess(string? command, string? stdin = null, CancellationToken token = new())
     {
         if (!string.IsNullOrWhiteSpace(command))
         {
@@ -127,20 +128,21 @@ public partial class Terminal : UserControl
                 try
                 {
                     CurrentProcess.Start();
+                    token.Register(() => proc.Kill());
                     ReadOutputLoop();
                     ReadErrorLoop();
                     if (stdin != null)
                     {
                         await CurrentProcess.StandardInput.WriteAsync(stdin);
-                        await CurrentProcess.StandardInput.FlushAsync();
+                        await CurrentProcess.StandardInput.FlushAsync(token);
                     }
 
-                    await CurrentProcess.WaitForExitAsync();
+                    await CurrentProcess.WaitForExitAsync(token);
                     CurrentProcess = null;
                     LogService.Logger.Information($"Process {proc.Id} exited with code {proc.ExitCode}");
 
-                    Write(await proc.StandardOutput.ReadToEndAsync());
-                    Write(await proc.StandardError.ReadToEndAsync());
+                    Write(await proc.StandardOutput.ReadToEndAsync(token));
+                    Write(await proc.StandardError.ReadToEndAsync(token));
                     WritePrompt();
                 }
                 catch (Exception e)

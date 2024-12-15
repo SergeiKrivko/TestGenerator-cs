@@ -7,6 +7,7 @@ public interface IBackgroundTask
     public int? ExitCode { get; }
     
     public double? Progress { get; set; }
+    public bool IsCancelled { get; }
 
     public bool IsIndeterminate => Progress == null;
 
@@ -23,4 +24,19 @@ public interface IBackgroundTask
     public Task Run();
 
     public Task<int> Wait();
+
+    public void Cancel();
+    public Task CancelAsync();
+    
+    public BackgroundTaskFlags Flags { get; }
+}
+
+[Flags]
+public enum BackgroundTaskFlags
+{
+    TerminateWithoutAsk = 1,
+    ProjectTask = 2,
+    Hidden = 4,
+    UiThread = 8,
+    CanBeCancelled = 16,
 }

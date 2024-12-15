@@ -6,6 +6,6 @@ namespace TestGenerator.Core.Types;
 interface IEvent
 {
     public void Emit(object? obj = null);
-    public ISubscription Subscribe<T>(AAppService.Handler<T> handler);
-    public ISubscription Subscribe(AAppService.Handler handler);
+    public ISubscription Subscribe<T>(Action<T> handler);
+    public ISubscription Subscribe(Action handler);
 }

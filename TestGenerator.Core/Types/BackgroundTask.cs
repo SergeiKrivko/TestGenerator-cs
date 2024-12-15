@@ -8,7 +8,8 @@ public class BackgroundTask : IBackgroundTask
     public Guid Id { get; } = Guid.NewGuid();
     public string Name { get; }
 
-    public int? ExitCode { get; private set; }
+    public int? ExitCode { get; internal set; }
+    public bool IsCancelled { get; private set; }
 
     private double? _progress = 0;
 
@@ -36,34 +37,68 @@ public class BackgroundTask : IBackgroundTask
         }
     }
 
+    public BackgroundTaskFlags Flags { get; }
+
     public event IBackgroundTask.StatusChangeHandler? StatusChanged;
 
     private Task<int>? _task;
-    private AAppService.BackgroundTaskProgressFunc _func;
+    private readonly Func<IBackgroundTask, CancellationToken, Task<int>> _func;
+    private CancellationTokenSource? _cancellationToken;
 
-    public BackgroundTask(string name, AAppService.BackgroundTaskProgressFunc func)
+    public BackgroundTask(string name, Func<IBackgroundTask, CancellationToken, Task<int>> func,
+        BackgroundTaskFlags? flags = null)
     {
         Name = name;
         _func = func;
+        if (flags != null)
+            Flags = flags.Value;
     }
-
-    public BackgroundTask(string name, AAppService.BackgroundTaskFunc func)
+    public BackgroundTask(string name, Func<CancellationToken, Task<int>> func,
+        BackgroundTaskFlags? flags = null)
     {
         Name = name;
-        _progress = null;
-        _func = task => func();
+        _func = (task, token) => func(token);
+        if (flags != null)
+            Flags = flags.Value;
     }
 
     public Task Run()
     {
         LogService.Logger.Information($"Task '{Name}' started");
-        return _task = Task.Run(() => _func(this));
+        _cancellationToken = new CancellationTokenSource();
+        if ((Flags & BackgroundTaskFlags.UiThread) == 0)
+            return _task = Task.Run(() => _func(this, _cancellationToken.Token), _cancellationToken.Token);
+        return _task = _func(this, _cancellationToken.Token);
     }
 
     public async Task<int> Wait()
     {
         if (_task == null)
             return ExitCode ?? 0;
-        return await _task;
+        try
+        {
+            return await _task;
+        }
+        catch (TaskCanceledException)
+        {
+            IsCancelled = true;
+            return 500;
+        }
+        catch (Exception e)
+        {
+            LogService.Logger.Error($"Error in background task '{Name}': {e.Message}");
+            return -1;
+        }
+    }
+
+    public void Cancel()
+    {
+        _cancellationToken?.Cancel();
+    }
+
+    public async Task CancelAsync()
+    {
+        if (_cancellationToken != null)
+            await _cancellationToken.CancelAsync();
     }
 }

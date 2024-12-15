@@ -10,6 +10,7 @@ using TestGenerator.Builds;
 using TestGenerator.FilesTab;
 using TestGenerator.Shared.Types;
 using TestGenerator.TerminalTab;
+using TestGenerator.UI;
 
 namespace TestGenerator;
 
@@ -49,6 +50,7 @@ public partial class MainWindow : Window
 
         PluginsService.Instance.Load();
         ProjectsService.Instance.Load();
+        ProjectsService.Instance.TerminateProjectTasksFunc = TerminateTasksWindow.TerminateProjectTasks;
     }
 
     private void ShowMainTab(string key)
@@ -222,11 +224,21 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
+    private bool _forceQuit = false;
+
+    private async void Window_OnClosing(object? sender, WindowClosingEventArgs e)
     {
+        if (!_forceQuit)
+            e.Cancel = true;
         AppService.Instance.Settings.Set("windowWidth", Width);
         AppService.Instance.Settings.Set("windowHeight", Height);
         AppService.Instance.Settings.Set("windowMaximized", WindowState == WindowState.Maximized);
         AppService.Instance.Settings.Set("windowPosition", Position.ToString());
+
+        if (!_forceQuit && await TerminateTasksWindow.TerminateAllTasks())
+        {
+            _forceQuit = true;
+            Close();
+        }
     }
 }

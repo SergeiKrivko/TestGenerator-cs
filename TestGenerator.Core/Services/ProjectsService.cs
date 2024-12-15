@@ -29,12 +29,12 @@ public class ProjectsService
             var project = Project.Load(path);
             Projects.Add(project);
             if (path == currentPath)
-                Current = project;
+                await SetCurrentProject(project);
         }
 
         if (Current == Project.LightEditProject && StartupService.StartupInfo?.Directory != null)
         {
-            Current = Load(StartupService.StartupInfo.Directory);
+            await SetCurrentProject(Load(StartupService.StartupInfo.Directory));
         }
 
         foreach (var file in StartupService.StartupInfo?.Files ?? [])
@@ -51,34 +51,7 @@ public class ProjectsService
 
     public event ProjectChangeHandler? CurrentChanged;
 
-    public Project Current
-    {
-        get => _current ?? Project.LightEditProject;
-        set
-        {
-            if (value == Current)
-                return;
-            if (value == Project.LightEditProject)
-            {
-                LogService.Logger.Debug("Current project set to LightEdit");
-                _current = null;
-                AppService.Instance.Settings.Remove("currentProject");
-            }
-            else if (Projects.Contains(value))
-            {
-                LogService.Logger.Debug($"Current project set to '{value.Name}'");
-                _current = value;
-                AppService.Instance.Settings.Set("currentProject", _current.Path);
-            }
-            else
-            {
-                throw new Exception("Unknown project!");
-            }
-
-            CurrentChanged?.Invoke(Current);
-            AppService.Instance.Emit("projectChanged", Current.Path);
-        }
-    }
+    public Project Current => _current ?? Project.LightEditProject;
 
     public Project Load(string path)
     {
@@ -86,5 +59,35 @@ public class ProjectsService
         Projects.Add(proj);
         AppService.Instance.Settings.Set("recentProjects", Projects.Select(p => p.Path));
         return proj;
+    }
+
+    public Func<Task<bool>>? TerminateProjectTasksFunc { get; set; }
+
+    public async Task<bool> SetCurrentProject(Project value)
+    {
+        if (value == Current)
+            return false;
+        if (value == Project.LightEditProject)
+        {
+            LogService.Logger.Debug("Current project set to LightEdit");
+            _current = null;
+            AppService.Instance.Settings.Remove("currentProject");
+        }
+        else if (Projects.Contains(value))
+        {
+            LogService.Logger.Debug($"Current project set to '{value.Name}'");
+            _current = value;
+            AppService.Instance.Settings.Set("currentProject", _current.Path);
+        }
+        else
+        {
+            throw new Exception("Unknown project!");
+        }
+
+        if (TerminateProjectTasksFunc != null && !await TerminateProjectTasksFunc())
+            return false;
+        CurrentChanged?.Invoke(Current);
+        AppService.Instance.Emit("projectChanged", Current.Path);
+        return true;
     }
 }

@@ -1,5 +1,4 @@
-﻿using TestGenerator.Shared.Types;
-using TestGenerator.Shared.Utils;
+﻿using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Shared.Types;
 
@@ -39,34 +38,24 @@ public abstract class AAppService
 
     public abstract void Emit(string key, object? data = null);
 
-    public delegate void Handler<T>(T obj);
+    public abstract ISubscription Subscribe<T>(string key, Action<T> handler);
+    public abstract ISubscription Subscribe(string key, Action handler);
 
-    public delegate void Handler();
-
-    public abstract ISubscription Subscribe<T>(string key, Handler<T> handler);
-    public abstract ISubscription Subscribe(string key, Handler handler);
-
-    public delegate Task<TO> RequestHandler<TI, TO>(TI data);
-
-    public delegate Task<TO> RequestHandler<TO>();
-
-    public abstract Task<T> Request<T>(string key, object? data = null);
-    public abstract void AddRequestHandler<TI, TO>(string key, RequestHandler<TI, TO> handler);
-    public abstract void AddRequestHandler<TO>(string key, RequestHandler<TO> handler);
+    public abstract Task<T> Request<T>(string key, object? data = null, CancellationToken token = new());
+    public abstract void AddRequestHandler<TI, TO>(string key, Func<TI, Task<TO>> handler);
+    public abstract void AddRequestHandler<TO>(string key, Func<Task<TO>> handler);
+    public abstract void AddRequestHandler<TI, TO>(string key, Func<TI, CancellationToken, Task<TO>> handler);
+    public abstract void AddRequestHandler<TO>(string key, Func<CancellationToken, Task<TO>> handler);
 
     public abstract AProject CurrentProject { get; }
 
-    public abstract Task<ICompletedProcess> RunProcess(RunProcessArgs.ProcessRunProvider where, RunProcessArgs args);
-    public abstract Task<ICompletedProcess> RunProcess(RunProcessArgs args);
+    public abstract Task<ICompletedProcess> RunProcess(RunProcessArgs.ProcessRunProvider where, RunProcessArgs args, CancellationToken token = new());
+    public abstract Task<ICompletedProcess> RunProcess(RunProcessArgs args, CancellationToken token = new());
 
-    public abstract Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs.ProcessRunProvider where, params RunProcessArgs[] args);
-    public abstract Task<ICollection<ICompletedProcess>> RunProcess(params RunProcessArgs[] args);
+    public abstract Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs.ProcessRunProvider where, RunProcessArgs[] args, CancellationToken token = new());
+    public abstract Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs[] args, CancellationToken token = new());
 
-    public delegate Task<int> BackgroundTaskProgressFunc(IBackgroundTask task);
-
-    public delegate Task<int> BackgroundTaskFunc();
-
-    public abstract IBackgroundTask RunBackgroundTask(string name, BackgroundTaskProgressFunc func);
-    public abstract IBackgroundTask RunBackgroundTask(string name, BackgroundTaskFunc func);
+    public abstract IBackgroundTask RunBackgroundTask(string name, Func<IBackgroundTask, CancellationToken, Task<int>> func, BackgroundTaskFlags? flags = null);
+    public abstract IBackgroundTask RunBackgroundTask(string name, Func<CancellationToken, Task<int>> func, BackgroundTaskFlags? flags = null);
     public abstract IBackgroundTask RunBackgroundTask(IBackgroundTask task);
 }
