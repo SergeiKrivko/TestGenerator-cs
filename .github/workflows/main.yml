@@ -37,10 +37,10 @@ jobs:
           
       - name: Upload release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TESTGEN_TOKEN: ${{ secrets.TESTGEN_TOKEN }}
         run: |
           pip install PyGithub
-          python upload_release.py Releases/win-x64/TestGenerator-setup.exe amd64
+          python upload_release.py Releases/win-x64/TestGenerator-setup.exe win-x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -97,10 +97,10 @@ jobs:
 
       - name: Upload release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TESTGEN_TOKEN: ${{ secrets.TESTGEN_TOKEN }}
         run: |
           pip install PyGithub
-          python3 upload_release.py Releases/linux-x64/debpkg.deb amd64
+          python3 upload_release.py Releases/linux-x64/debpkg.deb linux-x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -148,10 +148,10 @@ jobs:
 
       - name: Upload release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TESTGEN_TOKEN: ${{ secrets.TESTGEN_TOKEN }}
         run: |
           pip install PyGithub
-          python3 upload_release.py TestGenerator.dmg amd64
+          python3 upload_release.py TestGenerator.dmg osx-x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

@@ -104,7 +104,8 @@ public class Build : ABuild
         {
             if (proc.Compile)
             {
-                code = await AppService.Instance.RunBackgroundTask($"{Name} - компиляция", Compile).Wait();
+                code = await AppService.Instance
+                    .RunBackgroundTask($"{Name} - компиляция", Compile, BackgroundTaskFlags.CanBeCancelled).Wait();
             }
             else if (proc.Command != null)
             {
@@ -139,7 +140,8 @@ public class Build : ABuild
         {
             if (proc.Compile)
             {
-                code = await AppService.Instance.RunBackgroundTask($"{Name} - компиляция", Compile).Wait();
+                code = await AppService.Instance
+                    .RunBackgroundTask($"{Name} - компиляция", Compile, BackgroundTaskFlags.CanBeCancelled).Wait();
             }
             else if (proc.Command != null)
             {
@@ -189,7 +191,6 @@ public class Build : ABuild
     public override async Task<int> ExecuteConsole(string args = "", string? stdin = null,
         CancellationToken token = new())
     {
-        await Task.Delay(5000, token);
         var code = await RunPreProcConsole(token);
         if (code != 0)
             return code;
