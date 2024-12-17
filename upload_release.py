@@ -17,7 +17,7 @@ print(f"Version = {repr(version)}")
 
 for root, _, files in os.walk(f'TestGenerator/bin/Release/net8.0/{runtime}'):
     for file in files:
-        resp = requests.post(f"http://localhost:5255/api/v1/releases?version={version}&runtime={runtime}",
+        resp = requests.post(f"https://testgenerator-api.nachert.art/api/v1/releases?version={version}&runtime={runtime}",
                              files={'file': open(os.path.join(root, file), 'rb')},
                              headers={'Authorization': f'Bearer {os.getenv("TESTGEN_TOKEN")}'})
         if not resp.ok:
