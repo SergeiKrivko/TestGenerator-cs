@@ -20,7 +20,8 @@ for root, _, files in os.walk(f'TestGenerator/bin/Release/net8.0/{runtime}'):
         resp = requests.post(f"https://testgenerator-api.nachert.art/api/v1/releases?version={version}&runtime={runtime}",
                              files={'file': open(os.path.join(root, file), 'rb')},
                              headers={'Authorization': f'Bearer {os.getenv("TESTGEN_TOKEN")}'})
-        if not resp.ok:
+        if resp.code >= 400:
+            print(resp.code)
             print(resp.text)
             exit(1)
 
