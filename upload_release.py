@@ -21,6 +21,7 @@ for root, _, files in os.walk(f'TestGenerator/bin/Release/net8.0/{runtime}'):
                              files={'file': open(os.path.join(root, file), 'rb')},
                              headers={'Authorization': f'Bearer {os.getenv("TESTGEN_TOKEN")}'})
         if not resp.ok:
+            print(resp.text)
             exit(1)
 
 # using an access token
