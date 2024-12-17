@@ -81,9 +81,6 @@ jobs:
           chmod 755 Releases/linux-x64/debpkg/DEBIAN/prerm
           
           dpkg-deb --build Releases/linux-x64/debpkg
-          
-          ls
-          ls -R Releases/linux-x64
 
 #      - name: Create DEB package
 #        uses: jiro4989/build-deb-action@v3
