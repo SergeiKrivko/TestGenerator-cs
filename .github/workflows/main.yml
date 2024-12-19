@@ -38,6 +38,7 @@ jobs:
       - name: Upload release
         env:
           TESTGEN_TOKEN: ${{ secrets.TESTGEN_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install PyGithub
           python upload_release.py Releases/win-x64/TestGenerator-setup.exe win-x64
@@ -95,6 +96,7 @@ jobs:
       - name: Upload release
         env:
           TESTGEN_TOKEN: ${{ secrets.TESTGEN_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install PyGithub
           python3 upload_release.py Releases/linux-x64/debpkg.deb linux-x64
@@ -146,6 +148,7 @@ jobs:
       - name: Upload release
         env:
           TESTGEN_TOKEN: ${{ secrets.TESTGEN_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install PyGithub
           python3 upload_release.py TestGenerator.dmg osx-x64

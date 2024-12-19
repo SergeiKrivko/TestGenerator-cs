@@ -7,7 +7,8 @@
              x:DataType="ui:BuildRunner"
              x:Class="TestGenerator.UI.BuildRunner">
     <StackPanel Orientation="Horizontal" Spacing="5">
-        <ComboBox Name="ComboBox" ItemsSource="{Binding Builds}" VerticalAlignment="Center">
+        <ComboBox Name="ComboBox" MinWidth="100" ItemsSource="{Binding Builds}" VerticalAlignment="Center"
+                  SelectionChanged="ComboBox_OnSelectionChanged">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"></TextBlock>

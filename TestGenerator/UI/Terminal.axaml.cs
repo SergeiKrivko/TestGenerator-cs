@@ -128,7 +128,10 @@ public partial class Terminal : UserControl
                 try
                 {
                     CurrentProcess.Start();
-                    token.Register(() => proc.Kill());
+                    token.Register(() =>
+                    {
+                        proc.Close();
+                    });
                     ReadOutputLoop();
                     ReadErrorLoop();
                     if (stdin != null)

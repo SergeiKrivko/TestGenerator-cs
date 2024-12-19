@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using TestGenerator.Core.Services;
@@ -16,6 +18,12 @@ public partial class BuildRunner : UserControl
         Builds = BuildsService.Instance.Builds;
         InitializeComponent();
         ComboBox.ItemsSource = Builds;
+        ProjectsService.Instance.CurrentChanged += project =>
+        {
+            ComboBox.SelectedValue =
+                BuildsService.Instance.Builds.FirstOrDefault(b =>
+                    b.Id == project.Settings.Get<Guid>("selectedBuild"));
+        };
     }
 
     private async void RunButton_OnClick(object? sender, RoutedEventArgs e)
@@ -23,7 +31,8 @@ public partial class BuildRunner : UserControl
         if (ComboBox.SelectedValue is ABuild build)
         {
             AppService.Instance.ShowSideTab("Run");
-            _task = AppService.Instance.RunBackgroundTask($"Запуск {build.Name}", token => build.ExecuteConsole(token: token),
+            _task = AppService.Instance.RunBackgroundTask($"Запуск {build.Name}",
+                token => build.ExecuteConsole(token: token),
                 BackgroundTaskFlags.Hidden | BackgroundTaskFlags.ProjectTask | BackgroundTaskFlags.UiThread);
             ButtonCancel.IsVisible = true;
             ButtonRerun.IsVisible = true;
@@ -44,5 +53,13 @@ public partial class BuildRunner : UserControl
     {
         _task?.Cancel();
         RunButton_OnClick(sender, e);
+    }
+
+    private void ComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (ComboBox.SelectedValue is ABuild build)
+        {
+            ProjectsService.Instance.Current.Settings.Set("selectedBuild", build.Id);
+        }
     }
 }
