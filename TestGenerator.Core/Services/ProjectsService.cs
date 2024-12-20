@@ -56,7 +56,7 @@ public class ProjectsService
     public Project Load(string path)
     {
         var proj = Project.Load(path);
-        Projects.Add(proj);
+        Projects.Insert(0, proj);
         AppService.Instance.Settings.Set("recentProjects", Projects.Select(p => p.Path));
         return proj;
     }
@@ -77,6 +77,10 @@ public class ProjectsService
         {
             LogService.Logger.Debug($"Current project set to '{value.Name}'");
             _current = value;
+            Projects.Move(Projects.IndexOf(value), 0);
+            // Projects.Remove(value);
+            // Projects.Insert(0, value);
+            AppService.Instance.Settings.Set("recentProjects", Projects.Select(p => p.Path));
             AppService.Instance.Settings.Set("currentProject", _current.Path);
         }
         else

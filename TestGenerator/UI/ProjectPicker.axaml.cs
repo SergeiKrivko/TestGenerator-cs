@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -30,13 +31,10 @@ public partial class ProjectPicker : UserControl
 
     private async void ProjectsListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (ProjectsListBox.SelectedItem is Project)
+        await Task.Delay(100);
+        if (ProjectsListBox.SelectedItem is Project project)
         {
-            var project = (Project)ProjectsListBox.SelectedItem;
-            if (project != Service.Current)
-            {
-                await Service.SetCurrentProject(project);
-            }
+            await Service.SetCurrentProject(project);
         }
     }
 
@@ -48,7 +46,7 @@ public partial class ProjectPicker : UserControl
             await Service.SetCurrentProject(Project.LightEditProject);
         }
     }
-    
+
     private async void OpenProjectButton_Clicked(object sender, RoutedEventArgs args)
     {
         var topLevel = TopLevel.GetTopLevel(this);
