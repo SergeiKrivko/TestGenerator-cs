@@ -136,7 +136,17 @@ public partial class CodeTab : MainTab
         _tabs.Remove(file.Id);
         _files.Remove(file.Id);
         if (file.File?.Widget != null)
-            EditorsPanel.Children.Remove(file.File.Widget);
+        {
+            try
+            {
+                file.File.Widget.IsVisible = false;
+                EditorsPanel.Children.Remove(file.File.Widget);
+            }
+            catch (Exception e)
+            {
+                LogService.Logger.Error(e.Message);
+            }
+        }
         if (tab.IsSelected && _tabs.Count > 0)
             _tabs.Values.First().IsSelected = true;
         StoreOpenedFiles();
