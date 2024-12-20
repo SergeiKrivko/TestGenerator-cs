@@ -48,6 +48,8 @@ public partial class MainWindow : Window
         AddSideTab(new RunTab());
         AddSideTab(new TerminalTab.TerminalTab());
 
+        Title = $"TestGenerator {AppService.Instance.AppVersion}";
+
         PluginsService.Instance.Load();
         ProjectsService.Instance.Load();
         ProjectsService.Instance.TerminateProjectTasksFunc = TerminateTasksWindow.TerminateProjectTasks;

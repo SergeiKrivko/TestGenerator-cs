@@ -6,8 +6,7 @@
         xmlns:ui="clr-namespace:TestGenerator.UI"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TestGenerator.MainWindow"
-        Icon="/Assets/icon.ico"
-        Title="TestGenerator" Closing="Window_OnClosing">
+        Icon="/Assets/icon.ico" Closing="Window_OnClosing">
     <Grid RowDefinitions="50 * 30" ColumnDefinitions="50 *">
 
         <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Gray"

@@ -1,4 +1,5 @@
-﻿using TestGenerator.Shared.Types;
+﻿using TestGenerator.Core.Services;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.TerminalTab;
 
@@ -11,5 +12,11 @@ public partial class TerminalTab : SideTab
     public TerminalTab()
     {
         InitializeComponent();
+        ProjectsService.Instance.CurrentChanged += project =>
+        {
+            Terminal.CurrentDirectory = project.Path;
+            Terminal.Clear();
+            Terminal.WritePrompt();
+        };
     }
 }
