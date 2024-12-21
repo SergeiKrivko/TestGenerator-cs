@@ -239,7 +239,7 @@ public class AppService : AAppService
             ExitCode = proc.ExitCode,
             Stdout = await proc.StandardOutput.ReadToEndAsync(token),
             Stderr = await proc.StandardError.ReadToEndAsync(token),
-            Time = proc.TotalProcessorTime,
+            // Time = proc.TotalProcessorTime,
         };
     }
 
