@@ -8,7 +8,7 @@ public class LogService
 {
     public static string LogFilePath { get; } = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko", Config.AppName,
-        "Logs", $"{DateTime.Now:yyyy-MM-ddTHH-mm}.txt");
+        "Logs", $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}.txt");
 
     public static ILogger Logger { get; private set; } = new LoggerConfiguration()
         .MinimumLevel.Debug()

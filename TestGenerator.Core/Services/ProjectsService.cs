@@ -1,4 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.Reflection;
+using Avalonia;
+using Avalonia.Win32.JumpLists;
 using TestGenerator.Core.Types;
 
 namespace TestGenerator.Core.Services;
@@ -6,6 +9,8 @@ namespace TestGenerator.Core.Services;
 public class ProjectsService
 {
     private static ProjectsService? _instance;
+
+    private JumpList? _jumpList;
 
     public static ProjectsService Instance
     {
@@ -22,19 +27,20 @@ public class ProjectsService
 
     public async void Load()
     {
-        var currentPath = StartupService.StartupInfo?.Directory ??
-                          AppService.Instance.Settings.Get<string>("currentProject");
+        InitJumpList();
+
+        var currentPath = AppService.Instance.Settings.Get<string>("currentProject");
         foreach (var path in AppService.Instance.Settings.Get<string[]>("recentProjects", []))
         {
             var project = Project.Load(path);
             Projects.Add(project);
         }
-        await SetCurrentProject(Projects.First(p => p.Path == currentPath));
 
-        if (Current == Project.LightEditProject && StartupService.StartupInfo?.Directory != null)
-        {
-            await SetCurrentProject(Load(StartupService.StartupInfo.Directory));
-        }
+        if (StartupService.StartupInfo?.Directory != null)
+            await SetCurrentProject(Projects.FirstOrDefault(p => p.Path == StartupService.StartupInfo.Directory) ??
+                                    Load(StartupService.StartupInfo.Directory));
+        else
+            await SetCurrentProject(Projects.First(p => p.Path == currentPath));
 
         foreach (var file in StartupService.StartupInfo?.Files ?? [])
         {
@@ -56,7 +62,7 @@ public class ProjectsService
     {
         var proj = Project.Load(path);
         Projects.Insert(0, proj);
-        AppService.Instance.Settings.Set("recentProjects", Projects.Select(p => p.Path));
+        SaveRecentProjects();
         return proj;
     }
 
@@ -77,7 +83,7 @@ public class ProjectsService
             LogService.Logger.Debug($"Current project set to '{value.Name}'");
             _current = value;
             Projects.Move(Projects.IndexOf(value), 0);
-            AppService.Instance.Settings.Set("recentProjects", Projects.Select(p => p.Path));
+            SaveRecentProjects();
             AppService.Instance.Settings.Set("currentProject", _current.Path);
         }
         else
@@ -90,5 +96,50 @@ public class ProjectsService
         CurrentChanged?.Invoke(Current);
         AppService.Instance.Emit("projectChanged", Current.Path);
         return true;
+    }
+
+    private void SaveRecentProjects()
+    {
+        AppService.Instance.Settings.Set("recentProjects", Projects.Select(p => p.Path));
+        if (OperatingSystem.IsWindows() && _jumpList != null)
+        {
+            _jumpList.JumpItems.RemoveAll(i => (i as JumpTask)?.CustomCategory == "Недавние");
+            foreach (var project in Projects.Take(13))
+            {
+                _jumpList.JumpItems.Add(new JumpTask
+                {
+                    Title = project.Name,
+                    Description = $"Открыть проект '{project.Name}'",
+                    ApplicationPath = Path.Join(Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location),
+                        "TestGenerator.exe"),
+                    Arguments = $"-d {project.Path}",
+                    CustomCategory = "Недавние",
+                });
+            }
+
+            JumpList.SetJumpList(Application.Current!, _jumpList);
+        }
+    }
+
+    private void InitJumpList()
+    {
+        if (!OperatingSystem.IsWindows())
+            return;
+        _jumpList = new JumpList
+        {
+            ShowRecentCategory = true,
+            ShowFrequentCategory = true,
+        };
+        // jumpList1.JumpItemsRejected += JumpList1_JumpItemsRejected;
+        // jumpList1.JumpItemsRemovedByUser += JumpList1_JumpItemsRemovedByUser;
+        _jumpList.JumpItems.Add(new JumpTask
+        {
+            Title = "LightEdit",
+            Description = "Открыть в режиме LightEdit",
+            ApplicationPath = Path.Join(Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location),
+                "TestGenerator.exe"),
+            IconResourcePath = @"C:\Windows\notepad.exe",
+        });
+        JumpList.SetJumpList(Application.Current!, _jumpList);
     }
 }
