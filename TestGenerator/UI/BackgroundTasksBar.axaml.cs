@@ -6,18 +6,25 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
+using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.UI;
 
 public partial class BackgroundTasksBar : UserControl
 {
     private IBackgroundTask? _currentTask;
+
+    private readonly SettingsSection _developerSettings = AppService.Instance.GetSettings("Developer");
+    private bool ShowAllTasks => _developerSettings.Get<bool>("showAllTasks");
+
+    private ObservableCollection<IBackgroundTask> Tasks =>
+        ShowAllTasks ? AppService.Instance.BackgroundTasks : AppService.Instance.VisibleBackgroundTasks;
     
     public BackgroundTasksBar()
     {
         InitializeComponent();
         ItemsControl.ItemsSource = AppService.Instance.BackgroundTasks;
-        AppService.Instance.VisibleBackgroundTasks.CollectionChanged += BackgroundTasksOnCollectionChanged;
+        Tasks.CollectionChanged += BackgroundTasksOnCollectionChanged;
     }
 
     private void BackgroundTasksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -26,7 +33,7 @@ public partial class BackgroundTasksBar : UserControl
         {
             if (_currentTask != null)
                 _currentTask.ProgressChanged -= CurrentTaskOnProgressChanged;
-            _currentTask = AppService.Instance.VisibleBackgroundTasks.FirstOrDefault();
+            _currentTask = Tasks.FirstOrDefault();
             IsVisible = _currentTask != null;
             if (_currentTask != null)
             {

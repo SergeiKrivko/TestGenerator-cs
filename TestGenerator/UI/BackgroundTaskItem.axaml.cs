@@ -3,7 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Reactive;
 using Avalonia.Threading;
+using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
+using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.UI;
 
@@ -12,6 +14,9 @@ public partial class BackgroundTaskItem : UserControl
     public static readonly StyledProperty<IBackgroundTask?> BackgroundTaskProperty =
         AvaloniaProperty.Register<BackgroundTaskItem, IBackgroundTask?>(nameof(BackgroundTask));
 
+    private readonly SettingsSection _developerSettings = AppService.Instance.GetSettings("Developer");
+    private bool AllowKillAllTasks => _developerSettings.Get<bool>("allowKillAllTasks");
+    
     public IBackgroundTask? BackgroundTask
     {
         get => GetValue(BackgroundTaskProperty);
@@ -30,7 +35,7 @@ public partial class BackgroundTaskItem : UserControl
                 UpdateProgress(task.Progress);
                 task.StatusChanged += UpdateStatus;
                 UpdateStatus(task.Status);
-                ButtonCancel.IsVisible = (task.Flags & BackgroundTaskFlags.CanBeCancelled) > 0;
+                ButtonCancel.IsVisible = AllowKillAllTasks || (task.Flags & BackgroundTaskFlags.CanBeCancelled) > 0;
             }
         };
     }

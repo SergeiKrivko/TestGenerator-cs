@@ -8,6 +8,8 @@
         <StackPanel Spacing="5">
             <Button Click="ButtonOpenLogs_OnClick">Открыть файл с логами</Button>
             <Button Click="ButtonOpenPlugins_OnClick">Открыть папку плагинов</Button>
+            <CheckBox Name="ShowAllTasksBox" IsCheckedChanged="ShowAllTasksBox_OnIsCheckedChanged">Показывать все фоновые задачи</CheckBox>
+            <CheckBox Name="AllowKillAllTasksBox" Click="AllowKillAllTasksBox_OnClick">Разрешить отменять все фоновые задачи</CheckBox>
         </StackPanel>
     </Grid>
 </UserControl>
