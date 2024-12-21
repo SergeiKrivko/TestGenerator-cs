@@ -29,11 +29,12 @@ public class PluginsService
     public event PluginLoadedHandler? OnPluginLoaded;
     public event PluginLoadedHandler? OnPluginUnloaded;
 
+    public string PluginsPath { get; } = Path.Join(AppService.Instance.AppDataPath, "Plugins");
+
     public void Load()
     {
-        var path = Path.Join(AppService.Instance.AppDataPath, "Plugins");
-        Directory.CreateDirectory(path);
-        foreach (var directory in Directory.GetDirectories(path))
+        Directory.CreateDirectory(PluginsPath);
+        foreach (var directory in Directory.GetDirectories(PluginsPath))
         {
             if (File.Exists(Path.Join(directory, "IsDeleted")))
             {
@@ -90,10 +91,8 @@ public class PluginsService
 
     private Assembly _getPluginAssembly(string relativePath)
     {
-        var root = Path.Join(AppService.Instance.AppDataPath, "Plugins");
-
         var pluginLocation =
-            Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar)));
+            Path.GetFullPath(Path.Combine(PluginsPath, relativePath.Replace('\\', Path.DirectorySeparatorChar)));
         LogService.Logger.Debug($"Loading plugin from: {pluginLocation}");
         var loadContext = new PluginLoadContext(pluginLocation);
         return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
@@ -108,7 +107,7 @@ public class PluginsService
 
     public async Task InstallPlugin(string url)
     {
-        var installedPath = Path.Join(AppService.Instance.AppDataPath, "Plugins", Guid.NewGuid().ToString());
+        var installedPath = Path.Join(PluginsPath, Guid.NewGuid().ToString());
         var stream = await _httpClient.GetStreamAsync(url);
         await Task.Run(() => ZipFile.ExtractToDirectory(stream, installedPath));
         LoadPlugin(installedPath);
@@ -132,7 +131,7 @@ public class PluginsService
     public string GetPluginKeyByAssembly(Assembly assembly)
     {
         var path = Path.GetFullPath(assembly.Location);
-        var dirPath = Path.GetFullPath(Path.Join(AppService.Instance.AppDataPath, "Plugins"));
+        var dirPath = Path.GetFullPath(PluginsPath);
         if (!path.StartsWith(dirPath))
             throw new Exception("Call not from plugin");
         while (!string.IsNullOrEmpty(path = Path.GetDirectoryName(path)))

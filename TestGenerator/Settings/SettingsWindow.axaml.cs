@@ -40,6 +40,8 @@ public partial class SettingsWindow : Window
                 Add(item);
             }
         }
+        
+        Add(new Shared.Settings.SettingsNode("Для разработчиков", new DeveloperPage()));
 
         Closed += OnClosed;
 
