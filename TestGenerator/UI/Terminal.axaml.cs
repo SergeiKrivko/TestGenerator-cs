@@ -99,7 +99,8 @@ public partial class Terminal : UserControl
         }
     }
 
-    protected virtual async Task<ICompletedProcess?> RunProcess(string? command, string? stdin = null, CancellationToken token = new())
+    protected virtual async Task<ICompletedProcess?> RunProcess(string? command, string? stdin = null,
+        CancellationToken token = new())
     {
         if (!string.IsNullOrWhiteSpace(command))
         {
@@ -128,10 +129,6 @@ public partial class Terminal : UserControl
                 try
                 {
                     CurrentProcess.Start();
-                    token.Register(() =>
-                    {
-                        proc.Close();
-                    });
                     ReadOutputLoop();
                     ReadErrorLoop();
                     if (stdin != null)
@@ -140,13 +137,50 @@ public partial class Terminal : UserControl
                         await CurrentProcess.StandardInput.FlushAsync(token);
                     }
 
-                    await CurrentProcess.WaitForExitAsync(token);
+                    try
+                    {
+                        await CurrentProcess.WaitForExitAsync(token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        try
+                        {
+                            CurrentProcess.Kill(entireProcessTree: true);
+                        }
+                        catch (Exception e)
+                        {
+                            LogService.Logger.Warning($"Error while killing process '{CurrentProcess}': {e.Message}");
+                        }
+
+                        Write(await proc.StandardOutput.ReadToEndAsync(token));
+                        Write(await proc.StandardError.ReadToEndAsync(token));
+
+                        try
+                        {
+                            CurrentProcess.Dispose();
+                        }
+                        catch (Exception e)
+                        {
+                            LogService.Logger.Warning($"Error while killing process '{CurrentProcess}': {e.Message}");
+                        }
+
+                        CurrentProcess = null;
+                        LogService.Logger.Information($"Process {proc.Id} terminated");
+
+                        WritePrompt();
+                        throw;
+                    }
+
                     CurrentProcess = null;
                     LogService.Logger.Information($"Process {proc.Id} exited with code {proc.ExitCode}");
 
                     Write(await proc.StandardOutput.ReadToEndAsync(token));
                     Write(await proc.StandardError.ReadToEndAsync(token));
                     WritePrompt();
+                }
+                catch (TaskCanceledException)
+                {
+                    throw;
                 }
                 catch (Exception e)
                 {
@@ -155,7 +189,12 @@ public partial class Terminal : UserControl
                 }
 
                 return new CompletedProcess
-                    { ExitCode = proc.ExitCode, Stdout = _stdout, Stderr = _stderr, Time = proc.TotalProcessorTime };
+                {
+                    ExitCode = proc.ExitCode, 
+                    Stdout = _stdout, 
+                    Stderr = _stderr, 
+                    // Time = proc.TotalProcessorTime
+                };
             }
         }
 
