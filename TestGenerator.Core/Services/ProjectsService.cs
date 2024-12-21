@@ -28,9 +28,8 @@ public class ProjectsService
         {
             var project = Project.Load(path);
             Projects.Add(project);
-            if (path == currentPath)
-                await SetCurrentProject(project);
         }
+        await SetCurrentProject(Projects.First(p => p.Path == currentPath));
 
         if (Current == Project.LightEditProject && StartupService.StartupInfo?.Directory != null)
         {
@@ -78,8 +77,6 @@ public class ProjectsService
             LogService.Logger.Debug($"Current project set to '{value.Name}'");
             _current = value;
             Projects.Move(Projects.IndexOf(value), 0);
-            // Projects.Remove(value);
-            // Projects.Insert(0, value);
             AppService.Instance.Settings.Set("recentProjects", Projects.Select(p => p.Path));
             AppService.Instance.Settings.Set("currentProject", _current.Path);
         }
