@@ -1,5 +1,6 @@
 ﻿[Desktop Entry]
 Name=TestGenerator
+Version={AppVersion}
 Comment=IDE
 Exec=/opt/SergeiKrivko/TestGenerator/TestGenerator
 Icon=sergeikrivko-testgenerator
