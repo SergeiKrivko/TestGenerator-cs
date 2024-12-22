@@ -36,11 +36,15 @@ public class ProjectsService
             Projects.Add(project);
         }
 
-        if (StartupService.StartupInfo?.Directory != null)
+        if (StartupService.StartupInfo?.LightEdit == true)
+        {
+            await SetCurrentProject(Project.LightEditProject);
+        }
+        else if (StartupService.StartupInfo?.Directory != null)
             await SetCurrentProject(Projects.FirstOrDefault(p => p.Path == StartupService.StartupInfo.Directory) ??
                                     Load(StartupService.StartupInfo.Directory));
         else
-            await SetCurrentProject(Projects.First(p => p.Path == currentPath));
+            await SetCurrentProject(Projects.FirstOrDefault(p => p.Path == currentPath) ?? Project.LightEditProject);
 
         foreach (var file in StartupService.StartupInfo?.Files ?? [])
         {
@@ -109,10 +113,8 @@ public class ProjectsService
                 _jumpList.JumpItems.Add(new JumpTask
                 {
                     Title = project.Name,
-                    Description = $"Открыть проект '{project.Name}'",
-                    ApplicationPath = Path.Join(Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location),
-                        "TestGenerator.exe"),
-                    Arguments = $"-d {project.Path}",
+                    Description = $"Открыть проект '{project.Name}' ({project.Path})",
+                    Arguments = $"-d \"{project.Path}\"",
                     CustomCategory = "Недавние",
                 });
             }
@@ -127,8 +129,8 @@ public class ProjectsService
             return;
         _jumpList = new JumpList
         {
-            ShowRecentCategory = true,
-            ShowFrequentCategory = true,
+            ShowRecentCategory = false,
+            ShowFrequentCategory = false,
         };
         // jumpList1.JumpItemsRejected += JumpList1_JumpItemsRejected;
         // jumpList1.JumpItemsRemovedByUser += JumpList1_JumpItemsRemovedByUser;
@@ -136,8 +138,7 @@ public class ProjectsService
         {
             Title = "LightEdit",
             Description = "Открыть в режиме LightEdit",
-            ApplicationPath = Path.Join(Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location),
-                "TestGenerator.exe"),
+            Arguments = "--light-edit",
             IconResourcePath = @"C:\Windows\notepad.exe",
         });
         JumpList.SetJumpList(Application.Current!, _jumpList);
