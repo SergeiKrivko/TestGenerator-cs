@@ -6,10 +6,11 @@ public interface IProjectCreator
 {
     public string Key { get; }
     public string Name { get; }
-    public string? GroupName { get; }
     public string? Icon { get; }
 
     public Control GetControl();
 
-    public string Create(Control control);
+    public string Path { get; }
+    
+    public Task Initialize(AProject project, Control control);
 }
