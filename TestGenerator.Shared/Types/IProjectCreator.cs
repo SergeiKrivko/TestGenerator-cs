@@ -10,7 +10,7 @@ public interface IProjectCreator
 
     public Control GetControl();
 
-    public string Path { get; }
+    public string GetPath(Control control);
     
     public Task Initialize(AProject project, Control control);
 }
