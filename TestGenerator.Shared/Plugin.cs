@@ -17,6 +17,7 @@ public abstract class Plugin
     public List<SettingsNode> SettingsControls { get; init; } = [];
     public Dictionary<string, string> FileIcons { get; init; } = [];
     public Dictionary<Regex, string> RegexFileIcons { get; init; } = [];
+    public List<IProjectCreator> ProjectCreators { get; init; } = [];
 
     protected Plugin()
     {
@@ -32,7 +33,9 @@ public abstract class Plugin
         List<IFileCreator>? fileCreators = null,
         List<IFileAction>? fileActions = null,
         List<SettingsNode>? settingsControls = null,
-        Dictionary<string, string>? fileIcons = null)
+        Dictionary<string, string>? fileIcons = null,
+        Dictionary<Regex, string>? regexFileIcons = null,
+        List<IProjectCreator>? projectCreators = null)
     {
         Name = name;
         if (mainTabs != null)
@@ -53,6 +56,10 @@ public abstract class Plugin
             SettingsControls = settingsControls;
         if (fileIcons != null)
             FileIcons = fileIcons;
+        if (regexFileIcons != null)
+            RegexFileIcons = regexFileIcons;
+        if (projectCreators != null)
+            ProjectCreators = projectCreators;
     }
 
     public virtual async Task Init(CancellationToken token)
