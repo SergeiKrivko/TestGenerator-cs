@@ -25,6 +25,7 @@ public class BuildsService
         Load(ProjectsService.Instance.Current);
         AppService.Instance.AddRequestHandler("getAllBuilds", async () => Builds);
         AppService.Instance.AddRequestHandler("getBuild", async (Guid id) => Get(id));
+        AppService.Instance.AddRequestHandler("createBuild", async (string type) => New(type));
     }
 
     private void Load(Project project)

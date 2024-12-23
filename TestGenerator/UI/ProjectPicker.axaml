@@ -14,7 +14,8 @@
         <Button.Flyout>
             <Flyout>
                 <StackPanel Width="300" Margin="5" Spacing="2">
-                    <Button Content="Создать" HorizontalContentAlignment="Left" Width="300" BorderThickness="0" />
+                    <Button Content="Создать" HorizontalContentAlignment="Left" Width="300" BorderThickness="0"
+                            Click="CreateProjectButton_OnClick"/>
                     <Button Content="Открыть" HorizontalContentAlignment="Left" Width="300" BorderThickness="0"
                             Click="OpenProjectButton_Clicked" />
                     <ToggleButton Content="LightEdit"

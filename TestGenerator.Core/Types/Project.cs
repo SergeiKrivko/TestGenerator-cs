@@ -25,7 +25,7 @@ public class Project : AProject
     public string DataPath => System.IO.Path.Join(Path, TestGeneratorDir);
     public override ProjectType Type { get; }
 
-    private Project(string path)
+    private Project(string path, ProjectType? projectType = null)
     {
         Id = Guid.NewGuid();
         Path = path;
@@ -33,7 +33,7 @@ public class Project : AProject
         Settings = SettingsFile.Open(System.IO.Path.Join(DataPath, "Settings.xml"));
         var data = Data = SettingsFile.Open(System.IO.Path.Join(DataPath, "Data.xml"));
         var typeKey = data.Get<string>("type");
-        Type = typeKey == null ? DetectType() : ProjectTypesService.Instance.Get(typeKey);
+        Type = projectType ?? (typeKey == null ? DetectType() : ProjectTypesService.Instance.Get(typeKey));
     }
 
     private Project()
@@ -54,6 +54,11 @@ public class Project : AProject
     public static Project Load(string path)
     {
         return new Project(path);
+    }
+
+    public static Project Create(string path, ProjectType type)
+    {
+        return new Project(path, type);
     }
 
     public override SettingsSection GetSettings(string key)

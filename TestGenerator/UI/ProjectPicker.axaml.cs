@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
@@ -62,6 +64,16 @@ public partial class ProjectPicker : UserControl
         if (files.Count >= 1)
         {
             await ProjectsService.Instance.SetCurrentProject(ProjectsService.Instance.Load(files[0].Path.AbsolutePath));
+        }
+    }
+
+    private void CreateProjectButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (Application.Current?.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime lifetime &&
+            lifetime.MainWindow != null)
+        {
+            var dialog = new CreateProjectWindow();
+            dialog.ShowDialog(lifetime.MainWindow);
         }
     }
 }

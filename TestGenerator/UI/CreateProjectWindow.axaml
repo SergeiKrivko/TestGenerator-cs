@@ -1,0 +1,35 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:types="clr-namespace:TestGenerator.Shared.Types;assembly=TestGenerator.Shared"
+        xmlns:ui="clr-namespace:TestGenerator.UI"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TestGenerator.UI.CreateProjectWindow"
+        Title="Создание проекта">
+    <Grid ColumnDefinitions="Auto *" RowDefinitions="* Auto">
+        <TreeView MinWidth="250" BorderThickness="0 0 1 0" Name="Tree" SelectionChanged="Tree_OnSelectionChanged">
+            <TreeView.DataTemplates>
+                <TreeDataTemplate DataType="ui:ProjectTypeNode" ItemsSource="{Binding Creators}">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Data="{Binding Icon}"></PathIcon>
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </StackPanel>
+                </TreeDataTemplate>
+                <TreeDataTemplate DataType="ui:ProjectCreatorNode">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Data="{Binding Icon}"></PathIcon>
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </StackPanel>
+                </TreeDataTemplate>
+            </TreeView.DataTemplates>
+        </TreeView>
+        <ScrollViewer Grid.Row="0" Grid.Column="1">
+            <Panel Name="CreatorsPanel" Margin="10"></Panel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="5" Margin="10">
+            <Button Name="ButtonCancel">Отмена</Button>
+            <Button Name="ButtonCreate" Click="ButtonCreate_OnClick">Создать</Button>
+        </StackPanel>
+    </Grid>
+</Window>

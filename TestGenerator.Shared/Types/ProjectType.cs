@@ -25,6 +25,15 @@ public class ProjectType
     public List<ProjectTypeDetector> Detectors { get; }
     public List<IProjectCreator> Creators { get; }
 
+    public ProjectType(string key, string name, string iconPath, List<ProjectTypeDetector>? detectors = null)
+    {
+        Key = key;
+        Name = name;
+        IconPath = iconPath;
+        Detectors = detectors ?? [];
+        Creators = [];
+    }
+
     public ProjectType(string key, string name, string iconPath, List<ProjectTypeDetector>? detectors = null,
         List<IProjectCreator>? creators = null)
     {

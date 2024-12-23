@@ -3,6 +3,7 @@ using System.Reflection;
 using Avalonia;
 using Avalonia.Win32.JumpLists;
 using TestGenerator.Core.Types;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Core.Services;
 
@@ -70,12 +71,25 @@ public class ProjectsService
         return proj;
     }
 
+    public Project Create(string path, ProjectType type)
+    {
+        Directory.CreateDirectory(path);
+        var proj = Project.Create(path, type);
+        Projects.Insert(0, proj);
+        SaveRecentProjects();
+        return proj;
+    }
+
     public Func<Task<bool>>? TerminateProjectTasksFunc { get; set; }
 
     public async Task<bool> SetCurrentProject(Project value)
     {
         if (value == Current)
             return false;
+        
+        if (TerminateProjectTasksFunc != null && !await TerminateProjectTasksFunc())
+            return false;
+        
         if (value == Project.LightEditProject)
         {
             LogService.Logger.Debug("Current project set to LightEdit");
@@ -95,11 +109,19 @@ public class ProjectsService
             throw new Exception("Unknown project!");
         }
 
-        if (TerminateProjectTasksFunc != null && !await TerminateProjectTasksFunc())
-            return false;
         CurrentChanged?.Invoke(Current);
         AppService.Instance.Emit("projectChanged", Current.Path);
         return true;
+    }
+
+    public async Task ReloadProject()
+    {
+        if (TerminateProjectTasksFunc != null && !await TerminateProjectTasksFunc())
+            return;
+        LogService.Logger.Debug($"Project '{Current.Name}' reloaded");
+        CurrentChanged?.Invoke(Current);
+        AppService.Instance.Emit("projectChanged", Current.Path);
+        
     }
 
     private void SaveRecentProjects()
