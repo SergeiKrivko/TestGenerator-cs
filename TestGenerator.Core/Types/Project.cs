@@ -9,12 +9,14 @@ public class Project : AProject
 {
     public override SettingsFile Settings { get; }
     public override SettingsFile Data { get; }
-    
+
     public override Guid Id { get; }
 
     public override string Name
     {
-        get => string.IsNullOrWhiteSpace(Data.Get<string>("name")) ? System.IO.Path.GetFileName(Path) : Data.Get<string>("name") ?? "";
+        get => string.IsNullOrWhiteSpace(Data.Get<string>("name"))
+            ? System.IO.Path.GetFileName(Path)
+            : Data.Get<string>("name") ?? "";
         set => Settings.Set("name", value);
     }
 
@@ -27,9 +29,11 @@ public class Project : AProject
     {
         Id = Guid.NewGuid();
         Path = path;
+        CreateDataDirectory();
         Settings = SettingsFile.Open(System.IO.Path.Join(DataPath, "Settings.xml"));
         var data = Data = SettingsFile.Open(System.IO.Path.Join(DataPath, "Data.xml"));
-        Type = ProjectTypesService.Instance.Get(data.Get<string>("type") ?? "");
+        var typeKey = data.Get<string>("type");
+        Type = typeKey == null ? DetectType() : ProjectTypesService.Instance.Get(typeKey);
     }
 
     private Project()
@@ -70,5 +74,37 @@ public class Project : AProject
     public override SettingsSection GetData()
     {
         return GetData(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+    }
+
+    private void CreateDataDirectory()
+    {
+        if (Directory.Exists(DataPath))
+            return;
+        Directory.CreateDirectory(DataPath);
+        File.WriteAllText(System.IO.Path.Join(DataPath, ".gitignore"), "# Created automatically by TestGenerator\n" +
+                                                                       "*\n" +
+                                                                       "Settings.xml\n");
+    }
+
+    private ProjectType DetectType()
+    {
+        var detectors = new List<KeyValuePair<ProjectType, ProjectType.ProjectTypeDetector>>();
+        foreach (var projectType in ProjectTypesService.Instance.Types.Values)
+        {
+            detectors.AddRange(projectType.Detectors.Select(d =>
+                new KeyValuePair<ProjectType, ProjectType.ProjectTypeDetector>(projectType, d)));
+        }
+
+        foreach (var pair in detectors.OrderByDescending(p => p.Value.Priority))
+        {
+            LogService.Logger.Debug($"Trying detector with priority {pair.Value.Priority} for project type '{pair.Key.Key}'");
+            if (pair.Value.Func(Path))
+            {
+                Data.Set("type", pair.Key.Key);
+                return pair.Key;
+            }
+        }
+
+        return ProjectTypesService.Default;
     }
 }
