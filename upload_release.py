@@ -20,18 +20,6 @@ with open("version.txt", 'r', encoding='utf-8') as f:
 
 print(f"Version = {repr(version)}")
 
-auth = Auth.Token(os.getenv("GITHUB_TOKEN"))
-g = Github(auth=auth)
-
-repo = g.get_repo('SergeiKrivko/TestGenerator-cs')
-
-release = repo.get_latest_release()
-print(repr(release.tag_name), version)
-if release.tag_name != "v" + version:
-    release = repo.create_git_release("v" + version, f"Version {version}", '')
-
-release.upload_asset(path, name=f"testgenerator_{version}_{arch}.{path.split('.')[-1]}")
-
 file_models = []
 publish_dir = f'C:TestGenerator/bin/Release/net8.0/{runtime}'
 # publish_dir = fr'C:\Users\sergi\RiderProjects\TestGenerator\TestGenerator/bin/Release/net8.0/{runtime}/publish'
@@ -59,11 +47,23 @@ with zipfile.ZipFile('temp.zip', 'w', compression=zipfile.ZIP_DEFLATED) as zipf:
 
 resp = requests.post(
     f"{URL}/releases/upload?version={version}&runtime={runtime}",
-    data={'files': [m['filename'] for m in file_models]},
-    files={'zip': open('temp.zip', 'rb')},
+    data={'Files': [m['filename'] for m in file_models]},
+    files={'Zip': open('temp.zip', 'rb')},
     headers={'Authorization': f'Bearer {os.getenv("TESTGEN_TOKEN")}'}
 )
 print('Upload:', resp.status_code)
 print(resp.text)
 if resp.status_code >= 400:
     exit(1)
+
+auth = Auth.Token(os.getenv("GITHUB_TOKEN"))
+g = Github(auth=auth)
+
+repo = g.get_repo('SergeiKrivko/TestGenerator-cs')
+
+release = repo.get_latest_release()
+print(repr(release.tag_name), version)
+if release.tag_name != "v" + version:
+    release = repo.create_git_release("v" + version, f"Version {version}", '')
+
+release.upload_asset(path, name=f"testgenerator_{version}_{arch}.{path.split('.')[-1]}")
