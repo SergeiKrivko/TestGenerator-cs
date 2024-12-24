@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls.Documents;
+using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Types;
 using TestGenerator.UI;
@@ -33,6 +34,7 @@ public class RunTerminal : Terminal
                 return proc;
         }
 
+        LogService.Logger.Warning("Cannot run new process: another process still running");
         return new CompletedProcess { ExitCode = -1 };
     }
 

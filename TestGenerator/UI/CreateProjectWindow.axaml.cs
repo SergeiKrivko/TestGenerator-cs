@@ -53,6 +53,8 @@ public partial class CreateProjectWindow : Window
     {
         if (Tree.SelectedItem is not ProjectCreatorNode creator)
             return;
+        MainView.IsVisible = false;
+        Spinner.IsVisible = true;
 
         var control = _controls[creator.Key];
         var path = creator.Creator.GetPath(control);

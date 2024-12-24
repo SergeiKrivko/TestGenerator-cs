@@ -141,8 +141,9 @@ public partial class Terminal : UserControl
                     {
                         await CurrentProcess.WaitForExitAsync(token);
                     }
-                    catch (OperationCanceledException)
+                    catch (TaskCanceledException)
                     {
+                        LogService.Logger.Debug("Killing process...");
                         try
                         {
                             CurrentProcess.Kill(entireProcessTree: true);
@@ -152,8 +153,8 @@ public partial class Terminal : UserControl
                             LogService.Logger.Warning($"Error while killing process '{CurrentProcess}': {e.Message}");
                         }
 
-                        Write(await proc.StandardOutput.ReadToEndAsync(token));
-                        Write(await proc.StandardError.ReadToEndAsync(token));
+                        // Write(await proc.StandardOutput.ReadToEndAsync(token));
+                        // Write(await proc.StandardError.ReadToEndAsync(token));
 
                         try
                         {
@@ -161,11 +162,11 @@ public partial class Terminal : UserControl
                         }
                         catch (Exception e)
                         {
-                            LogService.Logger.Warning($"Error while killing process '{CurrentProcess}': {e.Message}");
+                            LogService.Logger.Warning($"Error while dispose process '{CurrentProcess}': {e.Message}");
                         }
 
                         CurrentProcess = null;
-                        LogService.Logger.Information($"Process {proc.Id} terminated");
+                        LogService.Logger.Debug("Process terminated");
 
                         WritePrompt();
                         throw;

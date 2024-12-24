@@ -7,30 +7,33 @@
         x:Class="TestGenerator.UI.CreateProjectWindow"
         Width="900" Height="500" WindowStartupLocation="CenterOwner"
         Title="Создание проекта">
-    <Grid ColumnDefinitions="Auto *" RowDefinitions="* Auto">
-        <TreeView MinWidth="250" BorderThickness="0 0 1 0" Name="Tree" SelectionChanged="Tree_OnSelectionChanged">
-            <TreeView.DataTemplates>
-                <TreeDataTemplate DataType="ui:ProjectTypeNode" ItemsSource="{Binding Creators}">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon Data="{Binding Icon}"></PathIcon>
-                        <TextBlock Text="{Binding Name}"></TextBlock>
-                    </StackPanel>
-                </TreeDataTemplate>
-                <TreeDataTemplate DataType="ui:ProjectCreatorNode">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon Data="{Binding Icon}"></PathIcon>
-                        <TextBlock Text="{Binding Name}"></TextBlock>
-                    </StackPanel>
-                </TreeDataTemplate>
-            </TreeView.DataTemplates>
-        </TreeView>
-        <ScrollViewer Grid.Row="0" Grid.Column="1">
-            <Panel Name="CreatorsPanel" Margin="10"></Panel>
-        </ScrollViewer>
-        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="5" Margin="10"
-                    HorizontalAlignment="Right">
-            <Button Name="ButtonCancel" Click="ButtonCancel_OnClick">Отмена</Button>
-            <Button Name="ButtonCreate" Classes="Accent" Click="ButtonCreate_OnClick">Создать</Button>
-        </StackPanel>
-    </Grid>
+    <Panel>
+        <Grid ColumnDefinitions="Auto *" RowDefinitions="* Auto" Name="MainView">
+            <TreeView MinWidth="250" BorderThickness="0 0 1 0" Name="Tree" SelectionChanged="Tree_OnSelectionChanged">
+                <TreeView.DataTemplates>
+                    <TreeDataTemplate DataType="ui:ProjectTypeNode" ItemsSource="{Binding Creators}">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Data="{Binding Icon}"></PathIcon>
+                            <TextBlock Text="{Binding Name}"></TextBlock>
+                        </StackPanel>
+                    </TreeDataTemplate>
+                    <TreeDataTemplate DataType="ui:ProjectCreatorNode">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Data="{Binding Icon}"></PathIcon>
+                            <TextBlock Text="{Binding Name}"></TextBlock>
+                        </StackPanel>
+                    </TreeDataTemplate>
+                </TreeView.DataTemplates>
+            </TreeView>
+            <ScrollViewer Grid.Row="0" Grid.Column="1">
+                <Panel Name="CreatorsPanel" Margin="10"></Panel>
+            </ScrollViewer>
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="5" Margin="10"
+                        HorizontalAlignment="Right">
+                <Button Name="ButtonCancel" Click="ButtonCancel_OnClick">Отмена</Button>
+                <Button Name="ButtonCreate" Classes="Accent" Click="ButtonCreate_OnClick">Создать</Button>
+            </StackPanel>
+        </Grid>
+        <Arc Width="100" Height="100" StrokeThickness="3" Classes="Spinner" Name="Spinner" IsVisible="False" />
+    </Panel>
 </Window>
