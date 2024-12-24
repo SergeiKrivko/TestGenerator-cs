@@ -6,19 +6,19 @@ namespace TestGenerator.Shared.Types;
 
 public class BuildType
 {
-    public required string Name { get; init; }
+    public virtual required string Name { get; init; }
 
-    public required string Key { get; init; }
+    public virtual required string Key { get; init; }
 
-    public string Icon { get; init; } = "";
+    public virtual string? Icon { get; init; } = "";
 
     public delegate Collection<IField> SettingsFunc();
 
-    public SettingsFunc SettingsFields { get; init; } = () => [];
+    public virtual SettingsFunc SettingsFields { get; init; } = () => [];
 
     public delegate BaseBuilder BuilderFunc(Guid id, AProject project, SettingsSection settings);
 
-    public required BuilderFunc Builder { get; init; }
+    public virtual required BuilderFunc Builder { get; init; }
 
     private class EmptyBuilder : BaseBuilder
     {
@@ -29,4 +29,8 @@ public class BuildType
 
     public static BuildType Empty { get; } = new()
         { Name = "", Key = "", Builder = (id, project, settings) => new EmptyBuilder(id, project, settings) };
+
+    public virtual async Task RefreshCreators()
+    {
+    }
 }
