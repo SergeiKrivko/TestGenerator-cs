@@ -21,7 +21,7 @@ with open("version.txt", 'r', encoding='utf-8') as f:
 print(f"Version = {repr(version)}")
 
 file_models = []
-publish_dir = f'C:TestGenerator/bin/Release/net8.0/{runtime}'
+publish_dir = f'TestGenerator/bin/Release/net8.0/{runtime}'
 # publish_dir = fr'C:\Users\sergi\RiderProjects\TestGenerator\TestGenerator/bin/Release/net8.0/{runtime}/publish'
 for root, _, files in os.walk(publish_dir):
     for file in files:
