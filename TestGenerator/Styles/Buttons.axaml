@@ -1,0 +1,43 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style Selector="ToggleButton:checked   /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.Success">
+        <Setter Property="Background" Value="{DynamicResource SuccessColor}" />
+        <Style Selector="^:pointerover   /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SuccessHoverColor}" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.Danger">
+        <Setter Property="Background" Value="{DynamicResource DangerColor}" />
+        <Style Selector="^:pointerover   /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerHoverColor}" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.Warning">
+        <Setter Property="Background" Value="{DynamicResource WarningColor}" />
+        <Style Selector="^:pointerover   /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource WarningHoverColor}" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.Accent">
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+        <Style Selector="^:pointerover   /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.Borderless">
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+</Styles>

@@ -1,0 +1,63 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="Arc.Spinner">
+        <Setter Property="StrokeThickness" Value="3" />
+        <Setter Property="Stroke" Value="{DynamicResource TextControlForeground}" />
+        <Style.Animations>
+            <Animation Duration="0:0:5" IterationCount="INFINITE">
+                <KeyFrame Cue="0%">
+                    <Setter Property="StartAngle" Value="0" />
+                    <Setter Property="SweepAngle" Value="30" />
+                </KeyFrame>
+                <KeyFrame Cue="5.56%">
+                    <Setter Property="StartAngle" Value="40" />
+                    <Setter Property="SweepAngle" Value="270" />
+                </KeyFrame>
+                <KeyFrame Cue="16.67%">
+                    <Setter Property="StartAngle" Value="120" />
+                    <Setter Property="SweepAngle" Value="270" />
+                </KeyFrame>
+                <KeyFrame Cue="22.22%">
+                    <Setter Property="StartAngle" Value="400" />
+                    <Setter Property="SweepAngle" Value="30" />
+                </KeyFrame>
+                <KeyFrame Cue="33.33%">
+                    <Setter Property="StartAngle" Value="480" />
+                    <Setter Property="SweepAngle" Value="30" />
+                </KeyFrame>
+                <KeyFrame Cue="38.89%">
+                    <Setter Property="StartAngle" Value="520" />
+                    <Setter Property="SweepAngle" Value="270" />
+                </KeyFrame>
+                <KeyFrame Cue="50%">
+                    <Setter Property="StartAngle" Value="600" />
+                    <Setter Property="SweepAngle" Value="270" />
+                </KeyFrame>
+                <KeyFrame Cue="55.56%">
+                    <Setter Property="StartAngle" Value="880" />
+                    <Setter Property="SweepAngle" Value="30" />
+                </KeyFrame>
+                <KeyFrame Cue="66.67%">
+                    <Setter Property="StartAngle" Value="960" />
+                    <Setter Property="SweepAngle" Value="30" />
+                </KeyFrame>
+                <KeyFrame Cue="72.22%">
+                    <Setter Property="StartAngle" Value="1000" />
+                    <Setter Property="SweepAngle" Value="270" />
+                </KeyFrame>
+                <KeyFrame Cue="83.33%">
+                    <Setter Property="StartAngle" Value="1080" />
+                    <Setter Property="SweepAngle" Value="270" />
+                </KeyFrame>
+                <KeyFrame Cue="88.89%">
+                    <Setter Property="StartAngle" Value="1360" />
+                    <Setter Property="SweepAngle" Value="30" />
+                </KeyFrame>
+                <KeyFrame Cue="100%">
+                    <Setter Property="StartAngle" Value="1440" />
+                    <Setter Property="SweepAngle" Value="30" />
+                </KeyFrame>
+            </Animation>
+        </Style.Animations>
+    </Style>
+</Styles>

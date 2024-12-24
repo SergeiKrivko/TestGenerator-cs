@@ -70,6 +70,11 @@ public partial class CreateProjectWindow : Window
         await ProjectsService.Instance.ReloadProject();
         Close();
     }
+
+    private void ButtonCancel_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Close();
+    }
 }
 
 public class ProjectTypeNode

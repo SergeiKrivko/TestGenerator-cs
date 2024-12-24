@@ -1,0 +1,30 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <Color x:Key="SuccessColor">#529615</Color>
+            <Color x:Key="SuccessHoverColor">#3F7310</Color>
+            <Color x:Key="WarningColor">#C4821A</Color>
+            <Color x:Key="WarningHoverColor">#916013</Color>
+            <Color x:Key="DangerColor">#C2190C</Color>
+            <Color x:Key="DangerHoverColor">#E31D0E</Color>
+            <Color x:Key="PrimaryColor">#2245A2</Color>
+            <Color x:Key="PrimaryHoverColor">#2D5CD9</Color>
+            <Color x:Key="Transparent1Color">#20000000</Color>
+            <Color x:Key="Transparent2Color">#40000000</Color>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <Color x:Key="SuccessColor">#529615</Color>
+            <Color x:Key="SuccessHoverColor">#3F7310</Color>
+            <Color x:Key="WarningColor">#C4821A</Color>
+            <Color x:Key="WarningHoverColor">#916013</Color>
+            <Color x:Key="DangerColor">#C2190C</Color>
+            <Color x:Key="DangerHoverColor">#E31D0E</Color>
+            <Color x:Key="PrimaryColor">#2245A2</Color>
+            <Color x:Key="PrimaryHoverColor">#2D5CD9</Color>
+            <Color x:Key="Transparent1Color">#20FFFFFF</Color>
+            <Color x:Key="Transparent2Color">#40FFFFFF</Color>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>
