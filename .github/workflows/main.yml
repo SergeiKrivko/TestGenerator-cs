@@ -1,8 +1,8 @@
 ﻿name: Build Application
 on:
   push:
-    paths:
-      - version.txt
+#    paths:
+#      - version.txt
 
 jobs:
   build-win-x64:
