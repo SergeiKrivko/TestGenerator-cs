@@ -29,6 +29,8 @@ for root, _, files in os.walk(publish_dir):
             'filename': os.path.relpath(os.path.join(root, file), publish_dir),
             'hash': hashlib.sha256(open(os.path.join(root, file), 'rb').read()).hexdigest()
         })
+        
+print(file_models)
 
 resp = requests.post(
     f"{URL}/releases/filter?runtime={runtime}",
