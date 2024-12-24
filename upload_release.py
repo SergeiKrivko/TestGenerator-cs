@@ -1,8 +1,13 @@
-﻿import os
+﻿import hashlib
+import os
 import sys
+import zipfile
 
 import requests
 from github import Github, Auth
+
+URL = "https://testgenerator-api.nachert.art/api/v1"
+# URL = "http://localhost:5255/api/v1"
 
 path, runtime = sys.argv[1], sys.argv[2]
 
@@ -15,20 +20,7 @@ with open("version.txt", 'r', encoding='utf-8') as f:
 
 print(f"Version = {repr(version)}")
 
-for root, _, files in os.walk(f'TestGenerator/bin/Release/net8.0/{runtime}'):
-    for file in files:
-        resp = requests.post(f"https://testgenerator-api.nachert.art/api/v1/releases?version={version}&runtime={runtime}",
-                             files={'file': open(os.path.join(root, file), 'rb')},
-                             headers={'Authorization': f'Bearer {os.getenv("TESTGEN_TOKEN")}'})
-        print(os.path.join(root, file), ':', resp.status_code)
-        if resp.status_code >= 400:
-            print(resp.text)
-            exit(1)
-
-# using an access token
 auth = Auth.Token(os.getenv("GITHUB_TOKEN"))
-
-# Public Web GitHub
 g = Github(auth=auth)
 
 repo = g.get_repo('SergeiKrivko/TestGenerator-cs')
@@ -39,3 +31,39 @@ if release.tag_name != "v" + version:
     release = repo.create_git_release("v" + version, f"Version {version}", '')
 
 release.upload_asset(path, name=f"testgenerator_{version}_{arch}.{path.split('.')[-1]}")
+
+file_models = []
+publish_dir = f'C:TestGenerator/bin/Release/net8.0/{runtime}'
+# publish_dir = fr'C:\Users\sergi\RiderProjects\TestGenerator\TestGenerator/bin/Release/net8.0/{runtime}/publish'
+for root, _, files in os.walk(publish_dir):
+    for file in files:
+        file_models.append({
+            'filename': os.path.relpath(os.path.join(root, file), publish_dir),
+            'hash': hashlib.sha256(open(os.path.join(root, file), 'rb').read()).hexdigest()
+        })
+
+resp = requests.post(
+    f"{URL}/releases/filter?runtime={runtime}",
+    json=file_models,
+    headers={'Authorization': f'Bearer {os.getenv("TESTGEN_TOKEN")}'}
+)
+print('Filter:', resp.status_code)
+print(resp.text, flush=True)
+if resp.status_code >= 400:
+    exit(1)
+
+files_to_push = resp.json()['data']
+with zipfile.ZipFile('temp.zip', 'w', compression=zipfile.ZIP_DEFLATED) as zipf:
+    for file in files_to_push:
+        zipf.write(os.path.join(publish_dir, file), file)
+
+resp = requests.post(
+    f"{URL}/releases/upload?version={version}&runtime={runtime}",
+    data={'files': [m['filename'] for m in file_models]},
+    files={'zip': open('temp.zip', 'rb')},
+    headers={'Authorization': f'Bearer {os.getenv("TESTGEN_TOKEN")}'}
+)
+print('Upload:', resp.status_code)
+print(resp.text)
+if resp.status_code >= 400:
+    exit(1)
