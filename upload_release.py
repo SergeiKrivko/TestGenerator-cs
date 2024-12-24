@@ -47,7 +47,8 @@ with zipfile.ZipFile('temp.zip', 'w', compression=zipfile.ZIP_DEFLATED) as zipf:
 
 resp = requests.post(
     f"{URL}/releases/upload?version={version}&runtime={runtime}",
-    multipart={'files': [m['filename'] for m in file_models], 'zip': open('temp.zip', 'rb')},
+    data={'files': [m['filename'] for m in file_models]},
+    files={'zip': open('temp.zip', 'rb')},
     headers={'Authorization': f'Bearer {os.getenv("TESTGEN_TOKEN")}'}
 )
 print('Upload:', resp.status_code)
