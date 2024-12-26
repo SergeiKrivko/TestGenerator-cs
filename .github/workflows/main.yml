@@ -80,6 +80,7 @@ jobs:
           cp -r TestGenerator/bin/Release/net8.0/linux-x64/. Releases/linux-x64/debpkg/opt/SergeiKrivko/TestGenerator
           chmod 755 Releases/linux-x64/debpkg/DEBIAN/postinst
           chmod 755 Releases/linux-x64/debpkg/DEBIAN/prerm
+          chmod 755 Releases/linux-x64/usr/share/applications/TestGenerator.desktop
           
           dpkg-deb --build Releases/linux-x64/debpkg
 
