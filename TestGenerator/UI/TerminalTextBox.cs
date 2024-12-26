@@ -48,6 +48,8 @@ public class TerminalTextBox : TextBox
     
     protected override void OnKeyDown(KeyEventArgs e)
     {
+        if (IsReadOnly)
+            return;
         if ((e.KeyModifiers & (KeyModifiers.Shift | KeyModifiers.Control)) != 0)
         {
             base.OnKeyDown(e);
