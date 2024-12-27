@@ -12,5 +12,5 @@ public interface IProjectCreator
 
     public string GetPath(Control control);
     
-    public Task Initialize(AProject project, Control control);
+    public Task Initialize(AProject project, Control control, IBackgroundTask backgroundTask, CancellationToken cancellationToken);
 }

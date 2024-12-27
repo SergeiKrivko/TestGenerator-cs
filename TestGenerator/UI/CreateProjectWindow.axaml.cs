@@ -63,9 +63,9 @@ public partial class CreateProjectWindow : Window
         await ProjectsService.Instance.SetCurrentProject(project);
 
         await AppService.Instance.RunBackgroundTask("Создание проекта",
-            async token =>
+            async (task, token) =>
             {
-                await creator.Creator.Initialize(project, control);
+                await creator.Creator.Initialize(project, control, task, token);
                 return 0;
             }).Wait();
 

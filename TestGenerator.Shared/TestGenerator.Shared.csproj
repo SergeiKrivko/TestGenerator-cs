@@ -7,7 +7,7 @@
         <PackageId>TestGenerator.Shared</PackageId>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>3.2.3</PackageVersion>
+        <PackageVersion>3.3.0</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
