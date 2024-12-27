@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
 
@@ -54,7 +55,7 @@ public partial class CreateProjectWindow : Window
         if (Tree.SelectedItem is not ProjectCreatorNode creator)
             return;
         MainView.IsVisible = false;
-        Spinner.IsVisible = true;
+        ProgressView.IsVisible = true;
 
         var control = _controls[creator.Key];
         var path = creator.Creator.GetPath(control);
@@ -62,15 +63,37 @@ public partial class CreateProjectWindow : Window
         var project = ProjectsService.Instance.Create(path, creator.Type);
         await ProjectsService.Instance.SetCurrentProject(project);
 
-        await AppService.Instance.RunBackgroundTask("Создание проекта",
+        var task = AppService.Instance.RunBackgroundTask("Создание проекта",
             async (task, token) =>
             {
                 await creator.Creator.Initialize(project, control, task, token);
                 return 0;
-            }).Wait();
+            });
+        
+        task.ProgressChanged += TaskOnProgressChanged;
+        task.StatusChanged += TaskOnStatusChanged;
+        TaskProgressBar.IsIndeterminate = task.Progress == null;
+        TaskProgressBar.Value = task.Progress ?? 0;
+        TaskStatusBar.Text = task.Status;
+        
+        await task.Wait();
 
         await ProjectsService.Instance.ReloadProject();
         Close();
+    }
+
+    private void TaskOnStatusChanged(string? status)
+    {
+        Dispatcher.UIThread.Post(() => TaskStatusBar.Text = status);
+    }
+
+    private void TaskOnProgressChanged(double? progress)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            TaskProgressBar.IsIndeterminate = progress == null;
+            TaskProgressBar.Value = progress ?? 0;
+        });
     }
 
     private void ButtonCancel_OnClick(object? sender, RoutedEventArgs e)
@@ -80,20 +103,20 @@ public partial class CreateProjectWindow : Window
 }
 
 public class ProjectTypeNode
-    {
-        public required ProjectType Type { get; init; }
-        public required ICollection<ProjectCreatorNode> Creators { get; init; }
+{
+    public required ProjectType Type { get; init; }
+    public required ICollection<ProjectCreatorNode> Creators { get; init; }
 
-        public string Icon => Type.IconPath;
-        public string Name => Type.Name;
-    }
+    public string Icon => Type.IconPath;
+    public string Name => Type.Name;
+}
 
-    public class ProjectCreatorNode
-    {
-        public required ProjectType Type { get; init; }
-        public required IProjectCreator Creator { get; init; }
+public class ProjectCreatorNode
+{
+    public required ProjectType Type { get; init; }
+    public required IProjectCreator Creator { get; init; }
 
-        public string? Icon => Creator.Icon;
-        public string Name => Creator.Name;
-        public string Key => $"{Type.Key}->{Creator.Icon}";
-    }
+    public string? Icon => Creator.Icon;
+    public string Name => Creator.Name;
+    public string Key => $"{Type.Key}->{Creator.Icon}";
+}

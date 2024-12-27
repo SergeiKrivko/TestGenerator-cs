@@ -28,12 +28,17 @@
             <ScrollViewer Grid.Row="0" Grid.Column="1">
                 <Panel Name="CreatorsPanel" Margin="10"></Panel>
             </ScrollViewer>
-            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="5" Margin="10"
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="5"
+                        Margin="10"
                         HorizontalAlignment="Right">
                 <Button Name="ButtonCancel" Click="ButtonCancel_OnClick">Отмена</Button>
                 <Button Name="ButtonCreate" Classes="Accent" Click="ButtonCreate_OnClick">Создать</Button>
             </StackPanel>
         </Grid>
-        <Arc Width="100" Height="100" StrokeThickness="3" Classes="Spinner" Name="Spinner" IsVisible="False" />
+        <StackPanel Name="ProgressView" Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center" IsVisible="False">
+            <Arc Width="100" Height="100" StrokeThickness="3" Classes="Spinner" Name="Spinner" Margin="10" />
+            <ProgressBar Name="TaskProgressBar" HorizontalAlignment="Center" Width="180" />
+            <TextBlock Name="TaskStatusBar" HorizontalAlignment="Center" />
+        </StackPanel>
     </Panel>
 </Window>
