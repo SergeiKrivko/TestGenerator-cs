@@ -1,8 +1,9 @@
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using TestGenerator.Core.Services;
 
 namespace TestGenerator.ErrorHandler;
 
@@ -20,7 +21,7 @@ public partial class MainWindow : Window
         {
             try
             {
-                return await File.ReadAllTextAsync(LogService.LogFilePath);
+                return await File.ReadAllTextAsync(Program.LogFilePath ?? "");
             }
             catch (IOException)
             {
@@ -29,15 +30,16 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Load()
+    private async void Load()
     {
-        LogBlock.Text = File.ReadAllText(LogService.LogFilePath);
+        LogBlock.Text = await ReadLogFile();
     }
 
     private async void ButtonSend_OnClick(object? sender, RoutedEventArgs e)
     {
-        // var httpService = new LogHttpService();
-        // await httpService.SendLog(await ReadLogFile());
+        var client = new HttpClient();
+        await client.PostAsync("https://testgenerator-api.nachert.art/api/v1/logs", 
+            JsonContent.Create(LogBlock.Text ?? ""));
         Close();
     }
 

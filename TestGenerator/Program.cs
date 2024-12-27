@@ -32,7 +32,7 @@ class Program
             throw;
 #else
             Process.Start(Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                "TestGenerator.ErrorHandler"));
+                "TestGenerator.ErrorHandler"), LogService.LogFilePath);
 #endif
         }
     }
