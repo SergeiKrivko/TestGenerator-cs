@@ -11,7 +11,7 @@ public class BackgroundTask : IBackgroundTask
     public int? ExitCode { get; internal set; }
     public bool IsCancelled { get; private set; }
 
-    private double? _progress = 0;
+    private double? _progress = null;
 
     public double? Progress
     {

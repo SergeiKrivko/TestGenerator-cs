@@ -15,7 +15,7 @@ public partial class BackgroundTasksBar : UserControl
     private IBackgroundTask? _currentTask;
 
     private readonly SettingsSection _developerSettings = AppService.Instance.GetSettings("Developer");
-    private bool ShowAllTasks => _developerSettings.Get<bool>("showAllTasks");
+    private bool ShowAllTasks => _developerSettings.Get("showAllTasks", false);
 
     private ObservableCollection<IBackgroundTask> Tasks =>
         ShowAllTasks ? AppService.Instance.BackgroundTasks : AppService.Instance.VisibleBackgroundTasks;
@@ -23,7 +23,7 @@ public partial class BackgroundTasksBar : UserControl
     public BackgroundTasksBar()
     {
         InitializeComponent();
-        ItemsControl.ItemsSource = AppService.Instance.BackgroundTasks;
+        ItemsControl.ItemsSource = Tasks;
         Tasks.CollectionChanged += BackgroundTasksOnCollectionChanged;
     }
 

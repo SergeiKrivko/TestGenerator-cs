@@ -52,9 +52,8 @@ public class Build : ABuild
         Type = buildType;
         Settings.Set("type", buildType.Key);
         var builder = Builder = buildType.Builder(id, _project, Settings.GetSection("typeSettings"));
-        Console.WriteLine($"{builder.GetType().GetMethod("Compile")?.Module} " +
-                          $"{typeof(BaseBuilder).GetMethod("Compile")?.Module}");
-        if (builder.GetType().GetMethod("Compile") != typeof(BaseBuilder).GetMethod("Compile"))
+        if (builder.GetType().GetMethod("Compile")?.Module.Name !=
+            typeof(BaseBuilder).GetMethod("Compile")?.Module.Name)
         {
             var lst = Settings.Get<BuildSubprocess[]>("preProc", []).ToList();
             lst.Add(new BuildSubprocess { Compile = true });

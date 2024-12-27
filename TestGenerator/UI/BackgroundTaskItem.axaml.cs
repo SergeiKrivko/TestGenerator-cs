@@ -45,7 +45,8 @@ public partial class BackgroundTaskItem : UserControl
         Dispatcher.UIThread.Post(() =>
         {
             ProgressBar.IsIndeterminate = progress == null;
-            ProgressBar.Value = progress ?? 0;
+            if (progress != null)
+                ProgressBar.Value = progress.Value;
         });
     }
 

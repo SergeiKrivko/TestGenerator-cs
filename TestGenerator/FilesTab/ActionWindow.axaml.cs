@@ -26,15 +26,6 @@ public partial class ActionWindow : Window
         try
         {
             await Task.Run(() => action.Run(path));
-            // _thread = new Thread(() =>
-            // {
-            //     Console.WriteLine(1);
-            //     var task = action.Run(path);
-            //     task.Wait();
-            //     Console.WriteLine(3);
-            // });
-            // _thread.Start();
-            // await Task.Run(_thread.Join);
             Spinner.IsVisible = false;
             SuccessPanel.IsVisible = true;
             ButtonCancel.IsVisible = false;

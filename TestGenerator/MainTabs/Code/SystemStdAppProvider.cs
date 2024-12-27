@@ -15,7 +15,6 @@ public class SystemStdAppProvider : IEditorProvider
 
     public OpenedFile? Open(string path)
     {
-        Console.WriteLine($"Starting '{path}'");
         if (OperatingSystem.IsWindows())
         {
             Process.Start(new ProcessStartInfo
