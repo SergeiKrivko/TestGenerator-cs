@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
+using TestGenerator.Shared.Settings.Shared;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.UI;
@@ -100,6 +101,7 @@ public partial class Terminal : UserControl
     }
 
     protected virtual async Task<ICompletedProcess?> RunProcess(string? command, string? stdin = null,
+        EnvironmentModel? environment = null,
         CancellationToken token = new())
     {
         if (!string.IsNullOrWhiteSpace(command))
@@ -126,6 +128,10 @@ public partial class Terminal : UserControl
                 CurrentProcess.StartInfo.RedirectStandardOutput = true;
                 CurrentProcess.StartInfo.RedirectStandardInput = true;
                 CurrentProcess.StartInfo.RedirectStandardError = true;
+                foreach (var variable in environment?.Variables ?? [])
+                {
+                    CurrentProcess.StartInfo.Environment[variable.Name] = variable.Value;
+                }
                 try
                 {
                     CurrentProcess.Start();
