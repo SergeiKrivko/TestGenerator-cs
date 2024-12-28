@@ -23,6 +23,6 @@ public class FileCreator : IFileCreator
     {
         var filename = options.Get<string>("Name");
         if (!string.IsNullOrWhiteSpace(filename))
-            File.Create(Path.Join(root, filename.Trim()));
+            File.Create(Path.Join(root, filename.Trim())).Close();
     }
 }

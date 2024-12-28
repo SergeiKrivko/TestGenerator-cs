@@ -1,0 +1,30 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TestGenerator.FilesTab.FileItem">
+    <Border Background="Transparent" Margin="-5" ContextRequested="Control_OnContextRequested">
+        <StackPanel Orientation="Vertical" Margin="5">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <PathIcon Name="IconBlock" />
+                <TextBlock Name="FilenameBlock" />
+            </StackPanel>
+        </StackPanel>
+        <Border.ContextMenu>
+            <ContextMenu Name="ContextMenu">
+                <MenuItem Header="Открыть" Name="OpenMenu" />
+                <Separator />
+                <MenuItem Header="Создать" Name="CreateMenu" />
+                <Separator Name="AfterActionsSeparator" />
+                <MenuItem Header="Копировать" Click="Copy_OnClick"></MenuItem>
+                <MenuItem Header="Копировать как путь" Click="CopyPath_OnClick"></MenuItem>
+                <MenuItem Header="Вставить" Click="Paste_OnClick"></MenuItem>
+                <Separator />
+                <MenuItem Header="Переименовать"></MenuItem>
+                <MenuItem Header="Удалить" Click="Delete_OnClick"></MenuItem>
+                <MenuItem Header="Переместить в корзину"></MenuItem>
+            </ContextMenu>
+        </Border.ContextMenu>
+    </Border>
+</UserControl>

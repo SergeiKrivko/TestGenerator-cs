@@ -151,12 +151,12 @@ public partial class MainWindow : Window
 
         foreach (var creator in plugin.FileCreators)
         {
-            _filesTab.FileCreators.Add(creator);
+            FilesTab.FilesTab.FileCreators.Add(creator);
         }
 
         foreach (var creator in plugin.FileActions)
         {
-            _filesTab.FileActions.Add(creator);
+            FilesTab.FilesTab.FileActions.Add(creator);
         }
 
         foreach (var item in plugin.FileIcons)
@@ -196,12 +196,12 @@ public partial class MainWindow : Window
 
         foreach (var creator in plugin.FileCreators)
         {
-            _filesTab.FileCreators.Remove(creator);
+            FilesTab.FilesTab.FileCreators.Remove(creator);
         }
 
         foreach (var creator in plugin.FileActions)
         {
-            _filesTab.FileActions.Remove(creator);
+            FilesTab.FilesTab.FileActions.Remove(creator);
         }
 
         foreach (var buildType in plugin.ProjectTypes)

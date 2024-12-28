@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace TestGenerator.FilesTab;
 
-internal abstract class Node
+public abstract class Node
 {
     public ObservableCollection<Node> SubNodes { get; }
     public string Title { get; }
@@ -41,7 +41,29 @@ internal abstract class Node
         return null;
     }
 
-    public abstract void Update();
+    public abstract void Update(int? recurseLevel = null);
+
+    public void UpdateIfExpanded()
+    {
+        if (IsExpanded)
+            Update();
+        foreach (var node in SubNodes)
+        {
+            node.UpdateIfExpanded();
+        }
+    }
 
     public abstract bool Exists { get; }
+    
+    private bool _isExpanded;
+    public bool IsExpanded
+    {
+        get => _isExpanded;
+        set
+        {
+            _isExpanded = value;
+            if (_isExpanded)
+                Update(recurseLevel: 2);
+        }
+    }
 }

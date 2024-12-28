@@ -12,35 +12,21 @@
               SelectionMode="Multiple"
               Background="Transparent"
               BorderThickness="0"
+              KeyDown="TreeView_OnKeyDown"
               DoubleTapped="TreeView_OnDoubleTapped">
         <TreeView.DataTemplates>
             <TreeDataTemplate DataType="filesTab:Node" ItemsSource="{Binding SubNodes}">
-                <Border Background="Transparent" ContextRequested="Control_OnContextRequested" Margin="-5">
-                    <StackPanel Orientation="Vertical" Margin="5">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <PathIcon Data="{Binding Icon}" />
-                            <TextBlock Text="{Binding Title}" />
-                        </StackPanel>
-                    </StackPanel>
-                    <Border.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Открыть">
-                                <MenuItem />
-                            </MenuItem>
-                            <Separator />
-                            <MenuItem Header="Создать"></MenuItem>
-                            <Separator Name="AfterActionsSeparator" />
-                            <MenuItem Header="Копировать" Click="Copy_OnClick"></MenuItem>
-                            <MenuItem Header="Копировать как путь" Click="CopyPath_OnClick"></MenuItem>
-                            <MenuItem Header="Вставить" Click="Paste_OnClick"></MenuItem>
-                            <Separator />
-                            <MenuItem Header="Переименовать"></MenuItem>
-                            <MenuItem Header="Удалить"></MenuItem>
-                            <MenuItem Header="Переместить в корзину"></MenuItem>
-                        </ContextMenu>
-                    </Border.ContextMenu>
-                </Border>
+                <filesTab:FileItem Node="{Binding .}"
+                                   CopyRequested="FileItem_OnCopyRequested"
+                                   PasteRequested="FileItem_OnPasteRequested"
+                                   DeleteRequested="FileItem_OnDeleteRequested"
+                                   GlobalUpdateRequested="FileItem_OnGlobalUpdateRequested"/>
             </TreeDataTemplate>
         </TreeView.DataTemplates>
+        <TreeView.Styles>
+            <Style Selector="TreeViewItem" x:DataType="filesTab:Node">
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+            </Style>
+        </TreeView.Styles>
     </TreeView>
 </UserControl>

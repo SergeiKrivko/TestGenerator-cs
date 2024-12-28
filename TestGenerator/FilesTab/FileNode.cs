@@ -18,9 +18,9 @@ internal class FileNode : Node
         Info = info;
     }
 
-    public override void Update()
+    public override void Update(int? recurseLevel = null)
     {
     }
 
-    public override bool Exists => Info.Exists;
+    public override bool Exists => File.Exists(Path);
 }
