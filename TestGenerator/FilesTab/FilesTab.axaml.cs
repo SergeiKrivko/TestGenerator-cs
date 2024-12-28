@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -136,7 +137,8 @@ public partial class FilesTab : SideTab
                 var dst = Path.Join(root, Path.GetFileName(path));
                 var i = 1;
                 while (File.Exists(dst))
-                    dst = Path.Join(root, Path.GetFileNameWithoutExtension(path) + $" ({i++})" + Path.GetExtension(path));
+                    dst = Path.Join(root,
+                        Path.GetFileNameWithoutExtension(path) + $" ({i++})" + Path.GetExtension(path));
                 File.Copy(path, dst);
             }
 
@@ -166,21 +168,37 @@ public partial class FilesTab : SideTab
         Update();
     }
 
-    private void FileItem_OnSentToTrashRequested(Node node)
+    private async void FileItem_OnSentToTrashRequested(Node node)
     {
         foreach (var item in TreeView.SelectedItems)
         {
             if (item is FileNode fileNode)
             {
-                FileSystem.DeleteFile(fileNode.Path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                if (OperatingSystem.IsWindows())
+                    await Task.Run(() =>
+                        FileSystem.DeleteFile(fileNode.Path, UIOption.OnlyErrorDialogs,
+                            RecycleOption.SendToRecycleBin));
+                else
+                {
+                    await AppService.Instance.RunProcess(new RunProcessArgs
+                        { Filename = "bash", Args = $"gio trash \"{fileNode.Path}\"" });
+                }
             }
             else if (item is DirectoryNode directoryNode)
             {
-                FileSystem.DeleteDirectory(directoryNode.Path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                if (OperatingSystem.IsWindows())
+                    await Task.Run(() =>
+                        FileSystem.DeleteDirectory(directoryNode.Path, UIOption.OnlyErrorDialogs,
+                            RecycleOption.SendToRecycleBin));
+                else
+                {
+                    await AppService.Instance.RunProcess(new RunProcessArgs
+                        { Filename = "bash", Args = $"gio trash \"{directoryNode.Path}\"" });
+                }
             }
-        }
 
-        Update();
+            Update();
+        }
     }
 
     private void TreeView_OnKeyDown(object? sender, KeyEventArgs e)
