@@ -202,14 +202,19 @@ public class AppService : AAppService
         Process? proc;
         try
         {
-            proc = Process.Start(new ProcessStartInfo(args.Filename, args.Args)
+            var startInfo = new ProcessStartInfo(args.Filename, args.Args)
             {
                 CreateNoWindow = true,
                 RedirectStandardInput = args.Stdin != null,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 WorkingDirectory = args.WorkingDirectory,
-            });
+            };
+            foreach (var variable in args.Environment?.Variables ?? [])
+            {
+                startInfo.Environment[variable.Name] = variable.Value;
+            }
+            proc = Process.Start(startInfo);
         }
         catch (Exception e)
         {

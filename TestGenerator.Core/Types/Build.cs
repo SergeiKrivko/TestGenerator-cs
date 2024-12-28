@@ -1,4 +1,5 @@
 ﻿using TestGenerator.Core.Services;
+using TestGenerator.Shared.Settings.Shared;
 using TestGenerator.Shared.Types;
 using TestGenerator.Shared.Utils;
 
@@ -18,6 +19,12 @@ public class Build : ABuild
     {
         get => Settings.Get<string>("workingDirectory") ?? _project.Path;
         set => Settings.Set("workingDirectory", value);
+    }
+
+    public override EnvironmentModel? Environment
+    {
+        get => Settings.Get<EnvironmentModel>("environment");
+        set => Settings.Set("environment", value);
     }
 
     public override List<BuildSubprocess> PreProc => Settings.Get<BuildSubprocess[]>("preProc", []).ToList();
@@ -83,11 +90,11 @@ public class Build : ABuild
 
     public override Task<ICompletedProcess>
         Run(string args = "", string? stdin = null, CancellationToken token = new()) =>
-        Builder.Run(args, WorkingDirectory, stdin, token: token);
+        Builder.Run(args, WorkingDirectory, stdin, Environment, token: token);
 
     public override Task<ICompletedProcess> RunConsole(string args = "", string? stdin = null,
         CancellationToken token = new()) =>
-        Builder.RunConsole(args, WorkingDirectory, stdin, token: token);
+        Builder.RunConsole(args, WorkingDirectory, stdin, Environment, token: token);
 
     private ABuild? _getBuild(Guid id)
     {

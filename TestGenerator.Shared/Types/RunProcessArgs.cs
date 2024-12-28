@@ -1,4 +1,6 @@
-﻿namespace TestGenerator.Shared.Types;
+﻿using TestGenerator.Shared.Settings.Shared;
+
+namespace TestGenerator.Shared.Types;
 
 public class RunProcessArgs
 {
@@ -12,4 +14,5 @@ public class RunProcessArgs
     public string Args { get; init; } = "";
     public string? WorkingDirectory { get; init; }
     public string? Stdin { get; init; }
+    public EnvironmentModel? Environment { get; init; }
 }

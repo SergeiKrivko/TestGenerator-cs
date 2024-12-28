@@ -1,10 +1,13 @@
-﻿namespace TestGenerator.Shared.Types;
+﻿using TestGenerator.Shared.Settings.Shared;
+
+namespace TestGenerator.Shared.Types;
 
 public abstract class ABuild
 {
     public abstract Guid Id { get; }
     public abstract string Name { get; set; }
     public abstract string WorkingDirectory { get; set; }
+    public abstract EnvironmentModel? Environment { get; set; }
 
     public abstract List<BuildSubprocess> PreProc { get; }
     public abstract List<BuildSubprocess> PostProc { get; }

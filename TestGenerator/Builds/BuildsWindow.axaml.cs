@@ -28,10 +28,11 @@ public partial class BuildsWindow : Window
         }
 
         MainSettingsControl.Add(new StringField { Key = "name", FieldName = "Название" });
-        MainSettingsControl.Add(new PathField
+        OtherSettingsControl.Add(new PathField
             { Key = "workingDirectory", FieldName = "Рабочая директория", Directory = true });
-        OtherSettingsControl.Add(new SubProcField{Key = "preProc", FieldName = " Перед выполнением"});
-        OtherSettingsControl.Add(new SubProcField{Key = "postProc", FieldName = " После выполнения"});
+        OtherSettingsControl.Add(new EnvironmentField { Key = "environment", FieldName = "Переменные среды" });
+        OtherSettingsControl.Add(new SubProcField { Key = "preProc", FieldName = " Перед выполнением" });
+        OtherSettingsControl.Add(new SubProcField { Key = "postProc", FieldName = " После выполнения" });
     }
 
     private void CreateBuild(string type)
