@@ -20,6 +20,8 @@
                                    CopyRequested="FileItem_OnCopyRequested"
                                    PasteRequested="FileItem_OnPasteRequested"
                                    DeleteRequested="FileItem_OnDeleteRequested"
+                                   SendToTrashRequested="FileItem_OnSentToTrashRequested"
+                                   DragRequested="FileItem_OnDragRequested"
                                    GlobalUpdateRequested="FileItem_OnGlobalUpdateRequested"/>
             </TreeDataTemplate>
         </TreeView.DataTemplates>

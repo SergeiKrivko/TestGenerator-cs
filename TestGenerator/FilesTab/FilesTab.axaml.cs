@@ -11,6 +11,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Microsoft.VisualBasic.FileIO;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
@@ -117,10 +118,8 @@ public partial class FilesTab : SideTab
         if (clipboard == null)
             return;
         var obj = new DataObject();
-        // obj.Set(DataFormats.FileNames, SelectedItems.Select(i => i.Path).ToArray());
+        obj.Set(DataFormats.FileNames, SelectedItems.Select(i => i.Path).ToArray());
         await clipboard.SetDataObjectAsync(obj);
-        Console.WriteLine(
-            $"After copy: {string.Join(';', await clipboard.GetFormatsAsync())} {await clipboard.GetDataAsync(DataFormats.FileNames)}");
     }
 
     private async void FileItem_OnPasteRequested(Node node)
@@ -221,5 +220,12 @@ public partial class FilesTab : SideTab
                     FileItem_OnPasteRequested(node);
             }
         }
+    }
+
+    private async void FileItem_OnDragRequested(Node obj, PointerEventArgs e)
+    {
+        var data = new DataObject();
+        data.Set(DataFormats.FileNames, SelectedItems.Select(i => i.Path).ToArray());
+        await DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
     }
 }

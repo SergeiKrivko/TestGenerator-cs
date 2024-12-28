@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using TestGenerator.MainTabs.Code;
@@ -26,11 +28,13 @@ public partial class FileItem : UserControl
     public event Action<Node>? PasteRequested; 
     public event Action<Node>? DeleteRequested; 
     public event Action<Node>? SendToTrashRequested; 
+    public event Action<Node, PointerEventArgs>? DragRequested; 
     public event Action? GlobalUpdateRequested; 
 
     public FileItem()
     {
         InitializeComponent();
+        AddHandler(DragDrop.DropEvent, InputElement_OnDrop);
         PropertyChanged += (sender, args) =>
         {
             if (args.Property == NodeProperty)
@@ -203,5 +207,32 @@ public partial class FileItem : UserControl
         if (Node == null)
             return;
         SendToTrashRequested?.Invoke(Node);
+    }
+
+    private DateTime? _pressedAt;
+
+    private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        _pressedAt = DateTime.Now;
+    }
+
+    private async void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (Node == null || _pressedAt == null || DateTime.Now - _pressedAt > TimeSpan.FromSeconds(1))
+            return;
+        DragRequested?.Invoke(Node, e);
+    }
+
+    private void InputElement_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _pressedAt = null;
+    }
+
+    private void InputElement_OnDrop(object? sender, DragEventArgs e)
+    {
+        foreach (var file in e.Data.GetFiles() ?? [])
+        {
+            Console.WriteLine(file.Path);
+        }
     }
 }
