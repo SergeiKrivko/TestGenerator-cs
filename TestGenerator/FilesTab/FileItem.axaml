@@ -23,7 +23,7 @@
                 <Separator />
                 <MenuItem Header="Переименовать"></MenuItem>
                 <MenuItem Header="Удалить" Click="Delete_OnClick"></MenuItem>
-                <MenuItem Header="Переместить в корзину"></MenuItem>
+                <MenuItem Header="Переместить в корзину" Click="SentToTrash_OnClick"></MenuItem>
             </ContextMenu>
         </Border.ContextMenu>
     </Border>

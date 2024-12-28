@@ -25,6 +25,7 @@ public partial class FileItem : UserControl
     public event Action<Node>? CopyRequested; 
     public event Action<Node>? PasteRequested; 
     public event Action<Node>? DeleteRequested; 
+    public event Action<Node>? SendToTrashRequested; 
     public event Action? GlobalUpdateRequested; 
 
     public FileItem()
@@ -195,5 +196,12 @@ public partial class FileItem : UserControl
         if (Node == null)
             return;
         DeleteRequested?.Invoke(Node);
+    }
+
+    private void SentToTrash_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (Node == null)
+            return;
+        SendToTrashRequested?.Invoke(Node);
     }
 }

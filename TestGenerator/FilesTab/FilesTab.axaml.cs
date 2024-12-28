@@ -10,6 +10,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Microsoft.VisualBasic.FileIO;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.MainTabs.Code;
@@ -165,6 +166,23 @@ public partial class FilesTab : SideTab
         Update();
     }
 
+    private void FileItem_OnSentToTrashRequested(Node node)
+    {
+        foreach (var item in TreeView.SelectedItems)
+        {
+            if (item is FileNode fileNode)
+            {
+                FileSystem.DeleteFile(fileNode.Path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            }
+            else if (item is DirectoryNode directoryNode)
+            {
+                FileSystem.DeleteDirectory(directoryNode.Path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            }
+        }
+
+        Update();
+    }
+
     private void TreeView_OnKeyDown(object? sender, KeyEventArgs e)
     {
         if (TreeView.SelectedItem is Node node)
@@ -173,6 +191,8 @@ public partial class FilesTab : SideTab
             {
                 if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
                     FileItem_OnDeleteRequested(node);
+                else
+                    FileItem_OnSentToTrashRequested(node);
             }
 
             if ((e.KeyModifiers & KeyModifiers.Control) != 0)
