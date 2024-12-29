@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Threading;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Settings.Shared;
@@ -18,12 +17,12 @@ public partial class Terminal : UserControl
 {
     protected Process? CurrentProcess;
     public string CurrentDirectory { get; set; } = ".";
-    public string TerminalApp { get; set; }
-    public string TerminalAppArgs { get; set; }
+    private string TerminalApp { get; }
+    private string TerminalAppArgs { get; }
 
-    public bool TerminalQuotes { get; set; } = false;
+    private bool TerminalQuotes { get; }
 
-    private List<string> _lastCommands = [];
+    private readonly List<string> _lastCommands = [];
     private int _lastCommandIndex = 0;
 
     public Terminal()
@@ -51,13 +50,13 @@ public partial class Terminal : UserControl
 
     private async void Box_OnReturn(string command)
     {
-        var text = Box.GetInput();
+        // var text = Box.GetInput();
         Write("\n");
         if (CurrentProcess == null)
-            await RunProcess(text);
+            await RunProcess(command);
         else
         {
-            await CurrentProcess.StandardInput.WriteLineAsync(text);
+            await CurrentProcess.StandardInput.WriteLineAsync(command);
             await CurrentProcess.StandardInput.FlushAsync();
         }
     }
@@ -74,12 +73,9 @@ public partial class Terminal : UserControl
 
     private void ChangeDirectory(string directory)
     {
-        if (Path.IsPathFullyQualified(directory))
-            CurrentDirectory = directory.Trim();
-        else
-        {
-            CurrentDirectory = Path.GetFullPath(Path.Combine(CurrentDirectory, directory));
-        }
+        CurrentDirectory = Path.IsPathFullyQualified(directory)
+            ? directory.Trim()
+            : Path.GetFullPath(Path.Combine(CurrentDirectory, directory));
     }
 
     private void PreviousCommand()
@@ -128,10 +124,13 @@ public partial class Terminal : UserControl
                 CurrentProcess.StartInfo.RedirectStandardOutput = true;
                 CurrentProcess.StartInfo.RedirectStandardInput = true;
                 CurrentProcess.StartInfo.RedirectStandardError = true;
+                if (environment?.InheritGlobal == false)
+                    CurrentProcess.StartInfo.Environment.Clear();
                 foreach (var variable in environment?.Variables ?? [])
                 {
                     CurrentProcess.StartInfo.Environment[variable.Name] = variable.Value;
                 }
+
                 try
                 {
                     CurrentProcess.Start();
@@ -197,9 +196,9 @@ public partial class Terminal : UserControl
 
                 return new CompletedProcess
                 {
-                    ExitCode = proc.ExitCode, 
-                    Stdout = _stdout, 
-                    Stderr = _stderr, 
+                    ExitCode = proc.ExitCode,
+                    Stdout = _stdout,
+                    Stderr = _stderr,
                     // Time = proc.TotalProcessorTime
                 };
             }
@@ -237,7 +236,7 @@ public partial class Terminal : UserControl
     {
         if (CurrentProcess == null)
             return;
-        _stdout = "";
+        _stderr = "";
         var pid = CurrentProcess.Id;
         var chars = new Memory<char>(new char[100]);
         while (pid == CurrentProcess?.Id)
@@ -246,7 +245,7 @@ public partial class Terminal : UserControl
             if (count > 0)
             {
                 var el = chars.Slice(0, count).ToString();
-                _stdout += el;
+                _stderr += el;
                 Write(el);
             }
 

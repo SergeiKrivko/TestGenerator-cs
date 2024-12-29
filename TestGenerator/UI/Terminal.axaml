@@ -7,6 +7,6 @@
              x:Class="TestGenerator.UI.Terminal">
     <Grid RowDefinitions="*">
         <ui:TerminalTextBox Name="Box" AcceptsReturn="False" Return="Box_OnReturn" ArrowUp="PreviousCommand" ArrowDown="NextCommand"
-                            FontFamily="Consolas" Background="Transparent" BorderThickness="0"/>
+                            FontFamily="Consolas" Background="Transparent" BorderThickness="0" TextWrapping="Wrap"/>
     </Grid>
 </UserControl>

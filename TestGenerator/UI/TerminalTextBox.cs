@@ -8,7 +8,7 @@ public class TerminalTextBox : TextBox
 {
     protected override Type StyleKeyOverride => typeof(TextBox); 
     
-    public string LastText { get; private set; } = "";
+    private string LastText { get; set; } = "";
     
     public delegate void ReturnHandler(string command);
     
@@ -30,7 +30,7 @@ public class TerminalTextBox : TextBox
         LastText = Text;
     }
     
-    public string? GetInput()
+    private string? GetInput()
     {
         return Text?.Replace(LastText, "");
     }

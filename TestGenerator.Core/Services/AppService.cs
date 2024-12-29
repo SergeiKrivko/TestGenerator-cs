@@ -197,7 +197,7 @@ public class AppService : AAppService
         return await RunProcess(RunProcessArgs.ProcessRunProvider.Background, args, token: token);
     }
 
-    private async Task<ICompletedProcess> RunBackgroundProcess(RunProcessArgs args, CancellationToken token = new())
+    private static async Task<ICompletedProcess> RunBackgroundProcess(RunProcessArgs args, CancellationToken token = new())
     {
         Process? proc;
         try
@@ -210,6 +210,8 @@ public class AppService : AAppService
                 RedirectStandardError = true,
                 WorkingDirectory = args.WorkingDirectory,
             };
+            if (args.Environment?.InheritGlobal == false)
+                startInfo.Environment.Clear();
             foreach (var variable in args.Environment?.Variables ?? [])
             {
                 startInfo.Environment[variable.Name] = variable.Value;
