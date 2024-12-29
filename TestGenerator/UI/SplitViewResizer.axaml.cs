@@ -155,18 +155,3 @@ public partial class SplitViewResizer : UserControl
         public double OriginalPaneLength;
     }
 }
-
-public class GridResizer : GridSplitter
-{
-    public override void Render(DrawingContext context)
-    {
-        base.Render(context);
-        Debug.WriteLine("GridResizer Render");
-    }
-
-    protected override void OnPointerMoved(PointerEventArgs e)
-    {
-        base.OnPointerMoved(e);
-        Debug.WriteLine("GridResizer Move: {0}", e.GetPosition(null));
-    }
-}

@@ -8,7 +8,8 @@ public abstract class Plugin
 {
     public required string Name { get; init; }
     public List<MainTab> MainTabs { get; init; } = [];
-    public List<SideTab> SideTabs { get; init; } = [];
+    [Obsolete("Use 'SideItems' instead")] public List<SideTab> SideTabs { get; init; } = [];
+    public List<ISideItem> SideItems { get; init; } = [];
     public List<BuildType> BuildTypes { get; init; } = [];
     public List<ProjectType> ProjectTypes { get; init; } = [];
     public List<IEditorProvider> EditorProviders { get; init; } = [];
@@ -25,7 +26,7 @@ public abstract class Plugin
     protected Plugin(
         string name,
         List<MainTab>? mainTabs = null,
-        List<SideTab>? sideTabs = null,
+        List<ISideItem>? sideItems = null,
         List<BuildType>? buildTypes = null,
         List<ProjectType>? projectTypes = null,
         List<IEditorProvider>? editorProviders = null,
@@ -38,8 +39,8 @@ public abstract class Plugin
         Name = name;
         if (mainTabs != null)
             MainTabs = mainTabs;
-        if (sideTabs != null)
-            SideTabs = sideTabs;
+        if (sideItems != null)
+            SideItems = sideItems;
         if (buildTypes != null)
             BuildTypes = buildTypes;
         if (projectTypes != null)

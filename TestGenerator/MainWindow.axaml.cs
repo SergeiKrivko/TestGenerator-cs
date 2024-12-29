@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared;
@@ -17,10 +16,6 @@ namespace TestGenerator;
 public partial class MainWindow : Window
 {
     private readonly Dictionary<string, MainTab> _mainTabs = new();
-    private readonly Dictionary<string, SideTab> _sideTabs = new();
-    private readonly Dictionary<string, SideWindow> _sideWindows = new();
-
-    private FilesTab.FilesTab _filesTab;
 
     public MainWindow()
     {
@@ -32,10 +27,14 @@ public partial class MainWindow : Window
 
         InitializeComponent();
         LoadWindowBounds();
+        
         _mainTabs.Add("Code", CodeTab);
         MainMenu.Add(CodeTab);
+        
+        SideBar.AttachPanel(SideTabsPanel);
+        BottomSideBar.AttachPanel(BottomSideTabsPanel);
 
-        AddSideTab(_filesTab = new FilesTab.FilesTab());
+        AddSideTab(new FilesTab.FilesTab());
         AddSideTab(new SideWindow
         {
             TabKey = "Builds", TabName = "Сценарии запуска", Window = () => new BuildsWindow(), TabIcon =
@@ -63,8 +62,9 @@ public partial class MainWindow : Window
 
     private void ShowSideTab(string key)
     {
-        if (key != SideBar.Current)
-            SideBar.Current = key;
+        if (SideBar.OpenTab(key) || BottomSideBar.OpenTab(key))
+            return;
+        LogService.Logger.Warning($"Side tab '{key}' not found");
     }
 
     private void MainMenu_OnTabChanged(object? sender, RoutedEventArgs e)
@@ -77,55 +77,24 @@ public partial class MainWindow : Window
         _mainTabs[MainMenu.Current].IsVisible = true;
     }
 
-    private void SideBar_OnTabChanged(string? key)
+    private void AddSideTab(ISideItem tab)
     {
-        foreach (var tab in _sideTabs.Values)
+        switch (tab.PreferredPlacement)
         {
-            tab.IsVisible = false;
+            case ISideItem.Placement.Left:
+                SideBar.Add(tab);
+                break;
+            case ISideItem.Placement.Bottom:
+                BottomSideBar.Add(tab);
+                break;
+            default:
+                LogService.Logger.Warning("Tab doesn't added: unknown preferred placement");
+                break;
         }
-
-        if (key is not null)
-        {
-            var tab = _sideTabs[key];
-            LogService.Logger.Debug($"Opening side tab '{key}'");
-            SplitView.IsPaneOpen = true;
-            tab.IsVisible = true;
-        }
-        else
-        {
-            SplitView.IsPaneOpen = false;
-        }
-    }
-
-    private async void SideBar_OnWindowSelected(string obj)
-    {
-        LogService.Logger.Debug($"Opening side dialog '{SideBar.Current}'");
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
-            desktop.MainWindow != null)
-        {
-            await _sideWindows[obj].Window().ShowDialog(desktop.MainWindow);
-        }
-    }
-
-    private void AddSideTab(SideTab tab)
-    {
-        _sideTabs.Add(tab.TabKey, tab);
-        SideTabsPanel.Children.Add(tab);
-        tab.IsVisible = false;
-        SideBar.Add(tab.TabKey, tab.TabIcon);
-    }
-
-    private void AddSideTab(SideWindow tab)
-    {
-        _sideWindows.Add(tab.TabKey, tab);
-        SideBar.Add(tab.TabKey, tab.TabIcon, isWindow: true);
     }
 
     private void RemoveSideTab(string key)
     {
-        var tab = _sideTabs[key];
-        _sideTabs.Remove(key);
-        SideTabsPanel.Children.Add(tab);
         SideBar.Remove(key);
     }
 
@@ -140,6 +109,10 @@ public partial class MainWindow : Window
         }
 
         foreach (var tab in plugin.SideTabs)
+        {
+            AddSideTab(tab);
+        }
+        foreach (var tab in plugin.SideItems)
         {
             AddSideTab(tab);
         }
@@ -188,6 +161,10 @@ public partial class MainWindow : Window
         {
             RemoveSideTab(tab.TabKey);
         }
+        foreach (var tab in plugin.SideItems)
+        {
+            RemoveSideTab(tab.TabKey);
+        }
 
         foreach (var provider in plugin.EditorProviders)
         {
@@ -226,7 +203,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private bool _forceQuit = false;
+    private bool _forceQuit;
 
     private async void Window_OnClosing(object? sender, WindowClosingEventArgs e)
     {
@@ -242,5 +219,15 @@ public partial class MainWindow : Window
             _forceQuit = true;
             Close();
         }
+    }
+
+    private void SideBar_OnCurrentChanged(string? obj)
+    {
+        SplitView.IsPaneOpen = obj != null;
+    }
+
+    private void BottomSideBar_OnCurrentChanged(string? obj)
+    {
+        BottomPane.IsVisible = obj != null;
     }
 }

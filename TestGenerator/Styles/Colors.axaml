@@ -13,6 +13,7 @@
             <Color x:Key="PrimaryHoverColor">#2D5CD9</Color>
             <Color x:Key="Transparent1Color">#20000000</Color>
             <Color x:Key="Transparent2Color">#40000000</Color>
+            <Color x:Key="BottomPaneColor">#C2C2C2</Color>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <Color x:Key="SuccessColor">#529615</Color>
@@ -25,6 +26,7 @@
             <Color x:Key="PrimaryHoverColor">#2D5CD9</Color>
             <Color x:Key="Transparent1Color">#20FFFFFF</Color>
             <Color x:Key="Transparent2Color">#40FFFFFF</Color>
+            <Color x:Key="BottomPaneColor">#26282E</Color>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

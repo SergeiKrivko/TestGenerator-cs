@@ -7,35 +7,47 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TestGenerator.MainWindow"
         Icon="/Assets/icon.ico" Closing="Window_OnClosing">
-    <Grid RowDefinitions="50 * 30" ColumnDefinitions="50 *">
+    <Grid RowDefinitions="50 * Auto 30" ColumnDefinitions="40 *">
 
         <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Gray"
                 BorderThickness="0 0 0 1">
             <ui:MainMenu Name="MainMenu" TabChanged="MainMenu_OnTabChanged"></ui:MainMenu>
         </Border>
 
-        <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray"
+        <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" BorderBrush="Gray"
                 BorderThickness="0 0 1 0">
-            <ui:SideBar Name="SideBar" TabChanged="SideBar_OnTabChanged" WindowSelected="SideBar_OnWindowSelected"></ui:SideBar>
+            <Panel>
+                <ui:SideBar Name="SideBar" CurrentChanged="SideBar_OnCurrentChanged" VerticalAlignment="Top" />
+                <ui:SideBar Name="BottomSideBar" CurrentChanged="BottomSideBar_OnCurrentChanged"
+                            VerticalAlignment="Bottom" />
+            </Panel>
         </Border>
 
-        <SplitView Grid.Row="1" Grid.Column="1" PanePlacement="Left" OpenPaneLength="300" DisplayMode="Inline"
-                   IsPaneOpen="False" Transitions="" Name="SplitView">
+        <SplitView Grid.Row="1" Grid.Column="1" PanePlacement="Left" OpenPaneLength="300"
+                   DisplayMode="Inline" IsPaneOpen="False" Transitions="" Name="SplitView">
             <SplitView.Pane>
-                    <Border BorderThickness="0 0 1 0" BorderBrush="Gray">
-                        <Panel>
-                            <Panel Name="SideTabsPanel" Margin="0 0 5 0" />
-                            <ui:SplitViewResizer Width="8" HorizontalAlignment="Right" Background="Transparent" />
-                        </Panel>
-                    </Border>
+                <Border BorderThickness="0 0 1 0" BorderBrush="Gray">
+                    <Panel>
+                        <Panel Name="SideTabsPanel" Margin="0 0 5 0" />
+                        <ui:SplitViewResizer Width="8" HorizontalAlignment="Right" Background="Transparent" />
+                    </Panel>
+                </Border>
             </SplitView.Pane>
 
             <Panel Name="MainTabsPanel">
                 <code:CodeTab Name="CodeTab"></code:CodeTab>
             </Panel>
         </SplitView>
-        
-        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="0 1 0 0" BorderBrush="Gray">
+
+        <Border Grid.Row="2" Grid.Column="1" Name="BottomPane" BorderThickness="0 1 0 0" BorderBrush="Gray"
+                Height="300" Background="{DynamicResource BottomPaneColor}" IsVisible="False">
+            <Grid RowDefinitions="Auto *">
+                <ui:BottomPaneResizer />
+                <Panel Grid.Row="1" Name="BottomSideTabsPanel"></Panel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="0 1 0 0" BorderBrush="Gray">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <ui:BackgroundTasksBar IsVisible="False"></ui:BackgroundTasksBar>
             </StackPanel>

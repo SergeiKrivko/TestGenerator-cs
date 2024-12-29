@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
-using Avalonia.Interactivity;
-using Avalonia.Media;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.UI;
 
 public partial class SideBar : UserControl
 {
-    private readonly Dictionary<string, Control> _buttons = new();
+    private readonly Dictionary<string, SideBarItem> _buttons = new();
+    private readonly Dictionary<string, SideTab> _tabs = new();
 
     private string? _current;
 
@@ -22,51 +23,52 @@ public partial class SideBar : UserControl
             if (value == _current)
                 return;
             _current = value;
-            foreach (var item in _buttons)
+            foreach (var item in _tabs)
             {
-                if (item.Value is ToggleButton toggleButton)
-                    toggleButton.IsChecked = value == item.Key;
+                _buttons[item.Key].IsChecked = value == item.Key;
+                item.Value.IsVisible = value == item.Key;
             }
 
-            TabChanged?.Invoke(value);
+            CurrentChanged?.Invoke(value);
         }
     }
+
+    public event Action<string?>? CurrentChanged;
+
+    private Panel? _panel;
 
     public SideBar()
     {
         InitializeComponent();
     }
 
-    public event Action<string?>? TabChanged;
-    public event Action<string>? WindowSelected;
-
-    public void Add(string key, string iconData, bool isWindow = false)
+    public void AttachPanel(Panel panel)
     {
-        var pathIcon = new PathIcon { Data = PathGeometry.Parse(iconData) };
-        Button button;
-        if (isWindow)
+        if (_panel != null)
+            throw new Exception("Panel already attached");
+        _panel = panel;
+    }
+
+    public void Add(ISideItem item)
+    {
+        var button = new SideBarItem { Item = item };
+
+        switch (item)
         {
-            button = new Button
-            {
-                Content = pathIcon,
-                Width = 40,
-                Height = 40,
-                CornerRadius = new CornerRadius(8),
-            };
-        }
-        else
-        {
-            button = new ToggleButton
-            {
-                Content = pathIcon,
-                Width = 40,
-                Height = 40,
-                CornerRadius = new CornerRadius(8),
-            };
+            case SideTab tab:
+                if (_panel == null)
+                    throw new Exception("Panel not attached");
+                _tabs.Add(tab.TabKey, tab);
+                _panel.Children.Add(tab);
+                tab.IsVisible = false;
+                break;
         }
 
-        button.Click += (obj, args) => _onClicked(key);
-        _buttons[key] = button;
+        button.WindowShow += ShowWindow;
+        button.TabShow += tab => Current = tab.TabKey;
+        button.TabHide += tab => Current = null;
+        
+        _buttons[item.TabKey] = button;
         StackPanel.Children.Add(button);
     }
 
@@ -75,21 +77,25 @@ public partial class SideBar : UserControl
         var button = _buttons[key];
         _buttons.Remove(key);
         StackPanel.Children.Remove(button);
+        _panel?.Children.Remove(_tabs[key]);
+        _tabs.Remove(key);
     }
 
-    private void _onClicked(string key)
+    public bool OpenTab(string key)
     {
-        if (_buttons[key] is not ToggleButton toggle)
-        {
-            WindowSelected?.Invoke(key);
-            return;
-        }
-        foreach (var item in _buttons)
-        {
-            if (key != item.Key && item.Value is ToggleButton toggleButton)
-                toggleButton.IsChecked = false;
-        }
+        if (!_tabs.ContainsKey(key))
+            return false;
+        Current = key;
+        return true;
+    }
 
-        Current = toggle.IsChecked == true ? key : null;
+    private static async void ShowWindow(SideWindow window)
+    {
+        if (Application.Current?.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime lifetime &&
+            lifetime.MainWindow != null)
+        {
+            var dialog = window.Window();
+            await dialog.ShowDialog(lifetime.MainWindow);
+        }
     }
 }

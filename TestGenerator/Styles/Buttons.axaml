@@ -40,4 +40,8 @@
     <Style Selector="Button.Borderless">
         <Setter Property="BorderThickness" Value="0" />
     </Style>
+
+    <Style Selector="ToggleButton.Borderless">
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
 </Styles>
