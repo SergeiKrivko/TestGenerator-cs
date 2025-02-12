@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -27,10 +28,10 @@ public partial class MainWindow : Window
 
         InitializeComponent();
         LoadWindowBounds();
-        
+
         _mainTabs.Add("Code", CodeTab);
         MainMenu.Add(CodeTab);
-        
+
         SideBar.AttachPanel(SideTabsPanel);
         BottomSideBar.AttachPanel(BottomSideTabsPanel);
 
@@ -108,11 +109,12 @@ public partial class MainWindow : Window
             MainMenu.Add(tab);
         }
 
-        foreach (var tab in plugin.SideTabs)
+        foreach (var tab in plugin.SideItems.Where(i => i is SideTab))
         {
             AddSideTab(tab);
         }
-        foreach (var tab in plugin.SideItems)
+
+        foreach (var tab in plugin.SideItems.Where(i => i is SideTab))
         {
             AddSideTab(tab);
         }
@@ -157,11 +159,12 @@ public partial class MainWindow : Window
             MainMenu.Remove(tab.TabKey);
         }
 
-        foreach (var tab in plugin.SideTabs)
+        foreach (var tab in plugin.SideItems.Where(i => i is SideTab))
         {
             RemoveSideTab(tab.TabKey);
         }
-        foreach (var tab in plugin.SideItems)
+
+        foreach (var tab in plugin.SideItems.Where(i => i is SideTab))
         {
             RemoveSideTab(tab.TabKey);
         }
@@ -189,6 +192,9 @@ public partial class MainWindow : Window
 
     private void LoadWindowBounds()
     {
+        if (OperatingSystem.IsMacOS())
+            return;
+
         Width = AppService.Instance.Settings.Get<double>("windowWidth");
         Height = AppService.Instance.Settings.Get<double>("windowHeight");
         WindowState = AppService.Instance.Settings.Get("windowMaximized", false)
@@ -208,11 +214,17 @@ public partial class MainWindow : Window
     private async void Window_OnClosing(object? sender, WindowClosingEventArgs e)
     {
         if (!_forceQuit)
+        {
             e.Cancel = true;
-        AppService.Instance.Settings.Set("windowWidth", Width);
-        AppService.Instance.Settings.Set("windowHeight", Height);
-        AppService.Instance.Settings.Set("windowMaximized", WindowState == WindowState.Maximized);
-        AppService.Instance.Settings.Set("windowPosition", Position.ToString());
+        }
+
+        if (!OperatingSystem.IsMacOS())
+        {
+            AppService.Instance.Settings.Set("windowWidth", Width);
+            AppService.Instance.Settings.Set("windowHeight", Height);
+            AppService.Instance.Settings.Set("windowMaximized", WindowState == WindowState.Maximized);
+            AppService.Instance.Settings.Set("windowPosition", Position.ToString());
+        }
 
         if (!_forceQuit && await TerminateTasksWindow.TerminateAllTasks())
         {
