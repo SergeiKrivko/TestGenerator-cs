@@ -50,7 +50,9 @@ public partial class MainWindow : Window
 
         Title = $"TestGenerator {AppService.Instance.AppVersion}";
 
-        PluginsService.Instance.Load();
+        MainMenu.Margin = OperatingSystem.IsMacOS() ? new Thickness(100, 0, 0, 0) : new Thickness(0, 0, 150, 0);
+
+        PluginsService.Instance.Initialize();
         ProjectsService.Instance.Load();
         ProjectsService.Instance.TerminateProjectTasksFunc = TerminateTasksWindow.TerminateProjectTasks;
     }

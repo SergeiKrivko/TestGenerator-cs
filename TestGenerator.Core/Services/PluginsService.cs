@@ -1,6 +1,8 @@
-﻿using System.IO.Compression;
+﻿using System.Diagnostics;
+using System.IO.Compression;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.Json;
 using TestGenerator.Core.Exceptions;
 using TestGenerator.Core.Types;
@@ -31,7 +33,7 @@ public class PluginsService
 
     public string PluginsPath { get; } = Path.Join(AppService.Instance.AppDataPath, "Plugins");
 
-    public void Load()
+    public void Initialize()
     {
         Directory.CreateDirectory(PluginsPath);
         foreach (var directory in Directory.GetDirectories(PluginsPath))
@@ -51,7 +53,7 @@ public class PluginsService
             {
                 try
                 {
-                    LoadPlugin(directory);
+                    Load(directory);
                 }
                 catch (Exception e)
                 {
@@ -61,71 +63,127 @@ public class PluginsService
         }
     }
 
-    private void LoadPlugin(string pluginPath)
+    private void Load(string pluginPath)
     {
-        var config = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(pluginPath, "Config.json")));
-        if (config == null)
-            throw new Exception("Invalid plugin: config not found");
-        var pluginAssembly = _getPluginAssembly(Path.Join(pluginPath, config.Assembly));
-        foreach (var type in pluginAssembly.GetTypes())
+        var plugin = InstalledPlugin.Load(pluginPath);
+        Plugins.Add(plugin.Config.Key, plugin);
+        LogService.Logger.Debug($"Plugin '{plugin.Config.Key}' loaded");
+        OnPluginLoaded?.Invoke(plugin.Plugin);
+        AppService.Instance.RunBackgroundTask($"Инициализация плагина {plugin.Config.Name}", async token =>
         {
-            if (typeof(Plugin).IsAssignableFrom(type))
-            {
-                var instance = Activator.CreateInstance(type);
-                if (instance != null)
-                {
-                    var plugin = (Plugin)instance;
-                    Plugins.Add(config.Key,
-                        new InstalledPlugin { Config = config, Plugin = plugin, Path = pluginPath });
-                    LogService.Logger.Debug($"Plugin '{config.Key}' loaded");
-                    OnPluginLoaded?.Invoke(plugin);
-                    AppService.Instance.RunBackgroundTask($"Инициализация плагина {config.Name}", async token =>
-                    {
-                        await plugin.Init(token);
-                        return 0;
-                    });
-                }
-            }
-        }
+            await plugin.Plugin.Init(token);
+            return 0;
+        });
     }
 
-    private Assembly _getPluginAssembly(string relativePath)
-    {
-        var pluginLocation =
-            Path.GetFullPath(Path.Combine(PluginsPath, relativePath.Replace('\\', Path.DirectorySeparatorChar)));
-        LogService.Logger.Debug($"Loading plugin from: {pluginLocation}");
-        var loadContext = new PluginLoadContext(pluginLocation);
-        return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
-    }
-
-    private void UnloadPlugin(string key)
+    private void Unload(string key)
     {
         var plugin = Plugins[key];
         OnPluginUnloaded?.Invoke(plugin.Plugin);
+        plugin.Dispose();
         Plugins.Remove(key);
     }
 
-    public async Task InstallPlugin(string url)
+    public async Task Install(string url)
     {
-        var installedPath = Path.Join(PluginsPath, Guid.NewGuid().ToString());
-        var stream = await _httpClient.GetStreamAsync(url);
-        await Task.Run(() => ZipFile.ExtractToDirectory(stream, installedPath));
-        LoadPlugin(installedPath);
-    }
+        var id = Guid.NewGuid();
 
-    public async Task RemovePlugin(string key)
-    {
-        if (!Plugins.ContainsKey(key))
+        var tempPath = Path.GetTempFileName();
+        await using (var stream = await _httpClient.GetStreamAsync(url))
         {
-            LogService.Logger.Warning($"Plugin '{key}' not found");
-            return;
+            await using var file = File.OpenWrite(tempPath);
+            await stream.CopyToAsync(file);
         }
 
-        var plugin = Plugins[key];
-        await plugin.Plugin.Destroy();
-        UnloadPlugin(key);
-        File.Create(Path.Join(plugin.Path, "IsDeleted"));
-        LogService.Logger.Information($"Plugin '{key}' was unloaded and marked as deleted");
+        await RunInstaller($"install {tempPath} {id} --clear-deleted --clear-duplicates");
+        Load(Path.Join(PluginsPath, id.ToString()));
+    }
+
+    public async Task Update(string key, string url)
+    {
+        Guid oldId;
+        {
+            if (!Plugins.TryGetValue(key, out var plugin))
+            {
+                LogService.Logger.Warning($"Plugin '{key}' not found");
+                return;
+            }
+
+            plugin = Plugins[key];
+            await plugin.Plugin.Destroy();
+            Unload(key);
+            oldId = plugin.Id;
+        }
+
+        var newId = Guid.NewGuid();
+
+        var tempPath = Path.GetTempFileName();
+        await using (var stream = await _httpClient.GetStreamAsync(url))
+        {
+            await using var file = File.OpenWrite(tempPath);
+            await stream.CopyToAsync(file);
+        }
+
+        await RunInstaller($"update {oldId} {tempPath} {newId} --clear-deleted --clear-duplicates");
+        Load(Path.Join(PluginsPath, newId.ToString()));
+    }
+
+    public async Task Remove(string key)
+    {
+        Guid id;
+        {
+            if (!Plugins.TryGetValue(key, out var plugin))
+            {
+                LogService.Logger.Warning($"Plugin '{key}' not found");
+                return;
+            }
+
+            plugin = Plugins[key];
+            await plugin.Plugin.Destroy();
+            Unload(key);
+            id = plugin.Id;
+        }
+        await RunInstaller($"remove {id} --clear-deleted --clear-duplicates");
+        LogService.Logger.Information($"Plugin '{key}' was unloaded and deleted");
+    }
+
+    private static async Task RunInstaller(string args)
+    {
+        var installerPath = Path.Join(Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location),
+            "TestGenerator.PluginInstaller");
+        Process? process = null;
+        if (OperatingSystem.IsWindows())
+        {
+            process = Process.Start(new ProcessStartInfo
+            {
+                FileName = installerPath + ".exe",
+                Arguments = args,
+                CreateNoWindow = true,
+                UseShellExecute = true,
+                Verb = "runas",
+            });
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            process = Process.Start(new ProcessStartInfo
+            {
+                FileName = "gnome-terminal",
+                Arguments = $"-- \"{installerPath}\" {args}",
+            });
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            process = Process.Start(new ProcessStartInfo
+            {
+                FileName = "open",
+                Arguments = $"-a Terminal \"{installerPath}\""
+            });
+        }
+
+        if (process == null)
+            return;
+
+        await process.WaitForExitAsync();
     }
 
     public string GetPluginKeyByAssembly(Assembly assembly)
@@ -143,6 +201,7 @@ public class PluginsService
                     return config.Key;
             }
         }
+
         throw new Exception("Plugin config not found");
     }
 }
