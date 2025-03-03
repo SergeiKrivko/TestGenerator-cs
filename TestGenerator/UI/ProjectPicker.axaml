@@ -13,7 +13,7 @@
         </StackPanel>
         <Button.Flyout>
             <Flyout>
-                <StackPanel Width="300" Margin="5" Spacing="2">
+                <StackPanel Width="300" Spacing="2">
                     <Button Content="Создать" HorizontalContentAlignment="Left" Width="300" BorderThickness="0"
                             Click="CreateProjectButton_OnClick"/>
                     <Button Content="Открыть" HorizontalContentAlignment="Left" Width="300" BorderThickness="0"
@@ -37,6 +37,11 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="CornerRadius" Value="8"></Setter>
+                            </Style>
+                        </ListBox.Styles>
                     </ListBox>
                 </StackPanel>
             </Flyout>

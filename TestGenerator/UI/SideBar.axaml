@@ -5,5 +5,5 @@
              mc:Ignorable="d" d:DesignWidth="50" d:DesignHeight="450"
              x:Class="TestGenerator.UI.SideBar"
              Width="50">
-    <StackPanel Margin="5" Name="StackPanel" Spacing="5"/>
+    <StackPanel Margin="5" Name="StackPanel" Spacing="5" HorizontalAlignment="Center"/>
 </UserControl>

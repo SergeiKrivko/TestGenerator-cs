@@ -8,20 +8,32 @@
     <StackPanel Spacing="5">
         <TextBlock Name="Label"></TextBlock>
         <Grid ColumnDefinitions="* Auto">
-            <ComboBox Name="ComboBox" SelectionChanged="ComboBox_OnSelectionChanged">
+            <ComboBox Name="ComboBox" SelectionChanged="ComboBox_OnSelectionChanged" HorizontalAlignment="Stretch">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="sidePrograms:SideProgramFile">
                         <StackPanel Orientation="Horizontal" Spacing="5">
-                            <PathIcon Name="IconOk" IsVisible="{Binding IsValid}" Data="{DynamicResource IconCheckmark}"></PathIcon>
-                            <PathIcon Name="IconInvalid" IsVisible="{Binding !IsValid}" Data="{DynamicResource IconClose}"></PathIcon>
+                            <PathIcon Name="IconOk" IsVisible="{Binding IsValid}"
+                                      Data="{DynamicResource IconCheckmark}">
+                            </PathIcon>
+                            <PathIcon Name="IconInvalid" IsVisible="{Binding !IsValid}"
+                                      Data="{DynamicResource IconClose}">
+                            </PathIcon>
                             <TextBlock Text="{Binding DisplayName}"></TextBlock>
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBox Grid.Column="0" Name="TextBox" LostFocus="TextBox_OnLostFocus" IsVisible="False" KeyDown="TextBox_OnKeyDown"></TextBox>
-            <Button Grid.Column="1" Name="ButtonEdit" Margin="5 0 0 0" Click="ButtonEdit_OnClick">+</Button>
-            <Button Grid.Column="1" Name="ButtonCancel" IsVisible="False" Margin="5 0 0 0" Click="ButtonCancel_OnClick">↵</Button>
+            <TextBox Grid.Column="0" Name="TextBox" LostFocus="TextBox_OnLostFocus" IsVisible="False"
+                     KeyDown="TextBox_OnKeyDown">
+            </TextBox>
+            <Button Grid.Column="1" Name="ButtonEdit" Margin="5 0 0 0" Click="ButtonEdit_OnClick" Classes="Border"
+                    VerticalAlignment="Stretch">
+                <PathIcon Data="{StaticResource IconPlus}" />
+            </Button>
+            <Button Grid.Column="1" Name="ButtonCancel" IsVisible="False" Margin="5 0 0 0" Click="ButtonCancel_OnClick"
+                    Classes="Border" VerticalAlignment="Stretch">
+                ↵
+            </Button>
         </Grid>
     </StackPanel>
 </UserControl>

@@ -24,10 +24,13 @@
                 <TextBlock Name="VersionBlock"></TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="5" Margin="5" Height="30">
-                <TextBlock Name="DownloadingBlock" VerticalAlignment="Center">Установка...</TextBlock>
-                <Button Name="InstallButton" Click="InstallButton_OnClick">Установить</Button>
-                <Button Name="RemoveButton" Click="RemoveButton_OnClick">Удалить</Button>
-                <Button Name="UpdateButton" Click="UpdateButton_OnClick">Обновить</Button>
+                <StackPanel Name="DownloadingBlock" Orientation="Horizontal" Spacing="8">
+                    <Arc Width="24" Height="24" Classes="Spinner"/>
+                    <TextBlock VerticalAlignment="Center">Установка...</TextBlock>
+                </StackPanel>
+                <Button Name="InstallButton" Click="InstallButton_OnClick" Classes="Accent">Установить</Button>
+                <Button Name="RemoveButton" Click="RemoveButton_OnClick" Classes="Danger">Удалить</Button>
+                <Button Name="UpdateButton" Click="UpdateButton_OnClick" Classes="Accent">Обновить</Button>
             </StackPanel>
             <Separator></Separator>
             <TextBlock Name="PluginDescriptionBox" TextWrapping="Wrap"></TextBlock>

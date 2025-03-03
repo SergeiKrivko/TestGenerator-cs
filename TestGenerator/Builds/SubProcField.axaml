@@ -9,17 +9,21 @@
     <StackPanel Orientation="Vertical" Spacing="5">
         <TextBlock Name="NameLabel"></TextBlock>
         <StackPanel Orientation="Horizontal" Spacing="5">
-            <Button Width="42" Height="30" Padding="0" Click="AddCommandButton_OnClick">
-                <PathIcon Data="{DynamicResource IconAddCommand}"></PathIcon>
+            <Button Width="42" Height="30" Padding="0" Click="AddCommandButton_OnClick" Classes="Accent">
+                <PathIcon Data="{StaticResource IconAddCommand}" />
             </Button>
-            <Button Width="42" Height="30" Padding="0" Click="AddBuildButton_OnClick">
-                <PathIcon Data="{DynamicResource IconAddBuild}"></PathIcon>
+            <Button Width="42" Height="30" Padding="0" Click="AddBuildButton_OnClick" Classes="Accent">
+                <PathIcon Data="{StaticResource IconAddBuild}" />
             </Button>
-            <Button Width="30" Height="30" Padding="0" Click="RemoveButton_OnClick">
-                <PathIcon Data="{DynamicResource IconTrash}"></PathIcon>
+            <Button Width="30" Height="30" Padding="0" Click="RemoveButton_OnClick" Classes="Danger">
+                <PathIcon Data="{StaticResource IconTrash}" />
             </Button>
-            <Button Width="30" Height="30" Padding="0">▲</Button>
-            <Button Width="30" Height="30" Padding="0">▼</Button>
+            <Button Width="30" Height="30" Padding="0" Classes="Border">
+                <PathIcon Data="{StaticResource IconChevronUp}" />
+            </Button>
+            <Button Width="30" Height="30" Padding="0" Classes="Border">
+                <PathIcon Data="{StaticResource IconChevronDown}" />
+            </Button>
         </StackPanel>
         <ListBox Name="ListBox" MinHeight="150" ItemsSource="{Binding Subprocesses}">
             <ListBox.ItemTemplate>

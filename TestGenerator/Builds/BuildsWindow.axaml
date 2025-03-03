@@ -10,11 +10,11 @@
         WindowStartupLocation="CenterOwner"
         Title="Сценарии запуска" Width="750" Height="500">
     <Grid ColumnDefinitions="200 *" RowDefinitions="Auto *">
-        <StackPanel Orientation="Horizontal">
-            <Button Name="AddButton">
+        <StackPanel Orientation="Horizontal" Margin="5" Spacing="5">
+            <Button Name="AddButton" Classes="Accent">
                 <PathIcon Data="{DynamicResource IconPlus}" />
             </Button>
-            <Button Click="DeleteButton_OnClick">
+            <Button Click="DeleteButton_OnClick" Classes="Danger">
                 <PathIcon Data="{DynamicResource IconTrash}" />
             </Button>
         </StackPanel>

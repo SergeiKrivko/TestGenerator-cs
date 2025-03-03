@@ -6,7 +6,22 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TestGenerator.UI.Terminal">
     <Grid RowDefinitions="*">
-        <ui:TerminalTextBox Name="Box" AcceptsReturn="False" Return="Box_OnReturn" ArrowUp="PreviousCommand" ArrowDown="NextCommand"
-                            FontFamily="Consolas" Background="Transparent" BorderThickness="0" TextWrapping="Wrap"/>
+        <ui:TerminalTextBox Name="Box" AcceptsReturn="False" Return="Box_OnReturn" ArrowUp="PreviousCommand"
+                            ArrowDown="NextCommand"
+                            FontFamily="Consolas" Background="Transparent" TextWrapping="Wrap">
+            <ui:TerminalTextBox.Styles>
+                <Style Selector="TextBox">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Style Selector="^:pointerover  /template/ Border#PART_BorderElement">
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                    <Style Selector="^:focus  /template/ Border#PART_BorderElement">
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                </Style>
+            </ui:TerminalTextBox.Styles>
+        </ui:TerminalTextBox>
     </Grid>
 </UserControl>

@@ -22,15 +22,15 @@ public partial class MainMenu : UserControl
         get => _current;
         set => OnTabClicked(value);
     }
-    
+
     public static readonly RoutedEvent<RoutedEventArgs> TabChangeEvent =
         RoutedEvent.Register<MainMenu, RoutedEventArgs>("tabChangeEvent", RoutingStrategies.Bubble);
-    
+
     public MainMenu()
     {
         InitializeComponent();
     }
-    
+
     public event EventHandler<RoutedEventArgs>? TabChanged
     {
         add => AddHandler(TabChangeEvent, value);
@@ -79,7 +79,7 @@ public partial class MainMenu : UserControl
 
         _buttons[key].IsChecked = true;
         _current = key;
-        
+
         var e = new RoutedEventArgs(TabChangeEvent);
         RaiseEvent(e);
     }

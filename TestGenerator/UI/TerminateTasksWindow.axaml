@@ -19,8 +19,8 @@
         </ScrollViewer>
         <TextBlock Grid.Row="2" Margin="5" TextWrapping="Wrap">Прервать выполнение этх задач?</TextBlock>
         <StackPanel Grid.Row="3" Margin="5" Orientation="Horizontal" Spacing="5">
-            <Button Click="CancelButton_OnClick">Отмена</Button>
-            <Button Click="TerminateButton_OnClick">Прервать</Button>
+            <Button Click="CancelButton_OnClick" Classes="Border">Отмена</Button>
+            <Button Click="TerminateButton_OnClick" Classes="Danger">Прервать</Button>
         </StackPanel>
     </Grid>
 </Window>

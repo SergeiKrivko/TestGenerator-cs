@@ -17,15 +17,14 @@
         </ComboBox>
         <StackPanel Orientation="Horizontal" MinWidth="69" Spacing="5">
             <Button VerticalAlignment="Center" Click="RunButton_OnClick" Foreground="{DynamicResource SuccessColor}"
-                    Classes="Borderless"
                     Width="32" Height="32" Name="ButtonRun">
                 <PathIcon Data="{DynamicResource IconPlay}"></PathIcon>
             </Button>
-            <Button VerticalAlignment="Center" Click="ButtonRerun_OnClick" Classes="Success Borderless"
+            <Button VerticalAlignment="Center" Click="ButtonRerun_OnClick" Classes="Success"
                     Width="32" Height="32" Name="ButtonRerun" IsVisible="False">
                 <PathIcon Data="{DynamicResource IconPlay}"></PathIcon>
             </Button>
-            <Button VerticalAlignment="Center" Click="CancelButton_OnClick" Classes="Danger Borderless" 
+            <Button VerticalAlignment="Center" Click="CancelButton_OnClick" Classes="Danger" 
                     Width="32" Height="32" Name="ButtonCancel" IsVisible="False">
                 <PathIcon Data="{DynamicResource IconStop}"></PathIcon>
             </Button>
