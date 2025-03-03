@@ -1,7 +1,9 @@
 ﻿using Avalonia;
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using TestGenerator.Core.Services;
-using TestGenerator.Shared.Types;
 using AvaluxUI.Utils;
 
 namespace TestGenerator;
