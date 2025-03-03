@@ -1,29 +1,30 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.UI;
 
 public partial class ProjectPicker : UserControl
 {
-    public ProjectsService Service { get; } = ProjectsService.Instance;
+    private readonly ProjectsService _projectsService = Injector.Inject<ProjectsService>();
 
     public ProjectPicker()
     {
         InitializeComponent();
-        ProjectsService.Instance.CurrentChanged += _onCurrentChanged;
-        ProjectsListBox.ItemsSource = ProjectsService.Instance.Projects;
-        _onCurrentChanged(ProjectsService.Instance.Current);
+        _projectsService.CurrentChanged += _onCurrentChanged;
+        ProjectsListBox.ItemsSource = _projectsService.Projects;
+        _onCurrentChanged(_projectsService.Current);
     }
 
-    private void _onCurrentChanged(Project project)
+    private void _onCurrentChanged(IProject project)
     {
         CurrentPathIcon.Data = PathGeometry.Parse(project.Type.IconPath);
         CurrentNameBlock.Text = project.Name;
@@ -36,16 +37,16 @@ public partial class ProjectPicker : UserControl
         await Task.Delay(100);
         if (ProjectsListBox.SelectedItem is Project project)
         {
-            await Service.SetCurrentProject(project);
+            await _projectsService.SetCurrentProject(project);
         }
     }
 
     private async void LightEditButton_OnClick(object? sender, RoutedEventArgs e)
     {
         LightEditButton.IsChecked = true;
-        if (Service.Current != Project.LightEditProject)
+        if (_projectsService.Current != Project.LightEditProject)
         {
-            await Service.SetCurrentProject(Project.LightEditProject);
+            await _projectsService.SetCurrentProject(Project.LightEditProject);
         }
     }
 
@@ -63,7 +64,7 @@ public partial class ProjectPicker : UserControl
 
         if (files.Count >= 1)
         {
-            await ProjectsService.Instance.SetCurrentProject(ProjectsService.Instance.Load(files[0].Path.AbsolutePath));
+            await _projectsService.SetCurrentProject(_projectsService.Load(files[0].Path.AbsolutePath));
         }
     }
 

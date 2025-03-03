@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
 
@@ -10,28 +11,32 @@ namespace TestGenerator.UI;
 
 public partial class BuildRunner : UserControl
 {
-    public ObservableCollection<ABuild> Builds { get; }
+    private readonly AppService _appService = Injector.Inject<AppService>();
+    private readonly ProjectsService _projectsService = Injector.Inject<ProjectsService>();
+    private readonly BuildsService _buildsService = Injector.Inject<BuildsService>();
+    
+    public ObservableCollection<IBuild> Builds { get; }
     private IBackgroundTask? _task;
 
     public BuildRunner()
     {
-        Builds = BuildsService.Instance.Builds;
+        Builds = _buildsService.Builds;
         InitializeComponent();
         ComboBox.ItemsSource = Builds;
-        ProjectsService.Instance.CurrentChanged += project =>
+        _projectsService.CurrentChanged += project =>
         {
             ComboBox.SelectedValue =
-                BuildsService.Instance.Builds.FirstOrDefault(b =>
+                _buildsService.Builds.FirstOrDefault(b =>
                     b.Id == project.Settings.Get<Guid>("selectedBuild"));
         };
     }
 
     private async void RunButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (ComboBox.SelectedValue is ABuild build)
+        if (ComboBox.SelectedValue is IBuild build)
         {
-            AppService.Instance.ShowSideTab("Run");
-            _task = AppService.Instance.RunBackgroundTask($"Запуск {build.Name}",
+            _appService.ShowSideTab("Run");
+            _task = _appService.RunBackgroundTask($"Запуск {build.Name}",
                 token => build.ExecuteConsole(token: token),
                 BackgroundTaskFlags.Hidden | BackgroundTaskFlags.ProjectTask | BackgroundTaskFlags.UiThread);
             ButtonCancel.IsVisible = true;
@@ -57,9 +62,9 @@ public partial class BuildRunner : UserControl
 
     private void ComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (ComboBox.SelectedValue is ABuild build)
+        if (ComboBox.SelectedValue is IBuild build)
         {
-            ProjectsService.Instance.Current.Settings.Set("selectedBuild", build.Id);
+            _projectsService.Current.Settings.Set("selectedBuild", build.Id);
         }
     }
 }

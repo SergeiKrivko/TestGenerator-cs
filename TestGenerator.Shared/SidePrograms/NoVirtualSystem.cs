@@ -1,4 +1,5 @@
-﻿using TestGenerator.Shared.Types;
+﻿using AvaluxUI.Utils;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Shared.SidePrograms;
 
@@ -6,6 +7,8 @@ internal class NoVirtualSystem : IVirtualSystem
 {
     public string Key => "";
     public string Name => "";
+    
+    private IAppService _appService = Injector.Inject<IAppService>();
 
     public ICollection<string> Tags
     {
@@ -24,26 +27,26 @@ internal class NoVirtualSystem : IVirtualSystem
 
     public async Task<ICompletedProcess> Execute(RunProcessArgs.ProcessRunProvider where, RunProcessArgs args, CancellationToken token = new())
     {
-        return await AAppService.Instance.RunProcess(where, args, token);
+        return await _appService.RunProcess(where, args, token);
     }
 
     public async Task<ICompletedProcess> Execute(RunProcessArgs args, CancellationToken token = new())
     {
-        return await AAppService.Instance.RunProcess(args, token);
+        return await _appService.RunProcess(args, token);
     }
 
     public async Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs.ProcessRunProvider where, RunProcessArgs[] args, CancellationToken token = new())
     {
-        return await AAppService.Instance.RunProcess(where, args, token);
+        return await _appService.RunProcess(where, args, token);
     }
 
     public async Task<ICollection<ICompletedProcess>> Execute(RunProcessArgs[] args, CancellationToken token = new())
     {
-        return await AAppService.Instance.RunProcess(args, token);
+        return await _appService.RunProcess(args, token);
     }
 
-    public async Task<string> ConvertPath(string path)
+    public Task<string> ConvertPath(string path)
     {
-        return path;
+        return Task.FromResult(path);
     }
 }

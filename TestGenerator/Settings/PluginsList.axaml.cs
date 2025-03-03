@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using AvaloniaEdit.Utils;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Models;
 using TestGenerator.Core.Services;
 
@@ -13,13 +13,14 @@ namespace TestGenerator.Settings;
 
 public abstract partial class PluginsList : UserControl
 {
-    protected readonly PluginsHttpService HttpService = new();
+    private readonly PluginsService _pluginsService = Injector.Inject<PluginsService>();
+    protected readonly PluginsHttpService HttpService = Injector.Inject<PluginsHttpService>();
     private RemotePlugin[] _plugins = [];
     public ObservableCollection<RemotePlugin> ObservablePlugins { get; } = [];
 
     private string? _selectedKey;
     private RemotePluginRelease? _latestRelease;
-    private HashSet<string> _nowDownloading = [];
+    private readonly HashSet<string> _nowDownloading = [];
 
     public PluginsList()
     {
@@ -34,7 +35,7 @@ public abstract partial class PluginsList : UserControl
     {
         try
         {
-            var plugin = PluginsService.Instance.Plugins[key];
+            var plugin = _pluginsService.Plugins[key];
             return new RemotePluginRelease
             {
                 Id = default,
@@ -147,7 +148,7 @@ public abstract partial class PluginsList : UserControl
         if (_latestRelease != null && _selectedKey != null)
         {
             AddDownloading(_selectedKey);
-            await PluginsService.Instance.Install(_latestRelease.Url);
+            await _pluginsService.Install(_latestRelease.Url);
             RemoveDownloading(_selectedKey);
         }
     }
@@ -156,7 +157,7 @@ public abstract partial class PluginsList : UserControl
     {
         if (_selectedKey != null)
         {
-            await PluginsService.Instance.Remove(_selectedKey);
+            await _pluginsService.Remove(_selectedKey);
             Open(_selectedKey);
         }
     }
@@ -166,7 +167,7 @@ public abstract partial class PluginsList : UserControl
         if (_latestRelease != null && _selectedKey != null)
         {
             AddDownloading(_selectedKey);
-            await PluginsService.Instance.Update(_selectedKey, _latestRelease.Url);
+            await _pluginsService.Update(_selectedKey, _latestRelease.Url);
             RemoveDownloading(_selectedKey);
         }
     }

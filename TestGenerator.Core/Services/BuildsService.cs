@@ -4,31 +4,21 @@ using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Core.Services;
 
-public class BuildsService
+public class BuildsService(BuildTypesService buildTypesService, ProjectsService projectsService)
 {
-    private static BuildsService? _instance;
+    public ObservableCollection<IBuild> Builds { get; } = [];
 
-    public static BuildsService Instance
+    private BuildsService(AppService appService, BuildTypesService buildTypesService, ProjectsService projectsService) :
+        this(buildTypesService, projectsService)
     {
-        get
-        {
-            _instance ??= new BuildsService();
-            return _instance;
-        }
+        projectsService.CurrentChanged += Load;
+        Load(projectsService.Current);
+        appService.AddRequestHandler("getAllBuilds", () => Task.FromResult(Builds));
+        appService.AddRequestHandler("getBuild", (Guid id) => Task.FromResult(Get(id)));
+        appService.AddRequestHandler("createBuild", (string type) => Task.FromResult(New(type)));
     }
 
-    public ObservableCollection<ABuild> Builds { get; } = [];
-
-    private BuildsService()
-    {
-        ProjectsService.Instance.CurrentChanged += Load;
-        Load(ProjectsService.Instance.Current);
-        AppService.Instance.AddRequestHandler("getAllBuilds", async () => Builds);
-        AppService.Instance.AddRequestHandler("getBuild", async (Guid id) => Get(id));
-        AppService.Instance.AddRequestHandler("createBuild", async (string type) => New(type));
-    }
-
-    private void Load(Project project)
+    private void Load(IProject project)
     {
         Builds.Clear();
         LogService.Logger.Debug($"Loading {project.Data.Get<Guid[]>("builds", []).Length} builds");
@@ -40,12 +30,12 @@ public class BuildsService
         }
     }
 
-    public ABuild New(string buildType)
+    public IBuild New(string buildType)
     {
-        var build = Build.New(BuildTypesService.Instance.Get(buildType));
+        var build = Build.New(buildTypesService.Get(buildType));
         build.GetBuild = Get;
         Builds.Add(build);
-        ProjectsService.Instance.Current.Data.Set("builds", Builds.Select(b => b.Id));
+        projectsService.Current.Data.Set("builds", Builds.Select(b => b.Id));
         return build;
     }
 
@@ -53,10 +43,10 @@ public class BuildsService
     {
         build.Settings.Delete();
         Builds.Remove(build);
-        ProjectsService.Instance.Current.Data.Set("builds", Builds.Select(b => b.Id));
+        projectsService.Current.Data.Set("builds", Builds.Select(b => b.Id));
     }
 
-    public ABuild? Get(Guid id)
+    public IBuild? Get(Guid id)
     {
         try
         {

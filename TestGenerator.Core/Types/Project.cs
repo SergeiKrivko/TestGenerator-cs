@@ -1,18 +1,21 @@
 ﻿using System.Reflection;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Core.Types;
 
-public class Project : AProject
+public class Project : IProject
 {
-    public override SettingsFile Settings { get; }
-    public override SettingsFile Data { get; }
+    private readonly ProjectTypesService _projectTypesService = Injector.Inject<ProjectTypesService>();
+    private readonly AppService _appService = Injector.Inject<AppService>();
 
-    public override Guid Id { get; }
+    public ISettingsSection Settings { get; }
+    public ISettingsSection Data { get; }
 
-    public override string Name
+    public Guid Id { get; }
+
+    public string Name
     {
         get => string.IsNullOrWhiteSpace(Data.Get<string>("name"))
             ? System.IO.Path.GetFileName(Path)
@@ -20,10 +23,11 @@ public class Project : AProject
         set => Settings.Set("name", value);
     }
 
-    public override string Path { get; }
+    public string Path { get; }
+    public const string TestGeneratorDir = ".TestGenerator";
 
     public string DataPath => System.IO.Path.Join(Path, TestGeneratorDir);
-    public override ProjectType Type { get; }
+    public ProjectType Type { get; }
 
     private Project(string path, ProjectType? projectType = null)
     {
@@ -33,7 +37,7 @@ public class Project : AProject
         Settings = SettingsFile.Open(System.IO.Path.Join(DataPath, "Settings.xml"));
         var data = Data = SettingsFile.Open(System.IO.Path.Join(DataPath, "Data.xml"));
         var typeKey = data.Get<string>("type");
-        Type = projectType ?? (typeKey == null ? DetectType() : ProjectTypesService.Instance.Get(typeKey));
+        Type = projectType ?? (typeKey == null ? DetectType() : _projectTypesService.Get(typeKey));
     }
 
     private Project()
@@ -46,7 +50,7 @@ public class Project : AProject
         var data = Data = SettingsFile.Open(System.IO.Path.Join(path, "Data.xml"));
         if (data.Get<string>("name") != "LightEdit")
             data.Set("name", "LightEdit");
-        Type = ProjectTypesService.Instance.Get(data.Get<string>("type", ""));
+        Type = _projectTypesService.Get(data.Get<string>("type", ""));
     }
 
     public static Project LightEditProject { get; } = new();
@@ -61,24 +65,24 @@ public class Project : AProject
         return new Project(path, type);
     }
 
-    public override SettingsSection GetSettings(string key)
+    public ISettingsSection GetSettings(string key)
     {
         return Settings.GetSection(key);
     }
 
-    public override SettingsSection GetSettings()
+    public ISettingsSection GetSettings()
     {
-        return GetSettings(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+        return GetSettings(_appService.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
     }
 
-    public override SettingsSection GetData(string key)
+    public ISettingsSection GetData(string key)
     {
         return Data.GetSection(key);
     }
 
-    public override SettingsSection GetData()
+    public ISettingsSection GetData()
     {
-        return GetData(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+        return GetData(_appService.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
     }
 
     private void CreateDataDirectory()
@@ -94,7 +98,7 @@ public class Project : AProject
     private ProjectType DetectType()
     {
         var detectors = new List<KeyValuePair<ProjectType, ProjectType.ProjectTypeDetector>>();
-        foreach (var projectType in ProjectTypesService.Instance.Types.Values)
+        foreach (var projectType in _projectTypesService.Types.Values)
         {
             detectors.AddRange(projectType.Detectors.Select(d =>
                 new KeyValuePair<ProjectType, ProjectType.ProjectTypeDetector>(projectType, d)));
@@ -102,7 +106,8 @@ public class Project : AProject
 
         foreach (var pair in detectors.OrderByDescending(p => p.Value.Priority))
         {
-            LogService.Logger.Debug($"Trying detector with priority {pair.Value.Priority} for project type '{pair.Key.Key}'");
+            LogService.Logger.Debug(
+                $"Trying detector with priority {pair.Value.Priority} for project type '{pair.Key.Key}'");
             if (pair.Value.Func(Path))
             {
                 Data.Set("type", pair.Key.Key);

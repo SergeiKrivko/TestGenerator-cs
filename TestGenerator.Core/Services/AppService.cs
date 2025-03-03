@@ -2,58 +2,44 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Types;
 using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Core.Services;
 
-public class AppService : AAppService
+public class AppService : IAppService
 {
-    private static AppService? _appService;
+    public Version? AppVersion => Version.TryParse("{AppVersion}", out var res) ? res : null;
 
-    public new static AppService Instance
-    {
-        get
-        {
-            if (_appService == null)
-            {
-                _instance = _appService = new AppService();
-            }
-
-            return _appService;
-        }
-    }
-
-    public override Version? AppVersion => Version.TryParse("{AppVersion}", out var res) ? res : null;
-
-    public override string AppDataPath { get; } = Path.Join(
+    public string AppDataPath { get; } = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko", Config.AppName);
 
-    public override SettingsFile Settings { get; } = SettingsFile.Open(Path.Join(
+    public ISettingsSection Settings { get; } = SettingsFile.Open(Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
         Config.AppName, "Settings.xml"));
 
-    public override SettingsSection GetSettings(string key)
+    public ISettingsSection GetSettings(string key)
     {
         return Settings.GetSection(key);
     }
 
-    public override SettingsSection GetSettings()
+    public ISettingsSection GetSettings()
     {
-        return GetSettings(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+        return GetSettings(GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
     }
 
-    public override string GetDataPath(string key)
+    public string GetDataPath(string key)
     {
         var res = Path.Join(AppDataPath, "PluginData", key);
         Directory.CreateDirectory(res);
         return res;
     }
 
-    public override string GetDataPath()
+    public string GetDataPath()
     {
-        return GetDataPath(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+        return GetDataPath(GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
     }
 
     private readonly Dictionary<string, IEvent> _events = [];
@@ -64,26 +50,26 @@ public class AppService : AAppService
     public event ShowHandler? OnMainTabShow;
     public event ShowHandler? OnSideTabShow;
 
-    public override void ShowMainTab(string key)
+    public void ShowMainTab(string key)
     {
         LogService.Logger.Debug($"Show main tab '{key}'");
         OnMainTabShow?.Invoke(key);
     }
 
-    public override void ShowSideTab(string key)
+    public void ShowSideTab(string key)
     {
         LogService.Logger.Debug($"Show side tab '{key}'");
         OnSideTabShow?.Invoke(key);
     }
 
-    public override Logger GetLogger(string name) => LogService.GetLogger(name);
+    public Logger GetLogger(string name) => LogService.GetLogger(name);
 
-    public override Logger GetLogger()
+    public Logger GetLogger()
     {
-        return GetLogger(PluginsService.Instance.GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+        return GetLogger(GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
     }
 
-    public override void Emit(string key, object? data = null)
+    public void Emit(string key, object? data = null)
     {
         if (_events.TryGetValue(key, out var ev))
         {
@@ -91,49 +77,49 @@ public class AppService : AAppService
         }
     }
 
-    public override ISubscription Subscribe<T>(string key, Action<T> handler)
+    public ISubscription Subscribe<T>(string key, Action<T> handler)
     {
         if (!_events.ContainsKey(key))
             _events[key] = new Event(key);
         return _events[key].Subscribe(handler);
     }
 
-    public override ISubscription Subscribe(string key, Action handler)
+    public ISubscription Subscribe(string key, Action handler)
     {
         if (!_events.ContainsKey(key))
             _events[key] = new Event(key);
         return _events[key].Subscribe(handler);
     }
 
-    public override void AddRequestHandler<TI, TO>(string key, Func<TI, Task<TO>> handler)
+    public void AddRequestHandler<TI, TO>(string key, Func<TI, Task<TO>> handler)
     {
         var h = new RequestHandler(key);
         h.SetHandler(handler);
         _requestHandlers[key] = h;
     }
 
-    public override void AddRequestHandler<TO>(string key, Func<Task<TO>> handler)
+    public void AddRequestHandler<TO>(string key, Func<Task<TO>> handler)
     {
         var h = new RequestHandler(key);
         h.SetHandler(handler);
         _requestHandlers[key] = h;
     }
 
-    public override void AddRequestHandler<TI, TO>(string key, Func<TI, CancellationToken, Task<TO>> handler)
+    public void AddRequestHandler<TI, TO>(string key, Func<TI, CancellationToken, Task<TO>> handler)
     {
         var h = new RequestHandler(key);
         h.SetHandler(handler);
         _requestHandlers[key] = h;
     }
 
-    public override void AddRequestHandler<TO>(string key, Func<CancellationToken, Task<TO>> handler)
+    public void AddRequestHandler<TO>(string key, Func<CancellationToken, Task<TO>> handler)
     {
         var h = new RequestHandler(key);
         h.SetHandler(handler);
         _requestHandlers[key] = h;
     }
 
-    public override async Task<T> Request<T>(string key, object? data = null, CancellationToken token = new())
+    public async Task<T> Request<T>(string key, object? data = null, CancellationToken token = new())
     {
         var res = await _requestHandlers[key].Call(data, token);
         if (res is T tRes)
@@ -144,9 +130,7 @@ public class AppService : AAppService
         throw new InvalidCastException();
     }
 
-    public override AProject CurrentProject => ProjectsService.Instance.Current;
-
-    public override async Task<ICompletedProcess> RunProcess(RunProcessArgs.ProcessRunProvider where,
+    public async Task<ICompletedProcess> RunProcess(RunProcessArgs.ProcessRunProvider where,
         RunProcessArgs args, CancellationToken token = new())
     {
         switch (where)
@@ -160,12 +144,12 @@ public class AppService : AAppService
         }
     }
 
-    public override async Task<ICompletedProcess> RunProcess(RunProcessArgs args, CancellationToken token = new())
+    public async Task<ICompletedProcess> RunProcess(RunProcessArgs args, CancellationToken token = new())
     {
         return await RunProcess(RunProcessArgs.ProcessRunProvider.Background, args, token: token);
     }
 
-    public override async Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs.ProcessRunProvider where,
+    public async Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs.ProcessRunProvider where,
         RunProcessArgs[] args, CancellationToken token = new())
     {
         var res = new List<ICompletedProcess>();
@@ -192,12 +176,13 @@ public class AppService : AAppService
         return res;
     }
 
-    public override async Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs[] args, CancellationToken token = new())
+    public async Task<ICollection<ICompletedProcess>> RunProcess(RunProcessArgs[] args, CancellationToken token = new())
     {
         return await RunProcess(RunProcessArgs.ProcessRunProvider.Background, args, token: token);
     }
 
-    private static async Task<ICompletedProcess> RunBackgroundProcess(RunProcessArgs args, CancellationToken token = new())
+    private static async Task<ICompletedProcess> RunBackgroundProcess(RunProcessArgs args,
+        CancellationToken token = new())
     {
         Process? proc;
         try
@@ -216,6 +201,7 @@ public class AppService : AAppService
             {
                 startInfo.Environment[variable.Name] = variable.Value;
             }
+
             proc = Process.Start(startInfo);
         }
         catch (Exception e)
@@ -253,17 +239,19 @@ public class AppService : AAppService
     public ObservableCollection<IBackgroundTask> BackgroundTasks { get; } = [];
     public ObservableCollection<IBackgroundTask> VisibleBackgroundTasks { get; } = [];
 
-    public override IBackgroundTask RunBackgroundTask(string name, Func<IBackgroundTask, CancellationToken, Task<int>> func, BackgroundTaskFlags? flags = null)
-    {
-        return RunBackgroundTask(new BackgroundTask(name, func, flags));
-    }
-    
-    public override IBackgroundTask RunBackgroundTask(string name, Func<CancellationToken, Task<int>> func, BackgroundTaskFlags? flags = null)
+    public IBackgroundTask RunBackgroundTask(string name, Func<IBackgroundTask, CancellationToken, Task<int>> func,
+        BackgroundTaskFlags? flags = null)
     {
         return RunBackgroundTask(new BackgroundTask(name, func, flags));
     }
 
-    public override IBackgroundTask RunBackgroundTask(IBackgroundTask task)
+    public IBackgroundTask RunBackgroundTask(string name, Func<CancellationToken, Task<int>> func,
+        BackgroundTaskFlags? flags = null)
+    {
+        return RunBackgroundTask(new BackgroundTask(name, func, flags));
+    }
+
+    public IBackgroundTask RunBackgroundTask(IBackgroundTask task)
     {
         task.Run();
         BackgroundTasks.Add(task);
@@ -285,5 +273,24 @@ public class AppService : AAppService
         BackgroundTasks.Remove(task);
         if ((task.Flags & BackgroundTaskFlags.Hidden) == 0)
             VisibleBackgroundTasks.Remove(task);
+    }
+
+    public string GetPluginKeyByAssembly(Assembly assembly)
+    {
+        var path = Path.GetFullPath(assembly.Location);
+        var dirPath = Path.GetFullPath(Path.Join(AppDataPath, "Plugins"));
+        if (!path.StartsWith(dirPath))
+            throw new Exception("Call not from plugin");
+        while (!string.IsNullOrEmpty(path = Path.GetDirectoryName(path)))
+        {
+            if (File.Exists(Path.Join(path, "Config.json")))
+            {
+                var config = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(path, "Config.json")));
+                if (config != null)
+                    return config.Key;
+            }
+        }
+
+        throw new Exception("Plugin config not found");
     }
 }

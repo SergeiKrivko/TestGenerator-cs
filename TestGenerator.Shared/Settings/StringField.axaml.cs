@@ -1,5 +1,5 @@
 ﻿using Avalonia.Controls;
-using TestGenerator.Shared.Utils;
+using AvaluxUI.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -31,7 +31,7 @@ public partial class StringField : UserControl, IField
         ValueChanged?.Invoke(this, TextBox.Text);
     }
 
-    public void Load(SettingsSection section)
+    public void Load(ISettingsSection section)
     {
         if (Key != null)
             Value = section.Get<string>(Key);

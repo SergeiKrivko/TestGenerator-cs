@@ -3,8 +3,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Interactivity;
+using AvaluxUI.Utils;
 using TestGenerator.Shared.Settings.Shared;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -51,7 +51,7 @@ public partial class EnvironmentField : UserControl, IField
         Variables.CollectionChanged += (s, e) => ValueChanged?.Invoke(this, Value);
     }
 
-    public void Load(SettingsSection section)
+    public void Load(ISettingsSection section)
     {
         if (Key != null)
             Value = section.Get<EnvironmentModel>(Key);

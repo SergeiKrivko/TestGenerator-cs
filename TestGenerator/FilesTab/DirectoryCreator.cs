@@ -1,7 +1,7 @@
 ﻿using System.IO;
+using AvaluxUI.Utils;
 using TestGenerator.Shared.Settings;
 using TestGenerator.Shared.Types;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.FilesTab;
 
@@ -19,7 +19,7 @@ public class DirectoryCreator : IFileCreator
         return settingsControl;
     }
 
-    public void Create(string root, SettingsSection options)
+    public void Create(string root, ISettingsSection options)
     {
         var filename = options.Get<string>("Name");
         if (!string.IsNullOrWhiteSpace(filename))

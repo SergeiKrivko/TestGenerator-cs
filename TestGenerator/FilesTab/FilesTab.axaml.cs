@@ -5,23 +5,21 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.Platform.Storage;
+using AvaluxUI.Utils;
 using Microsoft.VisualBasic.FileIO;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
-using TestGenerator.MainTabs.Code;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.FilesTab;
 
 public partial class FilesTab : SideTab
 {
+    private readonly AppService _appService = Injector.Inject<AppService>();
+    private readonly ProjectsService _projectsService = Injector.Inject<ProjectsService>();
+    
     private ObservableCollection<Node> Nodes { get; }
 
     public override string TabName => "Файлы";
@@ -44,14 +42,14 @@ public partial class FilesTab : SideTab
         InitializeComponent();
         Nodes = new ObservableCollection<Node>();
         TreeView.ItemsSource = Nodes;
-        ProjectsService.Instance.CurrentChanged += FullUpdate;
+        _projectsService.CurrentChanged += FullUpdate;
         // Update();
     }
 
-    public void FullUpdate(Project? project = null)
+    public void FullUpdate(IProject? project = null)
     {
         Nodes.Clear();
-        var path = (project ?? ProjectsService.Instance.Current).Path;
+        var path = (project ?? _projectsService.Current).Path;
         try
         {
             var node = new DirectoryNode(new DirectoryInfo(path));
@@ -67,7 +65,7 @@ public partial class FilesTab : SideTab
     {
         if (Nodes.Count == 0)
         {
-            var path = (project ?? ProjectsService.Instance.Current).Path;
+            var path = (project ?? _projectsService.Current).Path;
             try
             {
                 Nodes.Add(new DirectoryNode(new DirectoryInfo(path)));
@@ -85,13 +83,13 @@ public partial class FilesTab : SideTab
         }
     }
 
-    private void TreeView_OnDoubleTapped(object? sender, TappedEventArgs e)
+    private async void TreeView_OnDoubleTapped(object? sender, TappedEventArgs e)
     {
         var item = TreeView.SelectedItem;
         if (item is FileNode)
         {
             var fileNode = (FileNode)item;
-            AAppService.Instance.Request<string?>("openFile", fileNode.Info.FullName);
+            await _appService.Request<string?>("openFile", fileNode.Info.FullName);
         }
     }
 
@@ -179,7 +177,7 @@ public partial class FilesTab : SideTab
                             RecycleOption.SendToRecycleBin));
                 else
                 {
-                    await AppService.Instance.RunProcess(new RunProcessArgs
+                    await _appService.RunProcess(new RunProcessArgs
                         { Filename = "bash", Args = $"gio trash \"{fileNode.Path}\"" });
                 }
             }
@@ -191,7 +189,7 @@ public partial class FilesTab : SideTab
                             RecycleOption.SendToRecycleBin));
                 else
                 {
-                    await AppService.Instance.RunProcess(new RunProcessArgs
+                    await _appService.RunProcess(new RunProcessArgs
                         { Filename = "bash", Args = $"gio trash \"{directoryNode.Path}\"" });
                 }
             }

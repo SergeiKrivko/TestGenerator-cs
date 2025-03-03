@@ -42,7 +42,9 @@ public class Builder
         "MicroCom.Runtime.dll",
         "Serilog.dll",
         "Serilog.Sinks.Console.dll",
-        "Serilog.Sinks.File.dll"
+        "Serilog.Sinks.File.dll",
+        "AvaluxUI.Utils.dll",
+        "AvaluxUI.Avalonia.dll"
     ];
 
     public static string Build(string path, string? outPath = null, bool install = false, string? runtime = null)

@@ -1,7 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using TestGenerator.Shared.Utils;
+﻿using Avalonia.Controls;
+using AvaluxUI.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -28,7 +26,7 @@ public partial class IntField : UserControl, IField
         InitializeComponent();
     }
 
-    public void Load(SettingsSection section)
+    public void Load(ISettingsSection section)
     {
         if (Key != null)
             Value = section.Get<int>(Key);

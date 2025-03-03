@@ -1,11 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
+using AvaluxUI.Utils;
 using TestGenerator.Shared.Types;
 using TestGenerator.Shared.Settings;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Builds;
 
@@ -15,7 +16,7 @@ public partial class SubProcField : UserControl, IField
 
     public object? Value { get; set; }
     public ObservableCollection<BuildSubprocess> Subprocesses { get; private set; } = [];
-    
+
     public string? FieldName
     {
         get => NameLabel.Text;
@@ -29,9 +30,10 @@ public partial class SubProcField : UserControl, IField
         InitializeComponent();
         ListBox.ItemsSource = Subprocesses;
     }
-    
-    public void Load(SettingsSection section)
+
+    public void Load(ISettingsSection section)
     {
+        if (section == null) throw new ArgumentNullException(nameof(section));
         if (Key != null)
         {
             Value = Subprocesses = section.Get<ObservableCollection<BuildSubprocess>>(Key, []);

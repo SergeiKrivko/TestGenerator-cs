@@ -1,28 +1,15 @@
 ﻿using System.Diagnostics;
-using System.IO.Compression;
-using System.Net;
 using System.Reflection;
-using System.Runtime.Loader;
-using System.Text.Json;
 using TestGenerator.Core.Exceptions;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared;
+using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Core.Services;
 
-public class PluginsService
+public class PluginsService(IAppService appService)
 {
-    private static PluginsService? _instance;
     private readonly HttpClient _httpClient = new();
-
-    public static PluginsService Instance
-    {
-        get
-        {
-            _instance ??= new PluginsService();
-            return _instance;
-        }
-    }
 
     public Dictionary<string, InstalledPlugin> Plugins { get; } = [];
 
@@ -31,7 +18,7 @@ public class PluginsService
     public event PluginLoadedHandler? OnPluginLoaded;
     public event PluginLoadedHandler? OnPluginUnloaded;
 
-    public string PluginsPath { get; } = Path.Join(AppService.Instance.AppDataPath, "Plugins");
+    public string PluginsPath { get; } = Path.Join(appService.AppDataPath, "Plugins");
 
     public void Initialize()
     {
@@ -69,7 +56,7 @@ public class PluginsService
         Plugins.Add(plugin.Config.Key, plugin);
         LogService.Logger.Debug($"Plugin '{plugin.Config.Key}' loaded");
         OnPluginLoaded?.Invoke(plugin.Plugin);
-        AppService.Instance.RunBackgroundTask($"Инициализация плагина {plugin.Config.Name}", async token =>
+        appService.RunBackgroundTask($"Инициализация плагина {plugin.Config.Name}", async token =>
         {
             await plugin.Plugin.Init(token);
             return 0;
@@ -184,24 +171,5 @@ public class PluginsService
             return;
 
         await process.WaitForExitAsync();
-    }
-
-    public string GetPluginKeyByAssembly(Assembly assembly)
-    {
-        var path = Path.GetFullPath(assembly.Location);
-        var dirPath = Path.GetFullPath(PluginsPath);
-        if (!path.StartsWith(dirPath))
-            throw new Exception("Call not from plugin");
-        while (!string.IsNullOrEmpty(path = Path.GetDirectoryName(path)))
-        {
-            if (File.Exists(Path.Join(path, "Config.json")))
-            {
-                var config = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(Path.Join(path, "Config.json")));
-                if (config != null)
-                    return config.Key;
-            }
-        }
-
-        throw new Exception("Plugin config not found");
     }
 }

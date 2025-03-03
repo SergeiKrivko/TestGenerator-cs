@@ -4,6 +4,7 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared;
 using TestGenerator.Builds;
@@ -16,15 +17,19 @@ namespace TestGenerator;
 
 public partial class MainWindow : Window
 {
-    private readonly Dictionary<string, MainTab> _mainTabs = new();
+    private readonly AppService _appService = Injector.Inject<AppService>();
+    private readonly PluginsService _pluginsService = Injector.Inject<PluginsService>();
+    private readonly ProjectsService _projectsService = Injector.Inject<ProjectsService>();
+    private readonly ProjectTypesService _projectTypesService = Injector.Inject<ProjectTypesService>();
+
+    private readonly Dictionary<string, MainTab> _mainTabs = [];
 
     public MainWindow()
     {
-        AppService.Instance.OnMainTabShow += ShowMainTab;
-        AppService.Instance.OnSideTabShow += ShowSideTab;
-        PluginsService.Instance.OnPluginLoaded += AddPlugin;
-        PluginsService.Instance.OnPluginUnloaded += RemovePlugin;
-        BuildTypesService.Init();
+        _appService.OnMainTabShow += ShowMainTab;
+        _appService.OnSideTabShow += ShowSideTab;
+        _pluginsService.OnPluginLoaded += AddPlugin;
+        _pluginsService.OnPluginUnloaded += RemovePlugin;
 
         InitializeComponent();
         LoadWindowBounds();
@@ -48,13 +53,13 @@ public partial class MainWindow : Window
         AddSideTab(new RunTab());
         AddSideTab(new TerminalTab.TerminalTab());
 
-        Title = $"TestGenerator {AppService.Instance.AppVersion}";
+        Title = $"TestGenerator {_appService.AppVersion}";
 
         MainMenu.Margin = OperatingSystem.IsMacOS() ? new Thickness(100, 0, 0, 0) : new Thickness(0, 0, 125, 0);
 
-        PluginsService.Instance.Initialize();
-        ProjectsService.Instance.Load();
-        ProjectsService.Instance.TerminateProjectTasksFunc = TerminateTasksWindow.TerminateProjectTasks;
+        _pluginsService.Initialize();
+        _projectsService.Load();
+        _projectsService.TerminateProjectTasksFunc = TerminateTasksWindow.TerminateProjectTasks;
     }
 
     private void ShowMainTab(string key)
@@ -148,7 +153,7 @@ public partial class MainWindow : Window
 
         foreach (var buildType in plugin.ProjectTypes)
         {
-            ProjectTypesService.Instance.Types.Add(buildType.Key, buildType);
+            _projectTypesService.Types.Add(buildType.Key, buildType);
         }
     }
 
@@ -188,7 +193,7 @@ public partial class MainWindow : Window
 
         foreach (var buildType in plugin.ProjectTypes)
         {
-            ProjectTypesService.Instance.Types.Remove(buildType.Key);
+            _projectTypesService.Types.Remove(buildType.Key);
         }
     }
 
@@ -197,14 +202,14 @@ public partial class MainWindow : Window
         if (OperatingSystem.IsMacOS())
             return;
 
-        Width = AppService.Instance.Settings.Get<double>("windowWidth");
-        Height = AppService.Instance.Settings.Get<double>("windowHeight");
-        WindowState = AppService.Instance.Settings.Get("windowMaximized", false)
+        Width = _appService.Settings.Get<double>("windowWidth");
+        Height = _appService.Settings.Get<double>("windowHeight");
+        WindowState = _appService.Settings.Get("windowMaximized", false)
             ? WindowState.Maximized
             : WindowState.Normal;
         try
         {
-            Position = PixelPoint.Parse(AppService.Instance.Settings.Get<string>("windowPosition", ""));
+            Position = PixelPoint.Parse(_appService.Settings.Get<string>("windowPosition", ""));
         }
         catch (FormatException)
         {
@@ -222,10 +227,10 @@ public partial class MainWindow : Window
 
         if (!OperatingSystem.IsMacOS())
         {
-            AppService.Instance.Settings.Set("windowWidth", Width);
-            AppService.Instance.Settings.Set("windowHeight", Height);
-            AppService.Instance.Settings.Set("windowMaximized", WindowState == WindowState.Maximized);
-            AppService.Instance.Settings.Set("windowPosition", Position.ToString());
+            _appService.Settings.Set("windowWidth", Width);
+            _appService.Settings.Set("windowHeight", Height);
+            _appService.Settings.Set("windowMaximized", WindowState == WindowState.Maximized);
+            _appService.Settings.Set("windowPosition", Position.ToString());
         }
 
         if (!_forceQuit && await TerminateTasksWindow.TerminateAllTasks())

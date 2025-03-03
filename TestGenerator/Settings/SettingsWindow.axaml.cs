@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Controls;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Settings;
@@ -12,7 +13,12 @@ namespace TestGenerator.Settings;
 
 public partial class SettingsWindow : Window
 {
-    private Dictionary<string, TestGenerator.Shared.Settings.SettingsNode> _pages = [];
+    private readonly AppService _appService = Injector.Inject<AppService>();
+    private readonly ProjectsService _projectsService = Injector.Inject<ProjectsService>();
+    private readonly ProjectTypesService _projectTypesService = Injector.Inject<ProjectTypesService>();
+    private readonly PluginsService _pluginsService = Injector.Inject<PluginsService>();
+
+    private readonly Dictionary<string, TestGenerator.Shared.Settings.SettingsNode> _pages = [];
     private ObservableCollection<SettingsNode> Nodes { get; } = [];
     private string? _currentPage;
 
@@ -27,46 +33,28 @@ public partial class SettingsWindow : Window
             new SelectField<string>
             {
                 Key = "type", FieldName = "Тип проекта:",
-                Items = new ObservableCollection<SelectItem<string>>(ProjectTypesService.Instance.Types.Values.Select(
+                Items = new ObservableCollection<SelectItem<string>>(_projectTypesService.Types.Values.Select(
                     type =>
                         new SelectItem<string> { Name = type.Name, Icon = type.IconPath, Value = type.Key })),
             },
-        ], SettingsPageType.ProjectData, () => ProjectsService.Instance.Current != Project.LightEditProject));
+        ], SettingsPageType.ProjectData, () => _projectsService.Current != Project.LightEditProject));
 
-        foreach (var plugin in PluginsService.Instance.Plugins.Values)
+        foreach (var plugin in _pluginsService.Plugins.Values)
         {
             foreach (var item in plugin.Plugin.SettingsControls.Where(c => c.IsVisible))
             {
                 Add(item);
             }
         }
-        
+
         Add(new Shared.Settings.SettingsNode("Для разработчиков", new DeveloperPage()));
 
         Closed += OnClosed;
-
-        // ProjectsService.Instance.CurrentChanged += OnCurrentProjectChanged;
     }
 
     private void OnClosed(object? sender, EventArgs e)
     {
         PagesPanel.Children.Clear();
-    }
-
-    private void OnCurrentProjectChanged(Project project)
-    {
-        foreach (var page in _pages.Values.Select(c => c as SettingsPage))
-        {
-            switch (page?.Type)
-            {
-                case SettingsPageType.ProjectSettings:
-                    page.Section = project.Settings.GetSection(page.Key);
-                    break;
-                case SettingsPageType.ProjectData:
-                    page.Section = project.Data.GetSection(page.Key);
-                    break;
-            }
-        }
     }
 
     private SettingsNode CreateNode(string folderName)
@@ -129,13 +117,14 @@ public partial class SettingsWindow : Window
                     switch (settingsPage.Type)
                     {
                         case SettingsPageType.GlobalSettings:
-                            settingsPage.Section = AppService.Instance.Settings.GetSection(settingsPage.Key);
+                            settingsPage.Section = _appService.Settings.GetSection(settingsPage.Key);
                             break;
                         case SettingsPageType.ProjectSettings:
-                            settingsPage.Section = ProjectsService.Instance.Current.Settings.GetSection(settingsPage.Key);
+                            settingsPage.Section =
+                                _projectsService.Current.Settings.GetSection(settingsPage.Key);
                             break;
                         case SettingsPageType.ProjectData:
-                            settingsPage.Section = ProjectsService.Instance.Current.Data.GetSection(settingsPage.Key);
+                            settingsPage.Section = _projectsService.Current.Data.GetSection(settingsPage.Key);
                             break;
                     }
                 }

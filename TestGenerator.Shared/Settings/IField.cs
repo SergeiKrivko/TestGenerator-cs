@@ -1,4 +1,4 @@
-﻿using TestGenerator.Shared.Utils;
+﻿using AvaluxUI.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -11,5 +11,5 @@ public interface IField
 
     public event ChangeHandler? ValueChanged;
 
-    public void Load(SettingsSection section);
+    public void Load(ISettingsSection section);
 }

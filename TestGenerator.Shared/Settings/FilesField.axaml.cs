@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Avalonia.Controls;
+using AvaluxUI.Utils;
 using TestGenerator.Shared.Settings.Shared;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -21,7 +21,7 @@ public partial class FilesField : UserControl, IField
 
     private ObservableCollection<INode> Nodes { get; set; } = [];
 
-    private DirectoryNode? _topLevelItem = null;
+    private DirectoryNode? _topLevelItem;
 
     public event IField.ChangeHandler? ValueChanged;
 
@@ -45,7 +45,7 @@ public partial class FilesField : UserControl, IField
         }
     }
 
-    public void Load(SettingsSection section)
+    public void Load(ISettingsSection section)
     {
         if (Key != null)
             Value = section.Get<string[]>(Key);

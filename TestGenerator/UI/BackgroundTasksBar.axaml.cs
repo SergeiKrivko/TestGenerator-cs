@@ -1,27 +1,30 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.UI;
 
 public partial class BackgroundTasksBar : UserControl
 {
+    private readonly AppService _appService = Injector.Inject<AppService>();
+
     private IBackgroundTask? _currentTask;
 
-    private readonly SettingsSection _developerSettings = AppService.Instance.GetSettings("Developer");
+    private readonly ISettingsSection _developerSettings;
     private bool ShowAllTasks => _developerSettings.Get("showAllTasks", false);
 
     private ObservableCollection<IBackgroundTask> Tasks =>
-        ShowAllTasks ? AppService.Instance.BackgroundTasks : AppService.Instance.VisibleBackgroundTasks;
-    
+        ShowAllTasks ? _appService.BackgroundTasks : _appService.VisibleBackgroundTasks;
+
     public BackgroundTasksBar()
     {
+        _developerSettings = _appService.GetSettings("Developer");
+        
         InitializeComponent();
         ItemsControl.ItemsSource = Tasks;
         Tasks.CollectionChanged += BackgroundTasksOnCollectionChanged;

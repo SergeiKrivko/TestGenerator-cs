@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator.Core", "TestG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator.Shared", "TestGenerator.Shared\TestGenerator.Shared.csproj", "{632D4504-6B53-435A-8387-41134B6AF338}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGeneratorCLI", "TestGeneratorCLI\TestGeneratorCLI.csproj", "{ABE71C54-0D70-4B36-9C19-9286CE541176}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator.PluginBuilder", "TestGenerator.PluginBuilder\TestGenerator.PluginBuilder.csproj", "{1368C2C4-66B0-49D4-A67C-D0EBBAE42B3C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGenerator.Plugin", "TestGenerator.Plugin\TestGenerator.Plugin.csproj", "{5B6A418E-33A4-4064-B81D-CE3599903E7B}"
@@ -34,10 +32,6 @@ Global
 		{632D4504-6B53-435A-8387-41134B6AF338}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{632D4504-6B53-435A-8387-41134B6AF338}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{632D4504-6B53-435A-8387-41134B6AF338}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ABE71C54-0D70-4B36-9C19-9286CE541176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABE71C54-0D70-4B36-9C19-9286CE541176}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ABE71C54-0D70-4B36-9C19-9286CE541176}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABE71C54-0D70-4B36-9C19-9286CE541176}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1368C2C4-66B0-49D4-A67C-D0EBBAE42B3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1368C2C4-66B0-49D4-A67C-D0EBBAE42B3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1368C2C4-66B0-49D4-A67C-D0EBBAE42B3C}.Release|Any CPU.ActiveCfg = Release|Any CPU

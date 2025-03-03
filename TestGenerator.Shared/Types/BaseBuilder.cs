@@ -1,28 +1,29 @@
-﻿using System.Diagnostics;
+﻿using AvaluxUI.Utils;
 using TestGenerator.Shared.Settings.Shared;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Shared.Types;
 
 public abstract class BaseBuilder
 {
-    public SettingsSection Settings { get; }
+    private IAppService _appService = Injector.Inject<IAppService>();
+
+    public ISettingsSection Settings { get; }
 
     public Guid BuildId { get; }
-    public AProject Project { get; }
+    public IProject Project { get; }
 
-    protected BaseBuilder(Guid id, AProject project, SettingsSection settings)
+    protected BaseBuilder(Guid id, IProject project, ISettingsSection settings)
     {
         BuildId = id;
         Settings = settings;
         Project = project;
     }
 
-    public virtual async Task<int> Compile(CancellationToken token = new()) => 0;
+    public virtual Task<int> Compile(CancellationToken token = new()) => Task.FromResult(0);
     public virtual string? Command => null;
 
     [Obsolete("Используйте вариант с параметром 'environment'")]
-    public virtual async Task<ICompletedProcess> Run(string args = "", string? workingDirectory = null,
+    public virtual Task<ICompletedProcess> Run(string args = "", string? workingDirectory = null,
         string? stdin = null, CancellationToken token = new())
     {
         throw new NotImplementedException();
@@ -44,7 +45,7 @@ public abstract class BaseBuilder
     }
 
     [Obsolete("Используйте вариант с параметром 'environment'")]
-    public virtual async Task<ICompletedProcess> RunConsole(string args = "",
+    public virtual Task<ICompletedProcess> RunConsole(string args = "",
         string? workingDirectory = null,
         string? stdin = null,
         CancellationToken token = new())
@@ -79,7 +80,7 @@ public abstract class BaseBuilder
         if (Command == null)
             throw new Exception("Builder base runner: command is null");
         var lst = Command.Split();
-        return await AAppService.Instance.RunProcess(where, new RunProcessArgs
+        return await _appService.RunProcess(where, new RunProcessArgs
         {
             Filename = lst[0],
             Args = string.Join(' ', lst.Skip(1) + args),
@@ -88,5 +89,5 @@ public abstract class BaseBuilder
         }, token: token);
     }
 
-    public string TempPath => Path.Join(AAppService.Instance.AppDataPath, "Temp", "Builds", BuildId.ToString());
+    public string TempPath => Path.Join(_appService.AppDataPath, "Temp", "Builds", BuildId.ToString());
 }

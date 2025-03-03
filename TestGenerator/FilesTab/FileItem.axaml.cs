@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Avalonia;
@@ -8,6 +7,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using AvaluxUI.Utils;
+using TestGenerator.Core.Services;
 using TestGenerator.MainTabs.Code;
 using TestGenerator.Shared.Types;
 
@@ -15,6 +16,8 @@ namespace TestGenerator.FilesTab;
 
 public partial class FileItem : UserControl
 {
+    private readonly AppService _appService = Injector.Inject<AppService>();
+
     public static readonly StyledProperty<Node?>
         NodeProperty = AvaloniaProperty.Register<FileItem, Node?>(nameof(Node));
 
@@ -24,18 +27,18 @@ public partial class FileItem : UserControl
         set => SetValue(NodeProperty, value);
     }
 
-    public event Action<Node>? CopyRequested; 
-    public event Action<Node>? PasteRequested; 
-    public event Action<Node>? DeleteRequested; 
-    public event Action<Node>? SendToTrashRequested; 
-    public event Action<Node, PointerEventArgs>? DragRequested; 
-    public event Action? GlobalUpdateRequested; 
+    public event Action<Node>? CopyRequested;
+    public event Action<Node>? PasteRequested;
+    public event Action<Node>? DeleteRequested;
+    public event Action<Node>? SendToTrashRequested;
+    public event Action<Node, PointerEventArgs>? DragRequested;
+    public event Action? GlobalUpdateRequested;
 
     public FileItem()
     {
         InitializeComponent();
         AddHandler(DragDrop.DropEvent, InputElement_OnDrop);
-        PropertyChanged += (sender, args) =>
+        PropertyChanged += (_, args) =>
         {
             if (args.Property == NodeProperty)
             {
@@ -78,7 +81,7 @@ public partial class FileItem : UserControl
                 if (provider.CanOpen(Node.Path))
                 {
                     var menuItem = new MenuItem { Header = provider.Name };
-                    menuItem.Click += (o, args) => AAppService.Instance.Request<bool>("openFileWith",
+                    menuItem.Click += async (_, _) => await _appService.Request<bool>("openFileWith",
                         new OpenFileWithModel { Path = Node.Path, ProviderKey = provider.Key });
                     OpenMenu.Items.Add(menuItem);
                 }
@@ -107,7 +110,7 @@ public partial class FileItem : UserControl
             if (action.CanUse(Node.Path))
             {
                 var menuItem = new MenuItem { Header = action.Name };
-                menuItem.Click += (o, args) => RunAction(action, Node.Path);
+                menuItem.Click += (_, _) => RunAction(action, Node.Path);
                 ContextMenu.Items.Insert(3, menuItem);
                 flag = true;
             }
@@ -141,12 +144,12 @@ public partial class FileItem : UserControl
     {
         if (Node == null)
             return;
-        
+
         foreach (var creator in FilesTab.BuiltinFileCreators)
         {
             var menuItem = new MenuItem
                 { Header = creator.Name, Icon = new PathIcon { Data = PathGeometry.Parse(creator.Icon ?? "") } };
-            menuItem.Click += (o, args) => CreateFile(Node.Path, creator);
+            menuItem.Click += (_, _) => CreateFile(Node.Path, creator);
             CreateMenu.Items.Add(menuItem);
         }
 
@@ -156,7 +159,7 @@ public partial class FileItem : UserControl
         {
             var menuItem = new MenuItem
                 { Header = creator.Name, Icon = new PathIcon { Data = PathGeometry.Parse(creator.Icon ?? "") } };
-            menuItem.Click += (o, args) => CreateFile(Node.Path, creator);
+            menuItem.Click += (_, _) => CreateFile(Node.Path, creator);
             CreateMenu.Items.Add(menuItem);
         }
     }
@@ -216,7 +219,7 @@ public partial class FileItem : UserControl
         _pressedAt = DateTime.Now;
     }
 
-    private async void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
+    private void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
     {
         if (Node == null || _pressedAt == null || DateTime.Now - _pressedAt > TimeSpan.FromSeconds(1))
             return;

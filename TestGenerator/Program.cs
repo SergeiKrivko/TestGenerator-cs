@@ -1,9 +1,8 @@
 ﻿using Avalonia;
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 using TestGenerator.Core.Services;
+using TestGenerator.Shared.Types;
+using AvaluxUI.Utils;
 
 namespace TestGenerator;
 
@@ -20,6 +19,15 @@ class Program
         if (!startupInfo.StartGui)
             return;
         StartupService.StartupInfo = startupInfo;
+
+        Injector.AddService<AppService>();
+        Injector.AddService<PluginsService>();
+        Injector.AddService<ProjectTypesService>();
+        Injector.AddService<ProjectsService>();
+        Injector.AddService<BuildTypesService>();
+        Injector.AddService<BuildsService>();
+        Injector.AddService<PluginsHttpService>();
+
         try
         {
             BuildAvaloniaApp()
@@ -38,7 +46,7 @@ class Program
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp()
+    private static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()

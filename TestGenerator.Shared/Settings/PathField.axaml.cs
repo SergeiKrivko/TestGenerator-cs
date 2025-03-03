@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using TestGenerator.Shared.Utils;
+using AvaluxUI.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -24,15 +24,15 @@ public partial class PathField : UserControl, IField
     }
 
     public bool Directory { get; set; } = false;
-    
+
     public string? Extension { get; set; }
-    
+
     public PathField()
     {
         InitializeComponent();
     }
 
-    public void Load(SettingsSection section)
+    public void Load(ISettingsSection section)
     {
         if (Key != null)
             Value = section.Get<string>(Key);
@@ -68,7 +68,9 @@ public partial class PathField : UserControl, IField
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "Выберите файл",
-                FileTypeFilter = Extension == null ? [] : [new FilePickerFileType("Python file"){Patterns = [$"*{Extension}"]}],
+                FileTypeFilter = Extension == null
+                    ? []
+                    : [new FilePickerFileType("Python file") { Patterns = [$"*{Extension}"] }],
                 AllowMultiple = false
             });
 

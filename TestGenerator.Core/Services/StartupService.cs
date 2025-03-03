@@ -1,5 +1,5 @@
-﻿using TestGenerator.Core.Models;
-using TestGenerator.Shared.Utils;
+﻿using AvaluxUI.Utils;
+using TestGenerator.Core.Models;
 
 namespace TestGenerator.Core.Services;
 

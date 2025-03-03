@@ -1,14 +1,15 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AvaluxUI.Utils;
 using TestGenerator.Shared.Settings;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.FilesTab;
 
 public partial class CreateFileDialog : Window
 {
     public SettingsControl SettingsControl { get; }
-    private readonly SettingsSection _settingsSection = SettingsSection.Empty("");
+    // private readonly SettingsSection _settingsSection = SettingsSection.Empty("");
+    private readonly SettingsSection _settingsSection = SettingsSection.Empty();
 
     public delegate void ConfirmHandler(SettingsSection options);
 

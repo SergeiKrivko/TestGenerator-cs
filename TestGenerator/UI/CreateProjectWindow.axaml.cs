@@ -4,6 +4,7 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
 
@@ -11,12 +12,16 @@ namespace TestGenerator.UI;
 
 public partial class CreateProjectWindow : Window
 {
-    private Dictionary<string, Control> _controls = [];
+    private readonly AppService _appService = Injector.Inject<AppService>();
+    private readonly ProjectTypesService _projectTypesService = Injector.Inject<ProjectTypesService>();
+    private readonly ProjectsService _projectsService = Injector.Inject<ProjectsService>();
+
+    private readonly Dictionary<string, Control> _controls = [];
 
     public CreateProjectWindow()
     {
         InitializeComponent();
-        Tree.ItemsSource = ProjectTypesService.Instance.Types.Values.Select(type => new ProjectTypeNode
+        Tree.ItemsSource = _projectTypesService.Types.Values.Select(type => new ProjectTypeNode
         {
             Type = type,
             Creators = type.Creators.Select(creator => new ProjectCreatorNode { Creator = creator, Type = type })
@@ -60,25 +65,25 @@ public partial class CreateProjectWindow : Window
         var control = _controls[creator.Key];
         var path = creator.Creator.GetPath(control);
         Directory.CreateDirectory(path);
-        var project = ProjectsService.Instance.Create(path, creator.Type);
-        await ProjectsService.Instance.SetCurrentProject(project);
+        var project = _projectsService.Create(path, creator.Type);
+        await _projectsService.SetCurrentProject(project);
 
-        var task = AppService.Instance.RunBackgroundTask("Создание проекта",
+        var task = _appService.RunBackgroundTask("Создание проекта",
             async (task, token) =>
             {
                 await creator.Creator.Initialize(project, control, task, token);
                 return 0;
             });
-        
+
         task.ProgressChanged += TaskOnProgressChanged;
         task.StatusChanged += TaskOnStatusChanged;
         TaskProgressBar.IsIndeterminate = task.Progress == null;
         TaskProgressBar.Value = task.Progress ?? 0;
         TaskStatusBar.Text = task.Status;
-        
+
         await task.Wait();
 
-        await ProjectsService.Instance.ReloadProject();
+        await _projectsService.ReloadProject();
         Close();
     }
 

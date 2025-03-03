@@ -14,7 +14,7 @@
     "SharedLibVersion": {
       "type": "parameter",
       "datatype": "string",
-      "defaultValue": "1.4.1",
+      "defaultValue": "4.0.0",
       "replaces": "SharedLibVersion",
       "displayName": "Версия TestGenerator.Shared"
     }

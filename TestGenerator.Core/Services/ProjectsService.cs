@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Reflection;
 using Avalonia;
 using Avalonia.Win32.JumpLists;
 using TestGenerator.Core.Types;
@@ -7,31 +6,16 @@ using TestGenerator.Shared.Types;
 
 namespace TestGenerator.Core.Services;
 
-public class ProjectsService
+public class ProjectsService(AppService appService) : IProjectsService
 {
-    private static ProjectsService? _instance;
-
     private JumpList? _jumpList;
-
-    public static ProjectsService Instance
-    {
-        get
-        {
-            _instance ??= new ProjectsService();
-            return _instance;
-        }
-    }
-
-    private ProjectsService()
-    {
-    }
 
     public async void Load()
     {
         InitJumpList();
 
-        var currentPath = AppService.Instance.Settings.Get<string>("currentProject");
-        foreach (var path in AppService.Instance.Settings.Get<string[]>("recentProjects", []))
+        var currentPath = appService.Settings.Get<string>("currentProject");
+        foreach (var path in appService.Settings.Get<string[]>("recentProjects", []))
         {
             var project = Project.Load(path);
             Projects.Add(project);
@@ -49,7 +33,7 @@ public class ProjectsService
 
         foreach (var file in StartupService.StartupInfo?.Files ?? [])
         {
-            await AppService.Instance.Request<string?>("openFile", file);
+            await appService.Request<string?>("openFile", file);
         }
     }
 
@@ -57,11 +41,9 @@ public class ProjectsService
 
     private Project? _current;
 
-    public delegate void ProjectChangeHandler(Project project);
+    public event Action<IProject>? CurrentChanged;
 
-    public event ProjectChangeHandler? CurrentChanged;
-
-    public Project Current => _current ?? Project.LightEditProject;
+    public IProject Current => _current ?? Project.LightEditProject;
 
     public Project Load(string path)
     {
@@ -94,7 +76,7 @@ public class ProjectsService
         {
             LogService.Logger.Debug("Current project set to LightEdit");
             _current = null;
-            AppService.Instance.Settings.Remove("currentProject");
+            appService.Settings.Remove("currentProject");
         }
         else if (Projects.Contains(value))
         {
@@ -102,7 +84,7 @@ public class ProjectsService
             _current = value;
             Projects.Move(Projects.IndexOf(value), 0);
             SaveRecentProjects();
-            AppService.Instance.Settings.Set("currentProject", _current.Path);
+            appService.Settings.Set("currentProject", _current.Path);
         }
         else
         {
@@ -110,7 +92,7 @@ public class ProjectsService
         }
 
         CurrentChanged?.Invoke(Current);
-        AppService.Instance.Emit("projectChanged", Current.Path);
+        appService.Emit("projectChanged", Current.Path);
         return true;
     }
 
@@ -120,13 +102,13 @@ public class ProjectsService
             return;
         LogService.Logger.Debug($"Project '{Current.Name}' reloaded");
         CurrentChanged?.Invoke(Current);
-        AppService.Instance.Emit("projectChanged", Current.Path);
+        appService.Emit("projectChanged", Current.Path);
         
     }
 
     private void SaveRecentProjects()
     {
-        AppService.Instance.Settings.Set("recentProjects", Projects.Select(p => p.Path));
+        appService.Settings.Set("recentProjects", Projects.Select(p => p.Path));
         if (OperatingSystem.IsWindows() && _jumpList != null)
         {
             _jumpList.JumpItems.RemoveAll(i => (i as JumpTask)?.CustomCategory == "Недавние");

@@ -1,8 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using TestGenerator.Shared.Utils;
+using AvaluxUI.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -50,7 +48,7 @@ public partial class DefaultField : UserControl, IField
             ChildrenPanel.Children.Add(control);
     }
 
-    public void Load(SettingsSection section)
+    public void Load(ISettingsSection section)
     {
         if (Key != null)
             Value = section.Get<bool>(Key);

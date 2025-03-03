@@ -5,17 +5,6 @@ namespace TestGenerator.Core.Services;
 
 public class ProjectTypesService
 {
-    private static ProjectTypesService? _instance;
-
-    public static ProjectTypesService Instance
-    {
-        get
-        {
-            _instance ??= new ProjectTypesService();
-            return _instance;
-        }
-    }
-
     public static ProjectType Default { get; } = new("", "Unknown",
         "M0.25 4.5C0.25 3.5 1.75 0 5.25 0C8.75 0 10.75 2 10.75 4.5C10.75 7 9.25 8 9.25 8L6.75 10C6.75 10 5.75 " +
         "11 5.75 12C5.75 12.5 5.375 12.75 5 12.75V13.5C5 13.5 6.5 13.5 6.5 15C6.5 16.5 5 16.5 5 16.5C5 16.5 3.5 16.5 " +

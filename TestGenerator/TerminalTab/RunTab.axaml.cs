@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Types;
@@ -8,6 +9,8 @@ namespace TestGenerator.TerminalTab;
 
 public partial class RunTab : SideTab
 {
+    private readonly AppService _appService = Injector.Inject<AppService>();
+
     public override string TabKey => "Run";
     public override string TabName => "Выполнение";
 
@@ -19,7 +22,7 @@ public partial class RunTab : SideTab
     public RunTab()
     {
         InitializeComponent();
-        AppService.Instance.AddRequestHandler<RunProcessArgs, ICompletedProcess>("runProcessInTabRun", RunProcess);
+        _appService.AddRequestHandler<RunProcessArgs, ICompletedProcess>("runProcessInTabRun", RunProcess);
     }
 
     private async Task<ICompletedProcess> RunProcess(RunProcessArgs args, CancellationToken token)

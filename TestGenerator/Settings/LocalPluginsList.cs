@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Exceptions;
 using TestGenerator.Core.Models;
 using TestGenerator.Core.Services;
@@ -9,15 +10,17 @@ namespace TestGenerator.Settings;
 
 public class LocalPluginsList : PluginsList
 {
+    private readonly PluginsService _pluginsService = Injector.Inject<PluginsService>();
+    
     protected override Task<RemotePlugin[]> LoadAllPlugins()
     {
         return Task.Run(() =>
         {
-            return PluginsService.Instance.Plugins.Values.Select(p => new RemotePlugin
+            return _pluginsService.Plugins.Values.Select(p => new RemotePlugin
             {
                 Key = p.Config.Key,
-                OwnerId = default,
-                PluginId = default,
+                OwnerId = Guid.Empty,
+                PluginId = Guid.Empty,
             }).ToArray();
         });
     }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using AvaluxUI.Utils;
 using TestGenerator.Shared.Settings.Shared;
 using TestGenerator.Shared.Utils;
 
@@ -18,7 +19,7 @@ public class SelectField<T> : BaseSelectField where T : class
         }
     }
 
-    public override void Load(SettingsSection section)
+    public override void Load(ISettingsSection section)
     {
         if (Key != null)
         {

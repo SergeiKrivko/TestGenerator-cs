@@ -1,7 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia.Controls;
-using TestGenerator.Shared.Settings.Shared;
-using TestGenerator.Shared.Utils;
+﻿using Avalonia.Controls;
+using AvaluxUI.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -24,7 +22,7 @@ public abstract partial class BaseSelectField : UserControl, IField
         InitializeComponent();
     }
 
-    public abstract void Load(SettingsSection section);
+    public abstract void Load(ISettingsSection section);
 
     private void Box_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {

@@ -1,57 +1,60 @@
-﻿using TestGenerator.Core.Services;
+﻿using AvaluxUI.Utils;
+using TestGenerator.Core.Services;
 using TestGenerator.Shared.Settings.Shared;
 using TestGenerator.Shared.Types;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Core.Types;
 
-public class Build : ABuild
+public class Build : IBuild
 {
-    public override Guid Id { get; }
+    private readonly AppService _appService = Injector.Inject<AppService>();
+    private readonly BuildTypesService _buildTypesService = Injector.Inject<BuildTypesService>();
 
-    public override string Name
+    public Guid Id { get; }
+
+    public string Name
     {
         get => Settings.Get<string>("name") ?? "";
         set => Settings.Set("name", value);
     }
 
-    public override string WorkingDirectory
+    public string WorkingDirectory
     {
         get => Settings.Get<string>("workingDirectory") ?? _project.Path;
         set => Settings.Set("workingDirectory", value);
     }
 
-    public override EnvironmentModel? Environment
+    public EnvironmentModel? Environment
     {
         get => Settings.Get<EnvironmentModel>("environment");
         set => Settings.Set("environment", value);
     }
 
-    public override List<BuildSubprocess> PreProc => Settings.Get<BuildSubprocess[]>("preProc", []).ToList();
-    public override List<BuildSubprocess> PostProc => Settings.Get<BuildSubprocess[]>("postProc", []).ToList();
+    public List<BuildSubprocess> PreProc => Settings.Get<BuildSubprocess[]>("preProc", []).ToList();
+    public List<BuildSubprocess> PostProc => Settings.Get<BuildSubprocess[]>("postProc", []).ToList();
 
-    public override string TypeName => Settings.Get<string>("type") ?? "";
-    public override BuildType Type { get; }
-    public override BaseBuilder Builder { get; }
+    public string TypeName => Settings.Get<string>("type") ?? "";
+    public BuildType Type { get; }
+    public BaseBuilder Builder { get; }
 
-    private readonly Project _project;
+    private readonly IProject _project;
     public SettingsFile Settings { get; }
 
-    private Build(Project project, Guid id)
+    private Build(IProject project, Guid id)
     {
         Id = id;
         _project = project;
         Settings = SettingsFile.Open(Path.Join(_project.DataPath, "Builds", $"{id}.xml"));
 
-        var type = Type = BuildTypesService.Instance.Get(Settings.Get<string>("type") ?? "");
+        var type = Type = _buildTypesService.Get(Settings.Get<string>("type") ?? "");
         Builder = type.Builder(id, _project, Settings.GetSection("typeSettings"));
     }
 
-    public delegate ABuild? BuildGetter(Guid id);
+    public delegate IBuild? BuildGetter(Guid id);
 
     public BuildGetter? GetBuild { get; set; }
 
-    private Build(Project project, Guid id, BuildType buildType)
+    private Build(IProject project, Guid id, BuildType buildType)
     {
         Id = id;
         _project = project;
@@ -71,32 +74,32 @@ public class Build : ABuild
     public static Build FromFile(string path)
     {
         var filename = Path.GetFileNameWithoutExtension(path);
-        return new Build(ProjectsService.Instance.Current, Guid.Parse(filename));
+        return new Build(Injector.Inject<ProjectsService>().Current, Guid.Parse(filename));
     }
 
     public static Build Load(Guid id)
     {
-        return new Build(ProjectsService.Instance.Current, id);
+        return new Build(Injector.Inject<ProjectsService>().Current, id);
     }
 
     public static Build New(BuildType buildType)
     {
-        return new Build(ProjectsService.Instance.Current, Guid.NewGuid(), buildType);
+        return new Build(Injector.Inject<ProjectsService>().Current, Guid.NewGuid(), buildType);
     }
 
-    public override string? Command => Builder.Command;
+    public string? Command => Builder.Command;
 
-    public override Task<int> Compile(CancellationToken token = new()) => Builder.Compile(token: token);
+    public Task<int> Compile(CancellationToken token = new()) => Builder.Compile(token: token);
 
-    public override Task<ICompletedProcess>
+    public Task<ICompletedProcess>
         Run(string args = "", string? stdin = null, CancellationToken token = new()) =>
         Builder.Run(args, WorkingDirectory, stdin, Environment, token: token);
 
-    public override Task<ICompletedProcess> RunConsole(string args = "", string? stdin = null,
+    public Task<ICompletedProcess> RunConsole(string args = "", string? stdin = null,
         CancellationToken token = new()) =>
         Builder.RunConsole(args, WorkingDirectory, stdin, Environment, token: token);
 
-    private ABuild? _getBuild(Guid id)
+    private IBuild? _getBuild(Guid id)
     {
         if (GetBuild == null)
             throw new Exception("Can not get build");
@@ -110,13 +113,13 @@ public class Build : ABuild
         {
             if (proc.Compile)
             {
-                code = await AppService.Instance
+                code = await _appService
                     .RunBackgroundTask($"{Name} - компиляция", Compile, BackgroundTaskFlags.CanBeCancelled).Wait();
             }
             else if (proc.Command != null)
             {
                 var lst = proc.Command.Split();
-                code = (await AppService.Instance
+                code = (await _appService
                     .RunProcess(RunProcessArgs.ProcessRunProvider.RunTab,
                         new RunProcessArgs
                         {
@@ -146,13 +149,13 @@ public class Build : ABuild
         {
             if (proc.Compile)
             {
-                code = await AppService.Instance
+                code = await _appService
                     .RunBackgroundTask($"{Name} - компиляция", Compile, BackgroundTaskFlags.CanBeCancelled).Wait();
             }
             else if (proc.Command != null)
             {
                 var lst = proc.Command.Split();
-                code = (await AppService.Instance
+                code = (await _appService
                     .RunProcess(new RunProcessArgs
                     {
                         Filename = lst[0],
@@ -174,27 +177,27 @@ public class Build : ABuild
         return code;
     }
 
-    public override async Task<int> RunPreProcConsole(CancellationToken token = new())
+    public async Task<int> RunPreProcConsole(CancellationToken token = new())
     {
         return await RunSubProcConsole(PreProc, token: token);
     }
 
-    public override async Task<int> RunPostProcConsole(CancellationToken token = new())
+    public async Task<int> RunPostProcConsole(CancellationToken token = new())
     {
         return await RunSubProcConsole(PostProc, token: token);
     }
 
-    public override async Task<int> RunPreProc(CancellationToken token = new())
+    public async Task<int> RunPreProc(CancellationToken token = new())
     {
         return await RunSubProc(PreProc, token: token);
     }
 
-    public override async Task<int> RunPostProc(CancellationToken token = new())
+    public async Task<int> RunPostProc(CancellationToken token = new())
     {
         return await RunSubProc(PostProc, token: token);
     }
 
-    public override async Task<int> ExecuteConsole(string args = "", string? stdin = null,
+    public async Task<int> ExecuteConsole(string args = "", string? stdin = null,
         CancellationToken token = new())
     {
         var code = await RunPreProcConsole(token);
@@ -206,7 +209,7 @@ public class Build : ABuild
         return await RunPostProcConsole(token);
     }
 
-    public override async Task<int> Execute(string args = "", string? stdin = null, CancellationToken token = new())
+    public async Task<int> Execute(string args = "", string? stdin = null, CancellationToken token = new())
     {
         var code = await RunPreProc(token);
         if (code != 0)

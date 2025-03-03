@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using Avalonia.Controls;
-using TestGenerator.Shared.Utils;
+﻿using Avalonia.Controls;
+using AvaluxUI.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -31,7 +30,7 @@ internal partial class SettingsPageControl : UserControl
 
     public void Add(IField field) => SettingsControl.Add(field);
 
-    public SettingsSection? Section
+    public ISettingsSection? Section
     {
         get => SettingsControl.Section;
         set => SettingsControl.Section = value;

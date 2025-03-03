@@ -2,8 +2,8 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using AvaluxUI.Utils;
 using TestGenerator.Shared.SidePrograms;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
@@ -33,7 +33,6 @@ public partial class ProgramField : UserControl, IField
             {
                 ComboBox.SelectedItem = null;
             }
-            
         }
     }
 
@@ -70,7 +69,7 @@ public partial class ProgramField : UserControl, IField
         }
     }
 
-    public async void Load(SettingsSection section)
+    public async void Load(ISettingsSection section)
     {
         if (Key != null)
         {

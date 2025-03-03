@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
 
@@ -10,6 +11,8 @@ namespace TestGenerator.Builds;
 
 public class SubProcItem : StackPanel
 {
+    private readonly BuildsService _buildsService = Injector.Inject<BuildsService>();
+
     protected override Type StyleKeyOverride => typeof(MenuItem);
 
     private readonly PathIcon _icon;
@@ -28,11 +31,11 @@ public class SubProcItem : StackPanel
     {
         Spacing = 5;
         Orientation = Orientation.Horizontal;
-        _icon = new PathIcon{VerticalAlignment = VerticalAlignment.Center};
-        _label = new TextBlock{VerticalAlignment = VerticalAlignment.Center};
+        _icon = new PathIcon { VerticalAlignment = VerticalAlignment.Center };
+        _label = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
         Children.Add(_icon);
         Children.Add(_label);
-        SubprocessProperty.Changed.Subscribe(args => Update());
+        SubprocessProperty.Changed.Subscribe(_ => Update());
     }
 
     public void Update()
@@ -57,7 +60,7 @@ public class SubProcItem : StackPanel
         }
         else if (Subprocess.BuildId != null)
         {
-            var build = BuildsService.Instance.Get(Subprocess.BuildId.Value);
+            var build = _buildsService.Get(Subprocess.BuildId.Value);
             _icon.Data = PathGeometry.Parse(build?.Type.Icon ?? "");
             _label.Text = build?.Name;
         }

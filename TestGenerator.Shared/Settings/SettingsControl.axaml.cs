@@ -1,12 +1,13 @@
 ﻿using Avalonia.Controls;
-using TestGenerator.Shared.Utils;
+using AvaluxUI.Utils;
 
 namespace TestGenerator.Shared.Settings;
 
 public partial class SettingsControl : UserControl
 {
-    private SettingsSection? _section;
-    public SettingsSection? Section
+    private ISettingsSection? _section;
+
+    public ISettingsSection? Section
     {
         get => _section;
         set
@@ -15,9 +16,9 @@ public partial class SettingsControl : UserControl
             Load();
         }
     }
-    
+
     private readonly List<IField> _fields = [];
-    
+
     public SettingsControl()
     {
         InitializeComponent();
@@ -64,6 +65,7 @@ public partial class SettingsControl : UserControl
         {
             field.ValueChanged -= FieldOnValueChanged;
         }
+
         _fields.Clear();
         MainPanel.Children.Clear();
     }

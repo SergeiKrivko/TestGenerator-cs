@@ -2,38 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
-using TestGenerator.Core.Types;
 using TestGenerator.Shared.Types;
 
 namespace TestGenerator.MainTabs.Code;
 
 public partial class CodeTab : MainTab
 {
+    private readonly AppService _appService = Injector.Inject<AppService>();
+    private readonly ProjectsService _projectsService = Injector.Inject<ProjectsService>();
+
     public override string TabKey => "Code";
     public override string TabName => "Код";
     public override int TabPriority => 100;
 
     private readonly Dictionary<Guid, OpenedFileModel> _files = [];
     private readonly Dictionary<Guid, OpenedFileTab> _tabs = [];
-    private Guid? _currentFileId = null;
-
-    private static CodeTab? _instance = null;
-    public static CodeTab? Instance => _instance;
+    private readonly Guid? _currentFileId = null;
+    public static CodeTab? Instance { get; private set; }
 
     public OpenedFile? CurrentFile => _currentFileId == null ? null : _files[_currentFileId.Value].File;
     public List<IEditorProvider> Providers { get; } = [new CodeEditorProvider(), new SystemStdAppProvider()];
 
     public CodeTab()
     {
-        _instance = this;
+        Instance = this;
         InitializeComponent();
-        AAppService.Instance.AddRequestHandler<string, string?>("openFile", Open);
-        AAppService.Instance.AddRequestHandler<OpenFileWithModel, bool>("openFileWith", OpenWith);
-        ProjectsService.Instance.CurrentChanged += OnProjectChanged;
+        _appService.AddRequestHandler<string, string?>("openFile", Open);
+        _appService.AddRequestHandler<OpenFileWithModel, bool>("openFileWith", OpenWith);
+        _projectsService.CurrentChanged += OnProjectChanged;
     }
 
-    private async void OnProjectChanged(Project project)
+    private async void OnProjectChanged(IProject project)
     {
         Clear();
         var current = project.Settings.Get<OpenedFileModel>("currentFile");
@@ -51,7 +52,7 @@ public partial class CodeTab : MainTab
             _tabs[f.Id].IsSelected = true;
     }
 
-    private async Task<string?> Open(string path)
+    private Task<string?> Open(string path)
     {
         try
         {
@@ -60,7 +61,7 @@ public partial class CodeTab : MainTab
                 if (provider.CanOpen(path))
                 {
                     OpenFileWithProvider(path, provider);
-                    return provider.Key;
+                    return Task.FromResult<string?>(provider.Key);
                 }
             }
         }
@@ -69,23 +70,23 @@ public partial class CodeTab : MainTab
             LogService.Logger.Error($"Error while opening '{path}': {e.Message}");
         }
 
-        return null;
+        return Task.FromResult<string?>(null);
     }
 
-    private async Task<bool> OpenWith(OpenFileWithModel model)
+    private Task<bool> OpenWith(OpenFileWithModel model)
     {
         var provider = Providers.Find(p => p.Key == model.ProviderKey);
         if (provider == null)
-            return false;
+            return Task.FromResult(false);
         try
         {
             OpenFileWithProvider(model.Path, provider);
-            return true;
+            return Task.FromResult(true);
         }
         catch (Exception e)
         {
             LogService.Logger.Error($"Error while opening '{model.Path}' with {model.ProviderKey}: {e.Message}");
-            return false;
+            return Task.FromResult(false);
         }
     }
 
@@ -121,7 +122,7 @@ public partial class CodeTab : MainTab
 
     private void StoreOpenedFiles()
     {
-        ProjectsService.Instance.Current.Settings.Set("openedFiles",
+        _projectsService.Current.Settings.Set("openedFiles",
             _files.Values.ToArray());
     }
 
@@ -147,6 +148,7 @@ public partial class CodeTab : MainTab
                 LogService.Logger.Error(e.Message);
             }
         }
+
         if (tab.IsSelected && _tabs.Count > 0)
             _tabs.Values.First().IsSelected = true;
         StoreOpenedFiles();
@@ -167,8 +169,6 @@ public partial class CodeTab : MainTab
             return;
         foreach (var f in _files.Values.Where(f => f != file))
         {
-            if (f?.Id == null)
-                continue;
             _tabs[f.Id].IsSelected = false;
             var opened = _files[f.Id].File;
             if (opened == null)
@@ -177,6 +177,6 @@ public partial class CodeTab : MainTab
         }
 
         openedFile.Widget.IsVisible = true;
-        ProjectsService.Instance.Current.Settings.Set("currentFile", file);
+        _projectsService.Current.Settings.Set("currentFile", file);
     }
 }

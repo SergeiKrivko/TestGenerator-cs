@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Core.Types;
 using TestGenerator.Shared.Settings;
@@ -10,17 +11,20 @@ namespace TestGenerator.Builds;
 
 public partial class BuildsWindow : Window
 {
-    public ObservableCollection<ABuild> Builds { get; }
+    private readonly BuildsService _buildsService = Injector.Inject<BuildsService>();
+    private readonly BuildTypesService _buildTypesService = Injector.Inject<BuildTypesService>();
+    
+    public ObservableCollection<IBuild> Builds { get; }
 
     public BuildsWindow()
     {
-        Builds = BuildsService.Instance.Builds;
+        Builds = _buildsService.Builds;
         InitializeComponent();
         BuildsList.ItemsSource = Builds;
 
         var menu = new MenuFlyout();
         AddButton.Flyout = menu;
-        foreach (var buildType in BuildTypesService.Instance.Types.Values)
+        foreach (var buildType in _buildTypesService.Types.Values)
         {
             var item = new BuildTypeItem(buildType);
             item.Selected += CreateBuild;
@@ -37,7 +41,7 @@ public partial class BuildsWindow : Window
 
     private void CreateBuild(string type)
     {
-        BuildsService.Instance.New(type);
+        _buildsService.New(type);
     }
 
     private void BuildsList_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -63,6 +67,6 @@ public partial class BuildsWindow : Window
         var build = BuildsList?.SelectedItems?[0] as Build;
         if (build == null)
             return;
-        BuildsService.Instance.Remove(build);
+        _buildsService.Remove(build);
     }
 }

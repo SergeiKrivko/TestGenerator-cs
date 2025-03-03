@@ -1,22 +1,23 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Reactive;
 using Avalonia.Threading;
+using AvaluxUI.Utils;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
-using TestGenerator.Shared.Utils;
 
 namespace TestGenerator.UI;
 
 public partial class BackgroundTaskItem : UserControl
 {
+    private readonly AppService _appService = Injector.Inject<AppService>();
+
     public static readonly StyledProperty<IBackgroundTask?> BackgroundTaskProperty =
         AvaloniaProperty.Register<BackgroundTaskItem, IBackgroundTask?>(nameof(BackgroundTask));
 
-    private readonly SettingsSection _developerSettings = AppService.Instance.GetSettings("Developer");
+    private readonly ISettingsSection _developerSettings;
     private bool AllowKillAllTasks => _developerSettings.Get<bool>("allowKillAllTasks");
-    
+
     public IBackgroundTask? BackgroundTask
     {
         get => GetValue(BackgroundTaskProperty);
@@ -25,8 +26,9 @@ public partial class BackgroundTaskItem : UserControl
 
     public BackgroundTaskItem()
     {
+        _developerSettings = _appService.GetSettings("Developer");
         InitializeComponent();
-        PropertyChanged += (sender, args) =>
+        PropertyChanged += (_, args) =>
         {
             if (args.Property == BackgroundTaskProperty && args.NewValue is IBackgroundTask task)
             {
