@@ -68,10 +68,10 @@ public class ProjectsService(AppService appService) : IProjectsService
     {
         if (value == Current)
             return false;
-        
+
         if (TerminateProjectTasksFunc != null && !await TerminateProjectTasksFunc())
             return false;
-        
+
         if (value == Project.LightEditProject)
         {
             LogService.Logger.Debug("Current project set to LightEdit");
@@ -103,7 +103,6 @@ public class ProjectsService(AppService appService) : IProjectsService
         LogService.Logger.Debug($"Project '{Current.Name}' reloaded");
         CurrentChanged?.Invoke(Current);
         appService.Emit("projectChanged", Current.Path);
-        
     }
 
     private void SaveRecentProjects()

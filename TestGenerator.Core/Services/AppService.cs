@@ -20,13 +20,29 @@ public class AppService : IAppService
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
         Config.AppName, "Settings.xml"));
 
-    private string GetSecretKey(string key) => "12345";
+    private readonly SettingsFile _secretKeysStorage = SettingsFile.Open(Path.Join(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
+        Config.AppName, "SecretKeys.xml"));
+
+    private ISettingsSection SecretKeysStorage =>
+        _secretKeysStorage.GetSection("keys", "dxcfgvyhjikljhbgfcrtyughjbvfcgtyuhjhbvftyuhjbvfcyuhjbv");
+
+    private string GetSecretKey(string key)
+    {
+        var secretKey = SecretKeysStorage.Get<string>(key);
+        if (secretKey == null)
+        {
+            secretKey = Guid.NewGuid().ToString();
+            SecretKeysStorage.Set(key, secretKey);
+        }
+
+        Console.WriteLine(secretKey);
+        return secretKey;
+    }
 
     public ISettingsSection GetSettings(string key, bool encrypt = false)
     {
-        if (encrypt)
-            return Settings.GetSection(key, GetSecretKey(key));
-        return Settings.GetSection(key);
+        return encrypt ? Settings.GetSection(key, GetSecretKey(key)) : Settings.GetSection(key);
     }
 
     public ISettingsSection GetSettings(bool encrypt = false)
