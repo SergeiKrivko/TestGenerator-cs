@@ -20,14 +20,18 @@ public class AppService : IAppService
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
         Config.AppName, "Settings.xml"));
 
-    public ISettingsSection GetSettings(string key)
+    private string GetSecretKey(string key) => "12345";
+
+    public ISettingsSection GetSettings(string key, bool encrypt = false)
     {
+        if (encrypt)
+            return Settings.GetSection(key, GetSecretKey(key));
         return Settings.GetSection(key);
     }
 
-    public ISettingsSection GetSettings()
+    public ISettingsSection GetSettings(bool encrypt = false)
     {
-        return GetSettings(GetPluginKeyByAssembly(Assembly.GetCallingAssembly()));
+        return GetSettings(GetPluginKeyByAssembly(Assembly.GetCallingAssembly()), encrypt);
     }
 
     public string GetDataPath(string key)
