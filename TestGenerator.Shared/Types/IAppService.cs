@@ -11,7 +11,7 @@ public interface IAppService
 
     public string AppDataPath { get; }
 
-    public ISettingsSection GetSettings(string key, bool encrypt = false);
+    public ISettingsSection GetSettings(string key);
     public ISettingsSection GetSettings(bool encrypt = false);
 
     public string GetDataPath(string key);

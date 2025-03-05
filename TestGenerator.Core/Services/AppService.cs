@@ -40,14 +40,19 @@ public class AppService : IAppService
         return secretKey;
     }
 
-    public ISettingsSection GetSettings(string key, bool encrypt = false)
+    private ISettingsSection _GetSettings(string key, bool encrypt)
     {
         return encrypt ? Settings.GetSection(key, GetSecretKey(key)) : Settings.GetSection(key);
     }
 
+    public ISettingsSection GetSettings(string key)
+    {
+        return _GetSettings(key, false);
+    }
+
     public ISettingsSection GetSettings(bool encrypt = false)
     {
-        return GetSettings(GetPluginKeyByAssembly(Assembly.GetCallingAssembly()), encrypt);
+        return _GetSettings(GetPluginKeyByAssembly(Assembly.GetCallingAssembly()), encrypt);
     }
 
     public string GetDataPath(string key)
