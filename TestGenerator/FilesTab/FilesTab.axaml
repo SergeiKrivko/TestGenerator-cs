@@ -27,6 +27,11 @@
         </TreeView.DataTemplates>
         <TreeView.Styles>
             <Style Selector="TreeViewItem" x:DataType="filesTab:Node">
+                <Style Selector="^ /template/ ToggleButton#FluentTreeViewExpandCollapseChevron">
+                    <Setter Property="Width" Value="6"></Setter>
+                    <Setter Property="Height" Value="8"></Setter>
+                </Style>
+                <Setter Property="MinHeight" Value="26"></Setter>
                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
             </Style>
         </TreeView.Styles>

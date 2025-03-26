@@ -4,17 +4,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TestGenerator.FilesTab.ActionWindow"
-        Width="300" Height="200" WindowStartupLocation="CenterOwner"
+        Width="300" Height="220" WindowStartupLocation="CenterOwner"
+        ExtendClientAreaChromeHints="NoChrome" ExtendClientAreaToDecorationsHint="True"
         Title="TestGenerator">
-    <Grid RowDefinitions="* Auto" Margin="10">
-        <Arc Grid.Row="0" Classes="Spinner" Width="100" Height="100" Name="Spinner" />
+    <Grid RowDefinitions="Auto * Auto" Margin="10">
+        <TextBlock Name="ActionNameBlock" HorizontalAlignment="Center" />
+        <Arc Grid.Row="1" Classes="Spinner" Width="100" Height="100" Name="Spinner" />
         <TextBlock Grid.Row="0" TextWrapping="Wrap" Name="ErrorBlock" IsVisible="False"
                    Foreground="{DynamicResource ErrorColor}" />
-        <Panel Grid.Row="0" Width="100" Height="100" Name="SuccessPanel" IsVisible="False">
+        <Panel Grid.Row="1" Width="100" Height="100" Name="SuccessPanel" IsVisible="False">
             <Ellipse Width="100" Height="100" StrokeThickness="3" Stroke="{DynamicResource TextControlForeground}"></Ellipse>
             <PathIcon Data="{DynamicResource IconCheckmark}" Width="50" Height="50"></PathIcon>
         </Panel>
-        <Button Grid.Row="1" Name="ButtonCancel" Click="ButtonCancel_OnClick">Отмена</Button>
-        <Button Grid.Row="1" Name="ButtonOk" IsVisible="False" Click="ButtonOk_OnClick">Ок</Button>
+        <Button Grid.Row="2" Name="ButtonCancel" Click="ButtonCancel_OnClick" HorizontalAlignment="Center"
+                MaxWidth="120" Classes="Danger" HorizontalContentAlignment="Center">
+            Отмена
+        </Button>
+        <Button Grid.Row="2" Name="ButtonOk" IsVisible="False" Click="ButtonOk_OnClick" HorizontalAlignment="Center"
+                MinWidth="120" Classes="Accent" HorizontalContentAlignment="Center">
+            Ок
+        </Button>
     </Grid>
 </Window>

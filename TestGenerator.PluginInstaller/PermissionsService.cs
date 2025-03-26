@@ -7,6 +7,26 @@ namespace TestGenerator.PluginInstaller;
 public static class PermissionsService
 {
     [SupportedOSPlatform("Windows")]
+    private static void ClearWindowsPermissions(DirectoryInfo directory)
+    {
+        var dirSecurity = directory.GetAccessControl();
+
+        foreach (var el in dirSecurity.GetAccessRules(true, true, typeof(SecurityIdentifier)))
+        {
+            Console.WriteLine(el);
+            if (el is SecurityIdentifier rule)
+            {
+                dirSecurity.RemoveAccessRuleAll(new FileSystemAccessRule(rule, FileSystemRights.FullControl, AccessControlType.Allow));
+                dirSecurity.RemoveAccessRuleAll(new FileSystemAccessRule(rule, FileSystemRights.Write, AccessControlType.Allow));
+                Console.WriteLine(rule.AccountDomainSid);
+            }
+        }
+        Console.WriteLine("ALL");
+
+        directory.SetAccessControl(dirSecurity);
+    }
+
+    [SupportedOSPlatform("Windows")]
     private static void SetWindowsAdminPermissions(DirectoryInfo directory)
     {
         SecurityIdentifier sid = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
@@ -19,7 +39,7 @@ public static class PermissionsService
     [SupportedOSPlatform("Windows")]
     private static void AddWindowsUserPermissions(DirectoryInfo directory)
     {
-        SecurityIdentifier sid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+        var sid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
         var account = (NTAccount)sid.Translate(typeof(NTAccount));
         var dirSecurity = directory.GetAccessControl();
 
@@ -32,8 +52,9 @@ public static class PermissionsService
     [SupportedOSPlatform("Windows")]
     private static void SetWindowsPermissions(string path)
     {
+        ClearWindowsPermissions(new DirectoryInfo(path));
+        Thread.Sleep(TimeSpan.FromSeconds(10));
         SetWindowsAdminPermissions(new DirectoryInfo(path));
-
         AddWindowsUserPermissions(new DirectoryInfo(path));
     }
 

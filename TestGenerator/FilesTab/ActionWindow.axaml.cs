@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using TestGenerator.Core.Services;
 using TestGenerator.Shared.Types;
 
@@ -12,16 +9,14 @@ namespace TestGenerator.FilesTab;
 
 public partial class ActionWindow : Window
 {
-    private Thread? _thread;
-
     public ActionWindow()
     {
         InitializeComponent();
     }
 
-    public async void Run(IFileAction action, string path)
+    internal async void Run(IFileAction action, string path)
     {
-        Title = action.Name;
+        ActionNameBlock.Text = action.Name;
 
         try
         {
@@ -51,7 +46,6 @@ public partial class ActionWindow : Window
 
     private void ButtonCancel_OnClick(object? sender, RoutedEventArgs e)
     {
-        _thread?.Interrupt();
         Close();
     }
 }
